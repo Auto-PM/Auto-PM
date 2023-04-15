@@ -25,19 +25,29 @@ app.add_middleware(
 )
 
 
-class Item(BaseModel):
+class Task(BaseModel):
     name: str
     description: Optional[str] = None
-    price: float
-    tax: Optional[float] = None
 
 
-items = {}
+tasks = {}
 
 
 @app.get("/hello")
 async def hello():
     return {"message": "Hello World"}
+
+
+@app.post("/tasks/", response_model=Task)
+async def create_task(task: Task):
+    task_id = len(tasks) + 1
+    tasks[task_id] = task
+    return task
+
+
+@app.get("/tasks/", response_model=List[Task])
+async def read_tasks(skip: int = 0, limit: int = 10):
+    return list(tasks.values())[skip : skip + limit]
 
 
 # Create a custom image with the required dependencies installed
@@ -46,9 +56,12 @@ image = modal.Image.debian_slim().pip_install()
 template_mount = modal.Mount.from_local_file(
     ".well-known/ai-plugin.json", remote_path="/root/.well-known/ai-plugin.json"
 )
+asset_mount = modal.Mount.from_local_file(
+    "assets/logo.png", remote_path="/root/assets/logo.png"
+)
 
 
-@stub.asgi(image=image, mounts=[template_mount])
+@stub.asgi(image=image, mounts=[template_mount, asset_mount])
 def fastapi_app():
     return app
 
