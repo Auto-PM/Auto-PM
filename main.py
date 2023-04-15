@@ -4,11 +4,24 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional
 import modal
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 stub = modal.Stub("form_generator")
 
 app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
+origins = [
+    "https://chat.openai.com",
+    "http://localhost",
+    "http://localhost:8000",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Item(BaseModel):
     name: str
