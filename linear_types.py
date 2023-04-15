@@ -74,13 +74,13 @@ class Attachment(Node):
 
 
 class AttachmentCollectionFilter(BaseModel):
-    and: Optional[List['AttachmentCollectionFilter']]
+    and_: Optional[List['AttachmentCollectionFilter']]
     created_at: Optional['DateComparator']
     creator: Optional['NullableUserFilter']
     every: Optional['AttachmentFilter']
     id: Optional['IDComparator']
     length: Optional['NumberComparator']
-    or: Optional[List['AttachmentCollectionFilter']]
+    or_: Optional[List['AttachmentCollectionFilter']]
     some: Optional['AttachmentFilter']
     source_type: Optional['SourceTypeComparator']
     subtitle: Optional['NullableStringComparator']
@@ -115,11 +115,11 @@ class AttachmentEdge(BaseModel):
 
 
 class AttachmentFilter(BaseModel):
-    and: Optional[List['AttachmentFilter']]
+    and_: Optional[List['AttachmentFilter']]
     created_at: Optional['DateComparator']
     creator: Optional['NullableUserFilter']
     id: Optional['IDComparator']
-    or: Optional[List['AttachmentFilter']]
+    or_: Optional[List['AttachmentFilter']]
     source_type: Optional['SourceTypeComparator']
     subtitle: Optional['NullableStringComparator']
     title: Optional['StringComparator']
@@ -228,14 +228,14 @@ class Comment(Node):
 
 
 class CommentCollectionFilter(BaseModel):
-    and: Optional[List['CommentCollectionFilter']]
+    and_: Optional[List['CommentCollectionFilter']]
     body: Optional['StringComparator']
     created_at: Optional['DateComparator']
     every: Optional['CommentFilter']
     id: Optional['IDComparator']
     issue: Optional['IssueFilter']
     length: Optional['NumberComparator']
-    or: Optional[List['CommentCollectionFilter']]
+    or_: Optional[List['CommentCollectionFilter']]
     some: Optional['CommentFilter']
     updated_at: Optional['DateComparator']
     user: Optional['UserFilter']
@@ -265,12 +265,12 @@ class CommentEdge(BaseModel):
 
 
 class CommentFilter(BaseModel):
-    and: Optional[List['CommentFilter']]
+    and_: Optional[List['CommentFilter']]
     body: Optional['StringComparator']
     created_at: Optional['DateComparator']
     id: Optional['IDComparator']
     issue: Optional['IssueFilter']
-    or: Optional[List['CommentFilter']]
+    or_: Optional[List['CommentFilter']]
     updated_at: Optional['DateComparator']
     user: Optional['UserFilter']
 
@@ -438,7 +438,7 @@ class CycleEdge(BaseModel):
 
 
 class CycleFilter(BaseModel):
-    and: Optional[List['CycleFilter']]
+    and_: Optional[List['CycleFilter']]
     completed_at: Optional['DateComparator']
     created_at: Optional['DateComparator']
     ends_at: Optional['DateComparator']
@@ -451,7 +451,7 @@ class CycleFilter(BaseModel):
     issues: Optional['IssueCollectionFilter']
     name: Optional['StringComparator']
     number: Optional['NumberComparator']
-    or: Optional[List['CycleFilter']]
+    or_: Optional[List['CycleFilter']]
     starts_at: Optional['DateComparator']
     team: Optional['TeamFilter']
     updated_at: Optional['DateComparator']
@@ -475,7 +475,7 @@ class DateComparator(BaseModel):
     eq: Any
     gt: Any
     gte: Any
-    in: Optional[List[Any]]
+    in_: Optional[List[Any]]
     lt: Any
     lte: Any
     neq: Any
@@ -614,17 +614,17 @@ class EmojiPayload(BaseModel):
 
 
 class EstimateComparator(BaseModel):
-    and: Optional[List['NullableNumberComparator']]
+    and_: Optional[List['NullableNumberComparator']]
     eq: Optional[float]
     gt: Optional[float]
     gte: Optional[float]
-    in: Optional[List[float]]
+    in_: Optional[List[float]]
     lt: Optional[float]
     lte: Optional[float]
     neq: Optional[float]
     nin: Optional[List[float]]
     null: Optional[bool]
-    or: Optional[List['NullableNumberComparator']]
+    or_: Optional[List['NullableNumberComparator']]
 
 
 class EventCreateInput(BaseModel):
@@ -818,7 +818,7 @@ class GoogleUserAccountAuthInput(BaseModel):
 
 class IDComparator(BaseModel):
     eq: Optional[str]
-    in: Optional[List[str]]
+    in_: Optional[List[str]]
     neq: Optional[str]
     nin: Optional[List[str]]
 
@@ -1065,7 +1065,7 @@ class IssueBatchPayload(BaseModel):
 
 
 class IssueCollectionFilter(BaseModel):
-    and: Optional[List['IssueCollectionFilter']]
+    and_: Optional[List['IssueCollectionFilter']]
     assignee: Optional['NullableUserFilter']
     attachments: Optional['AttachmentCollectionFilter']
     auto_archived_at: Optional['NullableDateComparator']
@@ -1089,7 +1089,7 @@ class IssueCollectionFilter(BaseModel):
     labels: Optional['IssueLabelCollectionFilter']
     length: Optional['NumberComparator']
     number: Optional['NumberComparator']
-    or: Optional[List['IssueCollectionFilter']]
+    or_: Optional[List['IssueCollectionFilter']]
     parent: Optional['NullableIssueFilter']
     priority: Optional['NullableNumberComparator']
     project: Optional['NullableProjectFilter']
@@ -1172,7 +1172,7 @@ class IssueEdge(BaseModel):
 
 
 class IssueFilter(BaseModel):
-    and: Optional[List['IssueFilter']]
+    and_: Optional[List['IssueFilter']]
     assignee: Optional['NullableUserFilter']
     attachments: Optional['AttachmentCollectionFilter']
     auto_archived_at: Optional['NullableDateComparator']
@@ -1194,7 +1194,7 @@ class IssueFilter(BaseModel):
     id: Optional['IDComparator']
     labels: Optional['IssueLabelCollectionFilter']
     number: Optional['NumberComparator']
-    or: Optional[List['IssueFilter']]
+    or_: Optional[List['IssueFilter']]
     parent: Optional['NullableIssueFilter']
     priority: Optional['NullableNumberComparator']
     project: Optional['NullableProjectFilter']
@@ -1332,14 +1332,14 @@ class IssueLabel(Node):
 
 
 class IssueLabelCollectionFilter(BaseModel):
-    and: Optional[List['IssueLabelCollectionFilter']]
+    and_: Optional[List['IssueLabelCollectionFilter']]
     created_at: Optional['DateComparator']
     creator: Optional['NullableUserFilter']
     every: Optional['IssueLabelFilter']
     id: Optional['IDComparator']
     length: Optional['NumberComparator']
     name: Optional['StringComparator']
-    or: Optional[List['IssueLabelCollectionFilter']]
+    or_: Optional[List['IssueLabelCollectionFilter']]
     parent: Optional['IssueLabelFilter']
     some: Optional['IssueLabelFilter']
     team: Optional['TeamFilter']
@@ -1367,12 +1367,12 @@ class IssueLabelEdge(BaseModel):
 
 
 class IssueLabelFilter(BaseModel):
-    and: Optional[List['IssueLabelFilter']]
+    and_: Optional[List['IssueLabelFilter']]
     created_at: Optional['DateComparator']
     creator: Optional['NullableUserFilter']
     id: Optional['IDComparator']
     name: Optional['StringComparator']
-    or: Optional[List['IssueLabelFilter']]
+    or_: Optional[List['IssueLabelFilter']]
     parent: Optional['IssueLabelFilter']
     team: Optional['TeamFilter']
     updated_at: Optional['DateComparator']
@@ -1836,7 +1836,7 @@ class NotionSettingsInput(BaseModel):
 
 
 class NullableCycleFilter(BaseModel):
-    and: Optional[List['NullableCycleFilter']]
+    and_: Optional[List['NullableCycleFilter']]
     completed_at: Optional['DateComparator']
     created_at: Optional['DateComparator']
     ends_at: Optional['DateComparator']
@@ -1850,7 +1850,7 @@ class NullableCycleFilter(BaseModel):
     name: Optional['StringComparator']
     null: Optional[bool]
     number: Optional['NumberComparator']
-    or: Optional[List['NullableCycleFilter']]
+    or_: Optional[List['NullableCycleFilter']]
     starts_at: Optional['DateComparator']
     team: Optional['TeamFilter']
     updated_at: Optional['DateComparator']
@@ -1860,7 +1860,7 @@ class NullableDateComparator(BaseModel):
     eq: Any
     gt: Any
     gte: Any
-    in: Optional[List[Any]]
+    in_: Optional[List[Any]]
     lt: Any
     lte: Any
     neq: Any
@@ -1869,7 +1869,7 @@ class NullableDateComparator(BaseModel):
 
 
 class NullableIssueFilter(BaseModel):
-    and: Optional[List['NullableIssueFilter']]
+    and_: Optional[List['NullableIssueFilter']]
     assignee: Optional['NullableUserFilter']
     attachments: Optional['AttachmentCollectionFilter']
     auto_archived_at: Optional['NullableDateComparator']
@@ -1892,7 +1892,7 @@ class NullableIssueFilter(BaseModel):
     labels: Optional['IssueLabelCollectionFilter']
     null: Optional[bool]
     number: Optional['NumberComparator']
-    or: Optional[List['NullableIssueFilter']]
+    or_: Optional[List['NullableIssueFilter']]
     parent: Optional['NullableIssueFilter']
     priority: Optional['NullableNumberComparator']
     project: Optional['NullableProjectFilter']
@@ -1914,7 +1914,7 @@ class NullableNumberComparator(BaseModel):
     eq: Optional[float]
     gt: Optional[float]
     gte: Optional[float]
-    in: Optional[List[float]]
+    in_: Optional[List[float]]
     lt: Optional[float]
     lte: Optional[float]
     neq: Optional[float]
@@ -1923,7 +1923,7 @@ class NullableNumberComparator(BaseModel):
 
 
 class NullableProjectFilter(BaseModel):
-    and: Optional[List['NullableProjectFilter']]
+    and_: Optional[List['NullableProjectFilter']]
     created_at: Optional['DateComparator']
     creator: Optional['UserFilter']
     id: Optional['IDComparator']
@@ -1932,7 +1932,7 @@ class NullableProjectFilter(BaseModel):
     members: Optional['UserFilter']
     name: Optional['StringComparator']
     null: Optional[bool]
-    or: Optional[List['NullableProjectFilter']]
+    or_: Optional[List['NullableProjectFilter']]
     roadmaps: Optional['RoadmapCollectionFilter']
     slug_id: Optional['StringComparator']
     start_date: Optional['NullableDateComparator']
@@ -1942,11 +1942,11 @@ class NullableProjectFilter(BaseModel):
 
 
 class NullableProjectMilestoneFilter(BaseModel):
-    and: Optional[List['NullableProjectMilestoneFilter']]
+    and_: Optional[List['NullableProjectMilestoneFilter']]
     created_at: Optional['DateComparator']
     id: Optional['IDComparator']
     null: Optional[bool]
-    or: Optional[List['NullableProjectMilestoneFilter']]
+    or_: Optional[List['NullableProjectMilestoneFilter']]
     updated_at: Optional['DateComparator']
 
 
@@ -1956,7 +1956,7 @@ class NullableStringComparator(BaseModel):
     ends_with: Optional[str]
     eq: Optional[str]
     eq_ignore_case: Optional[str]
-    in: Optional[List[str]]
+    in_: Optional[List[str]]
     neq: Optional[str]
     neq_ignore_case: Optional[str]
     nin: Optional[List[str]]
@@ -1972,7 +1972,7 @@ class NullableTimelessDateComparator(BaseModel):
     eq: Any
     gt: Any
     gte: Any
-    in: Optional[List[Any]]
+    in_: Optional[List[Any]]
     lt: Any
     lte: Any
     neq: Any
@@ -1983,7 +1983,7 @@ class NullableTimelessDateComparator(BaseModel):
 class NullableUserFilter(BaseModel):
     active: Optional['BooleanComparator']
     admin: Optional['BooleanComparator']
-    and: Optional[List['NullableUserFilter']]
+    and_: Optional[List['NullableUserFilter']]
     assigned_issues: Optional['IssueCollectionFilter']
     created_at: Optional['DateComparator']
     display_name: Optional['StringComparator']
@@ -1992,7 +1992,7 @@ class NullableUserFilter(BaseModel):
     is_me: Optional['BooleanComparator']
     name: Optional['StringComparator']
     null: Optional[bool]
-    or: Optional[List['NullableUserFilter']]
+    or_: Optional[List['NullableUserFilter']]
     updated_at: Optional['DateComparator']
 
 
@@ -2000,7 +2000,7 @@ class NumberComparator(BaseModel):
     eq: Optional[float]
     gt: Optional[float]
     gte: Optional[float]
-    in: Optional[List[float]]
+    in_: Optional[List[float]]
     lt: Optional[float]
     lte: Optional[float]
     neq: Optional[float]
@@ -2273,7 +2273,7 @@ class PersonalNote(Node):
 
 
 class ProjectCollectionFilter(BaseModel):
-    and: Optional[List['ProjectCollectionFilter']]
+    and_: Optional[List['ProjectCollectionFilter']]
     created_at: Optional['DateComparator']
     creator: Optional['UserFilter']
     every: Optional['ProjectFilter']
@@ -2283,7 +2283,7 @@ class ProjectCollectionFilter(BaseModel):
     length: Optional['NumberComparator']
     members: Optional['UserFilter']
     name: Optional['StringComparator']
-    or: Optional[List['ProjectCollectionFilter']]
+    or_: Optional[List['ProjectCollectionFilter']]
     roadmaps: Optional['RoadmapCollectionFilter']
     slug_id: Optional['StringComparator']
     some: Optional['ProjectFilter']
@@ -2321,7 +2321,7 @@ class ProjectEdge(BaseModel):
 
 
 class ProjectFilter(BaseModel):
-    and: Optional[List['ProjectFilter']]
+    and_: Optional[List['ProjectFilter']]
     created_at: Optional['DateComparator']
     creator: Optional['UserFilter']
     id: Optional['IDComparator']
@@ -2329,7 +2329,7 @@ class ProjectFilter(BaseModel):
     lead: Optional['NullableUserFilter']
     members: Optional['UserFilter']
     name: Optional['StringComparator']
-    or: Optional[List['ProjectFilter']]
+    or_: Optional[List['ProjectFilter']]
     roadmaps: Optional['RoadmapCollectionFilter']
     slug_id: Optional['StringComparator']
     start_date: Optional['NullableDateComparator']
@@ -2900,14 +2900,14 @@ class Roadmap(Node):
 
 
 class RoadmapCollectionFilter(BaseModel):
-    and: Optional[List['RoadmapCollectionFilter']]
+    and_: Optional[List['RoadmapCollectionFilter']]
     created_at: Optional['DateComparator']
     creator: Optional['UserFilter']
     every: Optional['RoadmapFilter']
     id: Optional['IDComparator']
     length: Optional['NumberComparator']
     name: Optional['StringComparator']
-    or: Optional[List['RoadmapCollectionFilter']]
+    or_: Optional[List['RoadmapCollectionFilter']]
     slug_id: Optional['StringComparator']
     some: Optional['RoadmapFilter']
     updated_at: Optional['DateComparator']
@@ -2934,12 +2934,12 @@ class RoadmapEdge(BaseModel):
 
 
 class RoadmapFilter(BaseModel):
-    and: Optional[List['RoadmapFilter']]
+    and_: Optional[List['RoadmapFilter']]
     created_at: Optional['DateComparator']
     creator: Optional['UserFilter']
     id: Optional['IDComparator']
     name: Optional['StringComparator']
-    or: Optional[List['RoadmapFilter']]
+    or_: Optional[List['RoadmapFilter']]
     slug_id: Optional['StringComparator']
     updated_at: Optional['DateComparator']
 
@@ -3038,7 +3038,7 @@ class SlaStatus(str, Enum):
 
 class SlaStatusComparator(BaseModel):
     eq: Optional['SlaStatus']
-    in: Optional[List['SlaStatus']]
+    in_: Optional[List['SlaStatus']]
     neq: Optional['SlaStatus']
     nin: Optional[List['SlaStatus']]
     null: Optional[bool]
@@ -3062,7 +3062,7 @@ class SourceTypeComparator(BaseModel):
     ends_with: Optional[str]
     eq: Optional[str]
     eq_ignore_case: Optional[str]
-    in: Optional[List[str]]
+    in_: Optional[List[str]]
     neq: Optional[str]
     neq_ignore_case: Optional[str]
     nin: Optional[List[str]]
@@ -3084,7 +3084,7 @@ class StringComparator(BaseModel):
     ends_with: Optional[str]
     eq: Optional[str]
     eq_ignore_case: Optional[str]
-    in: Optional[List[str]]
+    in_: Optional[List[str]]
     neq: Optional[str]
     neq_ignore_case: Optional[str]
     nin: Optional[List[str]]
@@ -3154,14 +3154,14 @@ class TeamEdge(BaseModel):
 
 
 class TeamFilter(BaseModel):
-    and: Optional[List['TeamFilter']]
+    and_: Optional[List['TeamFilter']]
     created_at: Optional['DateComparator']
     description: Optional['NullableStringComparator']
     id: Optional['IDComparator']
     issues: Optional['IssueCollectionFilter']
     key: Optional['StringComparator']
     name: Optional['StringComparator']
-    or: Optional[List['TeamFilter']]
+    or_: Optional[List['TeamFilter']]
     updated_at: Optional['DateComparator']
 
 
@@ -3317,7 +3317,7 @@ class TimelessDateComparator(BaseModel):
     eq: Any
     gt: Any
     gte: Any
-    in: Optional[List[Any]]
+    in_: Optional[List[Any]]
     lt: Any
     lte: Any
     neq: Any
@@ -3432,7 +3432,7 @@ class UserAuthorizedApplication(BaseModel):
 class UserCollectionFilter(BaseModel):
     active: Optional['BooleanComparator']
     admin: Optional['BooleanComparator']
-    and: Optional[List['UserCollectionFilter']]
+    and_: Optional[List['UserCollectionFilter']]
     assigned_issues: Optional['IssueCollectionFilter']
     created_at: Optional['DateComparator']
     display_name: Optional['StringComparator']
@@ -3442,7 +3442,7 @@ class UserCollectionFilter(BaseModel):
     is_me: Optional['BooleanComparator']
     length: Optional['NumberComparator']
     name: Optional['StringComparator']
-    or: Optional[List['UserCollectionFilter']]
+    or_: Optional[List['UserCollectionFilter']]
     some: Optional['UserFilter']
     updated_at: Optional['DateComparator']
 
@@ -3461,7 +3461,7 @@ class UserEdge(BaseModel):
 class UserFilter(BaseModel):
     active: Optional['BooleanComparator']
     admin: Optional['BooleanComparator']
-    and: Optional[List['UserFilter']]
+    and_: Optional[List['UserFilter']]
     assigned_issues: Optional['IssueCollectionFilter']
     created_at: Optional['DateComparator']
     display_name: Optional['StringComparator']
@@ -3469,7 +3469,7 @@ class UserFilter(BaseModel):
     id: Optional['IDComparator']
     is_me: Optional['BooleanComparator']
     name: Optional['StringComparator']
-    or: Optional[List['UserFilter']]
+    or_: Optional[List['UserFilter']]
     updated_at: Optional['DateComparator']
 
 
@@ -3781,13 +3781,13 @@ class WorkflowStateEdge(BaseModel):
 
 
 class WorkflowStateFilter(BaseModel):
-    and: Optional[List['WorkflowStateFilter']]
+    and_: Optional[List['WorkflowStateFilter']]
     created_at: Optional['DateComparator']
     description: Optional['StringComparator']
     id: Optional['IDComparator']
     issues: Optional['IssueCollectionFilter']
     name: Optional['StringComparator']
-    or: Optional[List['WorkflowStateFilter']]
+    or_: Optional[List['WorkflowStateFilter']]
     position: Optional['NumberComparator']
     team: Optional['TeamFilter']
     type: Optional['StringComparator']
