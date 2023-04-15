@@ -12,3 +12,6 @@ venv: requirements.txt
 e2e-test: venv
 	./test/e2e-test.sh
 
+.PHONY: generate
+generate: venv
+	venv/bin/python3 -m gql_schema_codegen -p ./schemas/Linear-API@current.graphql -t linear_types.py
