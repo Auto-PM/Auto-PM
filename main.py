@@ -1,5 +1,6 @@
 # main.py
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional
 import modal
@@ -7,6 +8,7 @@ import modal
 app = FastAPI()
 stub = modal.Stub("form_generator")
 
+app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
 
 class Item(BaseModel):
     name: str

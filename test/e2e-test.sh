@@ -3,13 +3,13 @@
 
 . venv/bin/activate
 
-uvicorn static-files:app --reload &
+make run &
 upid=$!
 
 # kill uvicorn on exit
 trap "kill $upid" EXIT
 
-sleep 1
+sleep 5
 # Run the tests	
 curl -s http://localhost:8000/.well-known/ai-plugin.json
 
