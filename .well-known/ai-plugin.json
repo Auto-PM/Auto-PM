@@ -1,0 +1,18 @@
+{
+    "schema_version": "v1",
+    "name_for_human": "Task Management",
+    "name_for_model": "task-manager",
+    "description_for_human": "Plugin for managing Tasks in Linear.",
+    "description_for_model": "Plugin for managing Tasks in Linear.",
+    "auth": {
+        "type": "none"
+    },
+    "api": {
+        "type": "openapi",
+        "url": "http://localhost:8080/openapi.yaml",
+        "is_user_authenticated": false
+    },
+    "logo_url": "http://localhost:8080/assets/logo.png",
+    "contact_email": "support@example.com",
+    "legal_info_url": "http://www.example.com/legal"
+}
