@@ -30,7 +30,7 @@ query Issue($id: String!) {
           id
           name
         }
-        }}}""",
+        }}""",
     "list_issues": """
 query Issues($filter: IssueFilter) {
   issues(filter: $filter) {
@@ -189,7 +189,7 @@ class LinearClient:
         result = self._run_graphql_query(
             QUERIES["get_issue"],
             variables={
-                "issueId": issue_id,
+                "id": issue_id,
             },
         )
         print(result)

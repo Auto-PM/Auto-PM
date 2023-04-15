@@ -46,9 +46,10 @@ async def list_issues(stateId: str | None = None):
     response = linear_client.list_issues(filter)
     return response
 
-@app.get("/issues/{issue_id}", response_model=Issue)
-async def get_issue(issue_id: str):
-    response = linear_client.get_issue(issue_id)
+@app.get("/issues/{issueId}", response_model=Issue)
+async def get_issue(issueId: str):
+    """Look up details for a specific issue."""
+    response = linear_client.get_issue(issueId)
     return response
 
 
