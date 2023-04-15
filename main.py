@@ -7,6 +7,7 @@ import modal
 from fastapi.middleware.cors import CORSMiddleware
 
 from linear_types import Issue
+from linear_client import LinearClient
 
 app = FastAPI()
 stub = modal.Stub("form_generator")
@@ -26,6 +27,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+linear_client = LinearClient(endpoint="https://api.linear.app/graphql")
 
 class Task(BaseModel):
     name: str
@@ -34,12 +36,10 @@ class Task(BaseModel):
 
 tasks = {}
 
-
-
-@app.get("/hello")
-async def hello():
-    return {"message": "Hello World"}
-
+@app.get("/issues/", response_model=List[Issue])
+async def list_issues():
+    response = linear_client.list_issues()
+    return response
 
 @app.post("/tasks/", response_model=Task)
 async def create_task(task: Task):

@@ -1066,7 +1066,7 @@ class Issue(BaseModel):
     # branch_name: str
     # canceled_at: Any
     #children: 'IssueConnection'
-    children: list['Issue']
+    children: Optional[list['Issue']]
     # comments: 'CommentConnection'
     # completed_at: Any
     # created_at: Any
@@ -1087,7 +1087,7 @@ class Issue(BaseModel):
     parent: Optional['Issue']
     # previous_identifiers: List[str]
     priority: float
-    priority_label: str
+    # priority_label: str
     # project: Optional['Project']
     # project_milestone: Optional['ProjectMilestone']
     # relations: 'IssueRelationConnection'
