@@ -40,3 +40,4 @@ uvicorn
 watchfiles
 yarl
 zipp
+requests
