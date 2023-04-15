@@ -1,6 +1,7 @@
 #!/bin/bash
+# A basic "end to end" test.
 
-. .ve/bin/activate
+. venv/bin/activate
 
 uvicorn static-files:app --reload &
 upid=$!

@@ -1,12 +1,12 @@
 # This file contains useful helpers.
 
-.ve: requirements.txt
-	python3 -m venv .ve
-	.ve/bin/pip install wheel
-	.ve/bin/pip install -r requirements.txt
-	touch .ve
+venv: requirements.txt
+	python3 -mnv venv
+	/bin/pip install wheel
+	/bin/pip install -r requirements.txt
+	touch 
 
 .PHONY: e2e-test
-e2e-test: .ve
+e2e-test: 
 	./test/e2e-test.sh
 
