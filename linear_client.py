@@ -5,17 +5,32 @@ import json
 
 from pydantic import BaseModel
 
-from linear_types import Issue
+from linear_types import Issue, WorkflowState
 
+class ListIssueFilter(BaseModel):
+    stateId: Optional[str]
 
 class IssueInput(BaseModel):
     title: str
     description: str
     priority: float
+    stateId: Optional[str]
     # teamId: Optional[str]
 
 
 QUERIES = {
+        "get_issue": """
+query Issue($id: String!) {
+    issue(id: $id) {
+        id
+        title
+        identifier
+        priority
+        state {
+          id
+          name
+        }
+        }}}""",
     "list_issues": """
 query Issues($filter: IssueFilter) {
   issues(filter: $filter) {
@@ -24,30 +39,47 @@ query Issues($filter: IssueFilter) {
         title
         identifier
         priority
+        state {
+          id
+          name
+        }
     }
   }
 }""",
-    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int!, $teamId: String!) {
-    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId}) {
+    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String) {
+    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId}) {
         issue {
             id
             title
             identifier
             priority
+            stateId
             }}}""",
     "delete_issue": """mutation IssueDelete($issueDeleteId: String!) {
   issueDelete(id: $issueDeleteId) {
     success
   }
 }""",
-    "update_issue": """mutation IssueUpdate($id: String!, $title: String!, $description: String!, $priority: Int!, $teamId: String!) {
-    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId}) {
+    "update_issue": """mutation IssueUpdate($id: String!, $title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String) {
+    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, $stateId: $stateId}) {
         issue {
             id
             title
             identifier
             priority
+            state {
+              id
+              name
+            }
             }}}""",
+    "list_workflow_states": """query {
+  workflowStates {
+    nodes {
+      id
+      name
+    }
+  } }""",
+
 }
 
 LINEAR_API_KEY = os.environ["LINEAR_API_KEY"]
@@ -74,18 +106,25 @@ class LinearClient:
             },
         ).json()
 
-    def list_issues(self):
+    def list_issues(self, filter: Optional[ListIssueFilter] = None):
+        variables={
+            "filter": {
+                "team": {
+                    "id": {
+                        "eq": LINEAR_TEAM_ID,
+                    }
+                },
+            }
+        }
+        if filter and 'stateId' in filter:
+            variables["filter"]["state"] = {
+                "id": {
+                    "eq": filter['stateId'],
+                }
+            }
         result = self._run_graphql_query(
             QUERIES["list_issues"],
-            variables={
-                "filter": {
-                    "team": {
-                        "id": {
-                            "eq": LINEAR_TEAM_ID,
-                        }
-                    },
-                }
-            },
+            variables=variables,
         )
         print(result)
         if "errors" in result:
@@ -133,4 +172,28 @@ class LinearClient:
         if 'errors' in result:
             raise Exception(result['errors'])
         return Issue(**result["data"]["issueUpdate"]["issue"])
+
+    def list_workflow_states(self):
+        result = self._run_graphql_query(
+            QUERIES["list_workflow_states"],
+            variables={}
+        )
+        print(result)
+        if "errors" in result:
+            raise Exception(result["errors"])
+        return [WorkflowState(**workflow_state) for workflow_state in result["data"]["workflowStates"]["nodes"]]
+
+
+    def get_issue(self, issue_id):
+
+        result = self._run_graphql_query(
+            QUERIES["get_issue"],
+            variables={
+                "issueId": issue_id,
+            },
+        )
+        print(result)
+        if "errors" in result:
+            raise Exception(result["errors"])
+        return Issue(**result["data"]["issue"])
 

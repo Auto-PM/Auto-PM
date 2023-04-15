@@ -1046,6 +1046,21 @@ class User(BaseModel):
     # url: str
 
 
+class WorkflowState(BaseModel):
+    # archived_at: Any
+    # color: str
+    # created_at: Any
+    description: Optional[str]
+    id: str
+    # issues: 'IssueConnection'
+    name: str
+    # position: float
+    # team: 'Team'
+    type: Optional[str]    
+    # updated_at: Any
+
+
+
 class IssueConnection(BaseModel):
     edges: list['IssueEdge']
     # nodes: List['Issue']
@@ -1098,7 +1113,7 @@ class Issue(BaseModel):
     # sort_order: float
     # started_at: Any
     # started_triage_at: Any
-    # state: 'WorkflowState'
+    state: WorkflowState
     # sub_issue_sort_order: Optional[float]
     # subscribers: 'UserConnection'
     # team: 'Team'
@@ -3745,20 +3760,6 @@ class WorkflowDefinitionConnection(BaseModel):
 class WorkflowDefinitionEdge(BaseModel):
     cursor: str
     node: 'WorkflowDefinition'
-
-
-class WorkflowState(BaseModel):
-    archived_at: Any
-    color: str
-    created_at: Any
-    description: Optional[str]
-    id: str
-    issues: 'IssueConnection'
-    name: str
-    position: float
-    team: 'Team'
-    type: str
-    updated_at: Any
 
 
 class WorkflowStateConnection(BaseModel):

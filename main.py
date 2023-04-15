@@ -6,7 +6,7 @@ from typing import List, Optional
 import modal
 from fastapi.middleware.cors import CORSMiddleware
 
-from linear_types import Issue
+from linear_types import Issue, WorkflowState
 from linear_client import LinearClient
 
 app = FastAPI()
@@ -35,14 +35,20 @@ class Task(BaseModel):
     description: Optional[str] = None
 
 
-from linear_client import IssueInput
-
-tasks = {}
+from linear_client import IssueInput, ListIssueFilter
 
 
 @app.get("/issues/", response_model=List[Issue])
-async def list_issues():
-    response = linear_client.list_issues()
+async def list_issues(stateId: str | None = None):
+    filter = {}
+    if stateId:
+        filter["stateId"] = stateId
+    response = linear_client.list_issues(filter)
+    return response
+
+@app.get("/issues/{issue_id}", response_model=Issue)
+async def get_issue(issue_id: str):
+    response = linear_client.get_issue(issue_id)
     return response
 
 
@@ -72,6 +78,14 @@ async def read_tasks(skip: int = 0, limit: int = 10):
 @app.patch("/issues/{issue_id}", response_model=Issue)
 async def patch_issue(issue_id: str, issue: IssueInput):
     response = linear_client.update_issue(issue_id, issue)
+    return response
+
+
+# Workflow States
+@app.get("/workflow_states/", response_model=List[WorkflowState])
+async def list_workflow_states():
+    """Lists workflow states (such as Done, or Backlog). Also known as issue states."""
+    response = linear_client.list_workflow_states()
     return response
 
 # Create a custom image with the required dependencies installed
