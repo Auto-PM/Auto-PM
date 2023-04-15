@@ -6,6 +6,8 @@ from typing import List, Optional
 import modal
 from fastapi.middleware.cors import CORSMiddleware
 
+from linear_types import Issue
+
 app = FastAPI()
 stub = modal.Stub("form_generator")
 
@@ -31,6 +33,7 @@ class Task(BaseModel):
 
 
 tasks = {}
+
 
 
 @app.get("/hello")
