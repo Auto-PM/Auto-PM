@@ -40,6 +40,14 @@ query Issues($filter: IssueFilter) {
     success
   }
 }""",
+    "update_issue": """mutation IssueUpdate($id: String!, $title: String!, $description: String!, $priority: Int!, $teamId: String!) {
+    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId}) {
+        issue {
+            id
+            title
+            identifier
+            priority
+            }}}""",
 }
 
 LINEAR_API_KEY = os.environ["LINEAR_API_KEY"]
@@ -110,3 +118,19 @@ class LinearClient:
         if "errors" in result:
             raise Exception(result["errors"])
         return result["data"]["issueDelete"]["success"]
+
+    def update_issue(self, issue_id, issue):
+        variables={
+                   "id": issue_id, 
+                   "title": issue.title,
+                   "description": issue.description,
+                   "priority": issue.priority,
+                   "teamId": LINEAR_TEAM_ID,
+                   }
+        result = self._run_graphql_query(QUERIES["update_issue"], variables)
+        print("variables:",json.dumps(variables))
+        print(result)
+        if 'errors' in result:
+            raise Exception(result['errors'])
+        return Issue(**result["data"]["issueUpdate"]["issue"])
+
