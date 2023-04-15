@@ -29,29 +29,40 @@ app.add_middleware(
 
 linear_client = LinearClient(endpoint="https://api.linear.app/graphql")
 
+
 class Task(BaseModel):
     name: str
     description: Optional[str] = None
 
 
 from linear_client import IssueInput
+
 tasks = {}
+
 
 @app.get("/issues/", response_model=List[Issue])
 async def list_issues():
     response = linear_client.list_issues()
     return response
 
+
 @app.post("/issues/", response_model=Issue)
 async def create_issue(issue: IssueInput):
     response = linear_client.create_issue(issue)
     return response
+
 
 @app.post("/tasks/", response_model=Task)
 async def create_task(task: Task):
     task_id = len(tasks) + 1
     tasks[task_id] = task
     return task
+
+
+@app.post("/tasks/{task_id}/delete")
+async def delete_task(task_id: str):
+    response = linear_client.delete_issue(task_id)
+    return response
 
 
 @app.get("/tasks/", response_model=List[Task])
