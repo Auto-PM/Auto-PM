@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from enum import Enum
-from typing import Any, Optional, List
+from typing import Any, Optional, List, ForwardRef
 from pydantic import BaseModel
 
 
@@ -11,7 +13,13 @@ class Node(BaseModel):
     id: str
 
 
-class ApiKey(Node):
+class PageInfo(BaseModel):
+    end_cursor: Optional[str]
+    has_next_page: bool
+    has_previous_page: bool
+    start_cursor: Optional[str]
+
+class ApiKey(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
@@ -57,20 +65,20 @@ class ArchivePayload(BaseModel):
     success: bool
 
 
-class Attachment(Node):
+class Attachment(BaseModel):
     archived_at: Any
-    created_at: Any
-    creator: Optional['User']
-    group_by_source: bool
-    id: str
-    issue: 'Issue'
-    metadata: Any
-    source: Any
-    source_type: Optional[str]
-    subtitle: Optional[str]
-    title: str
-    updated_at: Any
-    url: str
+    # created_at: Any
+    # creator: Optional['User']
+    # group_by_source: bool
+    # id: str
+    # issue: 'Issue'
+    # metadata: Any
+    # source: Any
+    # source_type: Optional[str]
+    # subtitle: Optional[str]
+    # title: str
+    # updated_at: Any
+    # url: str
 
 
 class AttachmentCollectionFilter(BaseModel):
@@ -140,7 +148,7 @@ class AttachmentUpdateInput(BaseModel):
     title: str
 
 
-class AuditEntry(Node):
+class AuditEntry(BaseModel):
     actor: Optional['User']
     actor_id: Optional[str]
     archived_at: Any
@@ -210,7 +218,7 @@ class BooleanComparator(BaseModel):
     neq: Optional[bool]
 
 
-class Comment(Node):
+class Comment(BaseModel):
     archived_at: Any
     body: str
     body_data: str
@@ -328,7 +336,7 @@ class CreateOrganizationInput(BaseModel):
     utm: Optional[str]
 
 
-class CustomView(Node):
+class CustomView(BaseModel):
     archived_at: Any
     color: Optional[str]
     created_at: Any
@@ -393,7 +401,7 @@ class CustomViewUpdateInput(BaseModel):
     team_id: Optional[str]
 
 
-class Cycle(Node):
+class Cycle(BaseModel):
     archived_at: Any
     auto_archived_at: Any
     completed_at: Any
@@ -496,7 +504,7 @@ class DeleteOrganizationInput(BaseModel):
     deletion_code: str
 
 
-class Document(Node):
+class Document(BaseModel):
     archived_at: Any
     color: Optional[str]
     content: Optional[str]
@@ -578,7 +586,7 @@ class EmailUserAccountAuthChallengeResponse(BaseModel):
     success: bool
 
 
-class Emoji(Node):
+class Emoji(BaseModel):
     archived_at: Any
     created_at: Any
     creator: 'User'
@@ -639,7 +647,7 @@ class EventPayload(BaseModel):
     success: bool
 
 
-class ExternalUser(Node):
+class ExternalUser(BaseModel):
     archived_at: Any
     avatar_url: Optional[str]
     created_at: Any
@@ -663,7 +671,7 @@ class ExternalUserEdge(BaseModel):
     node: 'ExternalUser'
 
 
-class Favorite(Node):
+class Favorite(BaseModel):
     archived_at: Any
     children: 'FavoriteConnection'
     created_at: Any
@@ -829,7 +837,7 @@ class ImageUploadFromUrlPayload(BaseModel):
     url: Optional[str]
 
 
-class Integration(Node):
+class Integration(BaseModel):
     archived_at: Any
     created_at: Any
     creator: 'User'
@@ -894,7 +902,7 @@ class IntegrationSettingsInput(BaseModel):
     zendesk: Optional['ZendeskSettingsInput']
 
 
-class IntegrationTemplate(Node):
+class IntegrationTemplate(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
@@ -926,7 +934,7 @@ class IntegrationTemplatePayload(BaseModel):
     success: bool
 
 
-class IntegrationsSettings(Node):
+class IntegrationsSettings(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
@@ -1007,56 +1015,98 @@ class IntercomSettingsInput(BaseModel):
     send_note_on_status_change: Optional[bool]
 
 
-class Issue(Node):
+class User(BaseModel):
+    active: bool
+    admin: bool
     archived_at: Any
-    assignee: Optional['User']
-    attachments: 'AttachmentConnection'
-    auto_archived_at: Any
-    auto_closed_at: Any
-    branch_name: str
-    canceled_at: Any
-    children: 'IssueConnection'
-    comments: 'CommentConnection'
-    completed_at: Any
-    created_at: Any
-    creator: Optional['User']
-    customer_ticket_count: int
-    cycle: Optional['Cycle']
+    # assigned_issues: 'IssueConnection'
+    # avatar_url: Optional[str]
+    # calendar_hash: Optional[str]
+    # created_at: Any
+    # created_issue_count: int
+    # created_issues: 'IssueConnection'
+    # description: Optional[str]
+    # disable_reason: Optional[str]
+    # display_name: str
+    email: str
+    # guest: bool
+    id: str
+    # invite_hash: str
+    # is_me: bool
+    # last_seen: Any
+    # name: str
+    # organization: 'Organization'
+    # status_emoji: Optional[str]
+    # status_label: Optional[str]
+    # status_until_at: Any
+    # team_memberships: 'TeamMembershipConnection'
+    # teams: 'TeamConnection'
+    # timezone: Optional[str]
+    # updated_at: Any
+    # url: str
+
+
+class IssueConnection(BaseModel):
+    edges: list['IssueEdge']
+    # nodes: List['Issue']
+    page_info: PageInfo
+
+
+class IssueEdge(BaseModel):
+    cursor: str
+    node: Issue
+
+
+class Issue(BaseModel):
+    archived_at: Any
+    assignee: Optional[User]
+    # attachments: 'AttachmentConnection'
+    # auto_archived_at: Any
+    # auto_closed_at: Any
+    # branch_name: str
+    # canceled_at: Any
+    #children: 'IssueConnection'
+    children: list['Issue']
+    # comments: 'CommentConnection'
+    # completed_at: Any
+    # created_at: Any
+    # creator: Optional['User']
+    # customer_ticket_count: int
+    # cycle: Optional['Cycle']
     description: Optional[str]
-    description_data: Any
-    due_date: Any
-    estimate: Optional[float]
-    external_user_creator: Optional['ExternalUser']
-    history: 'IssueHistoryConnection'
+    # description_data: Any
+    # due_date: Any
+    # estimate: Optional[float]
+    # external_user_creator: Optional['ExternalUser']
+    # history: 'IssueHistoryConnection'
     id: str
     identifier: str
-    inverse_relations: 'IssueRelationConnection'
-    labels: 'IssueLabelConnection'
-    number: float
+    # inverse_relations: 'IssueRelationConnection'
+    # labels: 'IssueLabelConnection'
+    # number: float
     parent: Optional['Issue']
-    previous_identifiers: List[str]
+    # previous_identifiers: List[str]
     priority: float
     priority_label: str
-    project: Optional['Project']
-    project_milestone: Optional['ProjectMilestone']
-    relations: 'IssueRelationConnection'
-    sla_breaches_at: Any
-    sla_started_at: Any
-    snoozed_by: Optional['User']
-    snoozed_until_at: Any
-    sort_order: float
-    started_at: Any
-    started_triage_at: Any
-    state: 'WorkflowState'
-    sub_issue_sort_order: Optional[float]
-    subscribers: 'UserConnection'
-    team: 'Team'
+    # project: Optional['Project']
+    # project_milestone: Optional['ProjectMilestone']
+    # relations: 'IssueRelationConnection'
+    # sla_breaches_at: Any
+    # sla_started_at: Any
+    # snoozed_by: Optional['User']
+    # snoozed_until_at: Any
+    # sort_order: float
+    # started_at: Any
+    # started_triage_at: Any
+    # state: 'WorkflowState'
+    # sub_issue_sort_order: Optional[float]
+    # subscribers: 'UserConnection'
+    # team: 'Team'
     title: str
-    trashed: Optional[bool]
-    triaged_at: Any
-    updated_at: Any
-    url: str
-
+    # trashed: Optional[bool]
+    # triaged_at: Any
+    # updated_at: Any
+    # url: str
 
 class IssueBatchPayload(BaseModel):
     issues: List['Issue']
@@ -1108,12 +1158,6 @@ class IssueCollectionFilter(BaseModel):
     updated_at: Optional['DateComparator']
 
 
-class IssueConnection(BaseModel):
-    edges: List['IssueEdge']
-    nodes: List['Issue']
-    page_info: 'PageInfo'
-
-
 class IssueCreateInput(BaseModel):
     assignee_id: Optional[str]
     board_order: Optional[float]
@@ -1141,7 +1185,7 @@ class IssueCreateInput(BaseModel):
     title: str
 
 
-class IssueDraft(Node):
+class IssueDraft(BaseModel):
     archived_at: Any
     assignee_id: Optional[str]
     attachments: Any
@@ -1164,11 +1208,6 @@ class IssueDraft(Node):
     team_id: str
     title: str
     updated_at: Any
-
-
-class IssueEdge(BaseModel):
-    cursor: str
-    node: 'Issue'
 
 
 class IssueFilter(BaseModel):
@@ -1212,7 +1251,7 @@ class IssueFilter(BaseModel):
     updated_at: Optional['DateComparator']
 
 
-class IssueHistory(Node):
+class IssueHistory(BaseModel):
     actor: Optional['User']
     actor_id: Optional[str]
     added_label_ids: Optional[List[str]]
@@ -1279,7 +1318,7 @@ class IssueHistoryEdge(BaseModel):
     node: 'IssueHistory'
 
 
-class IssueImport(Node):
+class IssueImport(BaseModel):
     archived_at: Any
     created_at: Any
     creator_id: str
@@ -1316,7 +1355,7 @@ class IssueImportUpdateInput(BaseModel):
     mapping: Any
 
 
-class IssueLabel(Node):
+class IssueLabel(BaseModel):
     archived_at: Any
     children: 'IssueLabelConnection'
     color: str
@@ -1398,37 +1437,6 @@ class Entity(BaseModel):
     updated_at: Any
 
 
-class User(Node):
-    active: bool
-    admin: bool
-    archived_at: Any
-    assigned_issues: 'IssueConnection'
-    avatar_url: Optional[str]
-    calendar_hash: Optional[str]
-    created_at: Any
-    created_issue_count: int
-    created_issues: 'IssueConnection'
-    description: Optional[str]
-    disable_reason: Optional[str]
-    display_name: str
-    email: str
-    guest: bool
-    id: str
-    invite_hash: str
-    is_me: bool
-    last_seen: Any
-    name: str
-    organization: 'Organization'
-    status_emoji: Optional[str]
-    status_label: Optional[str]
-    status_until_at: Any
-    team_memberships: 'TeamMembershipConnection'
-    teams: 'TeamConnection'
-    timezone: Optional[str]
-    updated_at: Any
-    url: str
-
-
 class Notification(BaseModel):
     actor: Optional['User']
     archived_at: Any
@@ -1472,7 +1480,7 @@ class IssuePriorityValue(BaseModel):
     priority: int
 
 
-class IssueRelation(Node):
+class IssueRelation(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
@@ -2013,7 +2021,7 @@ class OAuthClientApprovalStatus(str, Enum):
     requested = 'requested'
 
 
-class OauthClient(Node):
+class OauthClient(BaseModel):
     archived_at: Any
     client_id: str
     client_secret: str
@@ -2034,7 +2042,7 @@ class OauthClient(Node):
     webhook_url: Optional[str]
 
 
-class OauthClientApproval(Node):
+class OauthClientApproval(BaseModel):
     archived_at: Any
     created_at: Any
     deny_reason: Optional[str]
@@ -2079,7 +2087,7 @@ class OnboardingCustomerSurvey(BaseModel):
     company_size: Optional[str]
 
 
-class Organization(Node):
+class Organization(BaseModel):
     allowed_auth_services: List[str]
     archived_at: Any
     created_at: Any
@@ -2120,7 +2128,7 @@ class OrganizationDeletePayload(BaseModel):
     success: bool
 
 
-class OrganizationDomain(Node):
+class OrganizationDomain(BaseModel):
     archived_at: Any
     auth_type: 'OrganizationDomainAuthType'
     claimed: Optional[bool]
@@ -2169,7 +2177,7 @@ class OrganizationExistsPayload(BaseModel):
     success: bool
 
 
-class OrganizationInvite(Node):
+class OrganizationInvite(BaseModel):
     accepted_at: Any
     archived_at: Any
     created_at: Any
@@ -2235,19 +2243,13 @@ class OrganizationStartPlusTrialPayload(BaseModel):
     success: bool
 
 
-class PageInfo(BaseModel):
-    end_cursor: Optional[str]
-    has_next_page: bool
-    has_previous_page: bool
-    start_cursor: Optional[str]
-
 
 class PaginationOrderBy(str, Enum):
     createdAt = 'createdAt'
     updatedAt = 'updatedAt'
 
 
-class PaidSubscription(Node):
+class PaidSubscription(BaseModel):
     archived_at: Any
     canceled_at: Any
     created_at: Any
@@ -2263,7 +2265,7 @@ class PaidSubscription(Node):
     updated_at: Any
 
 
-class PersonalNote(Node):
+class PersonalNote(BaseModel):
     archived_at: Any
     content_data: Any
     created_at: Any
@@ -2338,7 +2340,7 @@ class ProjectFilter(BaseModel):
     updated_at: Optional['DateComparator']
 
 
-class ProjectLink(Node):
+class ProjectLink(BaseModel):
     archived_at: Any
     created_at: Any
     creator: 'User'
@@ -2378,7 +2380,7 @@ class ProjectLinkUpdateInput(BaseModel):
     url: Optional[str]
 
 
-class ProjectMilestone(Node):
+class ProjectMilestone(BaseModel):
     archived_at: Any
     created_at: Any
     description: Optional[str]
@@ -2440,7 +2442,7 @@ class ProjectNotification(Entity, Node, Notification):
     user: 'User'
 
 
-class Project(Node):
+class Project(BaseModel):
     archived_at: Any
     auto_archived_at: Any
     canceled_at: Any
@@ -2483,7 +2485,7 @@ class Project(Node):
     url: str
 
 
-class Team(Node):
+class Team(BaseModel):
     active_cycle: Optional['Cycle']
     archived_at: Any
     auto_archive_period: float
@@ -2578,7 +2580,7 @@ class ProjectPayload(BaseModel):
     success: bool
 
 
-class ProjectUpdate(Node):
+class ProjectUpdate(BaseModel):
     archived_at: Any
     body: str
     created_at: Any
@@ -2637,7 +2639,7 @@ class ProjectUpdateInput(BaseModel):
     team_ids: Optional[List[str]]
 
 
-class ProjectUpdateInteraction(Node):
+class ProjectUpdateInteraction(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
@@ -2695,7 +2697,7 @@ class ProjectUpdateWithInteractionPayload(BaseModel):
     success: bool
 
 
-class PushSubscription(Node):
+class PushSubscription(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
@@ -2838,7 +2840,7 @@ class RateLimitResultPayload(BaseModel):
     type: str
 
 
-class Reaction(Node):
+class Reaction(BaseModel):
     archived_at: Any
     created_at: Any
     emoji: str
@@ -2883,7 +2885,7 @@ class ReleaseChannel(str, Enum):
     public = 'public'
 
 
-class Roadmap(Node):
+class Roadmap(BaseModel):
     archived_at: Any
     color: Optional[str]
     created_at: Any
@@ -2950,7 +2952,7 @@ class RoadmapPayload(BaseModel):
     success: bool
 
 
-class RoadmapToProject(Node):
+class RoadmapToProject(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
@@ -3165,7 +3167,7 @@ class TeamFilter(BaseModel):
     updated_at: Optional['DateComparator']
 
 
-class TeamMembership(Node):
+class TeamMembership(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
@@ -3265,7 +3267,7 @@ class TeamUpdateInput(BaseModel):
     upcoming_cycle_count: Optional[float]
 
 
-class Template(Node):
+class Template(BaseModel):
     archived_at: Any
     created_at: Any
     creator: Optional['User']
@@ -3527,7 +3529,7 @@ class UserRoleType(str, Enum):
     user = 'user'
 
 
-class UserSettings(Node):
+class UserSettings(BaseModel):
     archived_at: Any
     calendar_hash: Optional[str]
     created_at: Any
@@ -3562,7 +3564,7 @@ class UserSettingsUpdateInput(BaseModel):
     unsubscribed_from: Optional[List[str]]
 
 
-class ViewPreferences(Node):
+class ViewPreferences(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
@@ -3633,7 +3635,7 @@ class ViewType(str, Enum):
     userProfileCreatedByUser = 'userProfileCreatedByUser'
 
 
-class Webhook(Node):
+class Webhook(BaseModel):
     all_public_teams: bool
     archived_at: Any
     created_at: Any
@@ -3689,7 +3691,7 @@ class WorkflowCondition(BaseModel):
     project_filter: Optional['ProjectFilter']
 
 
-class WorkflowCronJobDefinition(Node):
+class WorkflowCronJobDefinition(BaseModel):
     activities: Any
     archived_at: Any
     created_at: Any
@@ -3715,7 +3717,7 @@ class WorkflowCronJobDefinitionEdge(BaseModel):
     node: 'WorkflowCronJobDefinition'
 
 
-class WorkflowDefinition(Node):
+class WorkflowDefinition(BaseModel):
     activities: Any
     archived_at: Any
     conditions: Any
@@ -3745,7 +3747,7 @@ class WorkflowDefinitionEdge(BaseModel):
     node: 'WorkflowDefinition'
 
 
-class WorkflowState(Node):
+class WorkflowState(BaseModel):
     archived_at: Any
     color: str
     created_at: Any
@@ -3856,3 +3858,7 @@ class ZendeskSettingsInput(BaseModel):
     send_note_on_status_change: Optional[bool]
     subdomain: str
     url: str
+
+
+# IssueEdge.update_forward_refs()
+# Issue.update_forward_refs()
