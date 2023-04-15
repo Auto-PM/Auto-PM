@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional
 import requests
 import json
 
@@ -11,7 +11,7 @@ class IssueInput(BaseModel):
     title: str
     description: str
     priority: float
-    teamId: str
+    #teamId: Optional[str]
 
 
 QUERIES = {
@@ -26,8 +26,8 @@ query Issues($filter: IssueFilter) {
     }
   }
 }""",
-    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: IssuePriority!) {
-    issueCreate(input: {title: $title, description: $description, priority: $priority}) {
+    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int!, $teamId: String!) {
+    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId}) {
         issue {
             id
             title
@@ -76,14 +76,15 @@ class LinearClient:
 
     def create_issue(self, input: IssueInput):
         # TODO(Can we just pass the whole input as variables?)
-        result = self._run_graphql_query(QUERIES["create_issue"], variables={
-            "teamId": LINEAR_TEAM_ID,
-            "title": input.title,
-            "description": input.description,
-            "priority": input.priority,
-        })
-        print(input)
+        variables={
+                    "teamId": LINEAR_TEAM_ID,
+                    "title": input.title,
+                    "description": input.description,
+                    "priority": input.priority,
+                }
+        result = self._run_graphql_query(QUERIES["create_issue"], variables)
+        print("variables:",json.dumps(variables))
         print(result)
         if 'errors' in result:
             raise Exception(result['errors'])
-        return Issue(**result["data"]["issue"])
+        return Issue(**result["data"]["issueCreate"]["issue"])
