@@ -23,6 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class Item(BaseModel):
     name: str
     description: Optional[str] = None
@@ -41,9 +42,12 @@ async def hello():
 # Create a custom image with the required dependencies installed
 # image = modal.Image.debian_slim().pip_install()
 image = modal.Image.debian_slim().pip_install()
+template_mount = modal.Mount.from_local_file(
+    ".well-known/ai-plugin.json", remote_path="/root/.well-known/ai-plugin.json"
+)
 
 
-@stub.asgi(image=image)
+@stub.asgi(image=image, mounts=[template_mount])
 def fastapi_app():
     return app
 
