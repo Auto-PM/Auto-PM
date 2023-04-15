@@ -10,6 +10,7 @@ app = FastAPI()
 stub = modal.Stub("form_generator")
 
 app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 origins = [
     "https://chat.openai.com",
     "http://localhost",
