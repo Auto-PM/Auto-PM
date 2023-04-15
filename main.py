@@ -34,11 +34,17 @@ class Task(BaseModel):
     description: Optional[str] = None
 
 
+from linear_client import IssueInput
 tasks = {}
 
 @app.get("/issues/", response_model=List[Issue])
 async def list_issues():
     response = linear_client.list_issues()
+    return response
+
+@app.post("/issues/", response_model=Issue)
+async def create_issue(issue: IssueInput):
+    response = linear_client.create_issue(issue)
     return response
 
 @app.post("/tasks/", response_model=Task)

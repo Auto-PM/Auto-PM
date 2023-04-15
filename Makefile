@@ -7,6 +7,7 @@ venv: requirements.txt
 	python3 -m venv venv
 	./venv/bin/pip3 install wheel
 	./venv/bin/pip3 install -r requirements.txt
+	touch venv
 
 .PHONY: e2e-test
 e2e-test: venv
