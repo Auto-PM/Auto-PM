@@ -20,6 +20,7 @@ from linear_types import Issue
 from enum import Enum, auto
 from typing import Any
 
+# TODO: don't hardcode these
 status = {
     "in_review": "7c0bbc28-ffce-45b4-b432-d9223c2330a9",
     "in_progress": "f4bf4bfa-7a53-4b9c-8a5f-6efd2167afd4",

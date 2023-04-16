@@ -1,10 +1,11 @@
 # main.py
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Any
 import modal
 from fastapi.middleware.cors import CORSMiddleware
+
 
 from linear_types import Issue
 from linear_client import LinearClient
@@ -37,8 +38,6 @@ class Task(BaseModel):
 
 from linear_client import IssueInput
 
-tasks = {}
-
 
 @app.get("/issues/", response_model=List[Issue])
 async def list_issues():
@@ -57,10 +56,18 @@ async def patch_issue(issue_id: str, issue: IssueInput):
     response = linear_client.update_issue(issue_id, issue)
     return response
 
+@app.post("/webhooks/linear")
+async def webhooks_linear(request: Request):
+    # TODO: validate sig
+    j = await request.json()
+    print("webhook payload:")
+    print(json.dumps(j))
+    return "ok"
+
 
 # Create a custom image with the required dependencies installed
 # image = modal.Image.debian_slim().pip_install()
-image = modal.Image.debian_slim().pip_install()
+image = modal.Image.debian_slim().pip_install("requests")
 template_mount = modal.Mount.from_local_file(
     ".well-known/ai-plugin.json", remote_path="/root/.well-known/ai-plugin.json"
 )
