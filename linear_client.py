@@ -4,6 +4,7 @@ import requests
 import json
 
 from pydantic import BaseModel, Field
+from typing import Optional
 
 from linear_types import Issue
 
@@ -50,6 +51,17 @@ class IssueInput(BaseModel):
     state: IssueState = Field(
         ...,
         description="Issue state/status. The current status of the issue. If a user asks to mark an issue a certain status you should not mention it anywhere in the title or description but instead just mark it here in 'state'. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
+        example=IssueState.IN_REVIEW,
+    )
+
+
+class IssueModificationInput(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    priority: Optional[float] = None
+    state: Optional[IssueState] = Field(
+        None,
+        description="Issue state/status. The current status of the issue. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
         example=IssueState.IN_REVIEW,
     )
 

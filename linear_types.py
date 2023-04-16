@@ -19,6 +19,7 @@ class PageInfo(BaseModel):
     has_previous_page: bool
     start_cursor: Optional[str]
 
+
 class ApiKey(BaseModel):
     archived_at: Any
     created_at: Any
@@ -28,9 +29,9 @@ class ApiKey(BaseModel):
 
 
 class ApiKeyConnection(BaseModel):
-    edges: List['ApiKeyEdge']
-    nodes: List['ApiKey']
-    page_info: 'PageInfo'
+    edges: List["ApiKeyEdge"]
+    nodes: List["ApiKey"]
+    page_info: "PageInfo"
 
 
 class ApiKeyCreateInput(BaseModel):
@@ -41,11 +42,11 @@ class ApiKeyCreateInput(BaseModel):
 
 class ApiKeyEdge(BaseModel):
     cursor: str
-    node: 'ApiKey'
+    node: "ApiKey"
 
 
 class ApiKeyPayload(BaseModel):
-    api_key: 'ApiKey'
+    api_key: "ApiKey"
     last_sync_id: float
     success: bool
 
@@ -82,25 +83,25 @@ class Attachment(BaseModel):
 
 
 class AttachmentCollectionFilter(BaseModel):
-    and_: Optional[List['AttachmentCollectionFilter']]
-    created_at: Optional['DateComparator']
-    creator: Optional['NullableUserFilter']
-    every: Optional['AttachmentFilter']
-    id: Optional['IDComparator']
-    length: Optional['NumberComparator']
-    or_: Optional[List['AttachmentCollectionFilter']]
-    some: Optional['AttachmentFilter']
-    source_type: Optional['SourceTypeComparator']
-    subtitle: Optional['NullableStringComparator']
-    title: Optional['StringComparator']
-    updated_at: Optional['DateComparator']
-    url: Optional['StringComparator']
+    and_: Optional[List["AttachmentCollectionFilter"]]
+    created_at: Optional["DateComparator"]
+    creator: Optional["NullableUserFilter"]
+    every: Optional["AttachmentFilter"]
+    id: Optional["IDComparator"]
+    length: Optional["NumberComparator"]
+    or_: Optional[List["AttachmentCollectionFilter"]]
+    some: Optional["AttachmentFilter"]
+    source_type: Optional["SourceTypeComparator"]
+    subtitle: Optional["NullableStringComparator"]
+    title: Optional["StringComparator"]
+    updated_at: Optional["DateComparator"]
+    url: Optional["StringComparator"]
 
 
 class AttachmentConnection(BaseModel):
-    edges: List['AttachmentEdge']
-    nodes: List['Attachment']
-    page_info: 'PageInfo'
+    edges: List["AttachmentEdge"]
+    nodes: List["Attachment"]
+    page_info: "PageInfo"
 
 
 class AttachmentCreateInput(BaseModel):
@@ -119,24 +120,24 @@ class AttachmentCreateInput(BaseModel):
 
 class AttachmentEdge(BaseModel):
     cursor: str
-    node: 'Attachment'
+    node: "Attachment"
 
 
 class AttachmentFilter(BaseModel):
-    and_: Optional[List['AttachmentFilter']]
-    created_at: Optional['DateComparator']
-    creator: Optional['NullableUserFilter']
-    id: Optional['IDComparator']
-    or_: Optional[List['AttachmentFilter']]
-    source_type: Optional['SourceTypeComparator']
-    subtitle: Optional['NullableStringComparator']
-    title: Optional['StringComparator']
-    updated_at: Optional['DateComparator']
-    url: Optional['StringComparator']
+    and_: Optional[List["AttachmentFilter"]]
+    created_at: Optional["DateComparator"]
+    creator: Optional["NullableUserFilter"]
+    id: Optional["IDComparator"]
+    or_: Optional[List["AttachmentFilter"]]
+    source_type: Optional["SourceTypeComparator"]
+    subtitle: Optional["NullableStringComparator"]
+    title: Optional["StringComparator"]
+    updated_at: Optional["DateComparator"]
+    url: Optional["StringComparator"]
 
 
 class AttachmentPayload(BaseModel):
-    attachment: 'Attachment'
+    attachment: "Attachment"
     last_sync_id: float
     success: bool
 
@@ -149,7 +150,7 @@ class AttachmentUpdateInput(BaseModel):
 
 
 class AuditEntry(BaseModel):
-    actor: Optional['User']
+    actor: Optional["User"]
     actor_id: Optional[str]
     archived_at: Any
     country_code: Optional[str]
@@ -157,31 +158,31 @@ class AuditEntry(BaseModel):
     id: str
     ip: Optional[str]
     metadata: Any
-    organization: Optional['Organization']
+    organization: Optional["Organization"]
     request_information: Any
     type: str
     updated_at: Any
 
 
 class AuditEntryConnection(BaseModel):
-    edges: List['AuditEntryEdge']
-    nodes: List['AuditEntry']
-    page_info: 'PageInfo'
+    edges: List["AuditEntryEdge"]
+    nodes: List["AuditEntry"]
+    page_info: "PageInfo"
 
 
 class AuditEntryEdge(BaseModel):
     cursor: str
-    node: 'AuditEntry'
+    node: "AuditEntry"
 
 
 class AuditEntryFilter(BaseModel):
-    actor: Optional['NullableUserFilter']
-    country_code: Optional['StringComparator']
-    created_at: Optional['DateComparator']
-    id: Optional['IDComparator']
-    ip: Optional['StringComparator']
-    type: Optional['StringComparator']
-    updated_at: Optional['DateComparator']
+    actor: Optional["NullableUserFilter"]
+    country_code: Optional["StringComparator"]
+    created_at: Optional["DateComparator"]
+    id: Optional["IDComparator"]
+    ip: Optional["StringComparator"]
+    type: Optional["StringComparator"]
+    updated_at: Optional["DateComparator"]
 
 
 class AuditEntryType(BaseModel):
@@ -196,12 +197,12 @@ class AuthMembership(BaseModel):
 
 class AuthResolverResponse(BaseModel):
     allow_domain_access: Optional[bool]
-    available_organizations: Optional[List['Organization']]
+    available_organizations: Optional[List["Organization"]]
     email: Optional[str]
     id: str
     last_used_organization_id: Optional[str]
     token: Optional[str]
-    users: List['User']
+    users: List["User"]
 
 
 class AuthorizedApplication(BaseModel):
@@ -222,37 +223,37 @@ class Comment(BaseModel):
     archived_at: Any
     body: str
     body_data: str
-    children: 'CommentConnection'
+    children: "CommentConnection"
     created_at: Any
     edited_at: Any
-    external_user: Optional['ExternalUser']
+    external_user: Optional["ExternalUser"]
     id: str
-    issue: 'Issue'
-    parent: Optional['Comment']
+    issue: "Issue"
+    parent: Optional["Comment"]
     reaction_data: Any
     updated_at: Any
     url: str
-    user: Optional['User']
+    user: Optional["User"]
 
 
 class CommentCollectionFilter(BaseModel):
-    and_: Optional[List['CommentCollectionFilter']]
-    body: Optional['StringComparator']
-    created_at: Optional['DateComparator']
-    every: Optional['CommentFilter']
-    id: Optional['IDComparator']
-    issue: Optional['IssueFilter']
-    length: Optional['NumberComparator']
-    or_: Optional[List['CommentCollectionFilter']]
-    some: Optional['CommentFilter']
-    updated_at: Optional['DateComparator']
-    user: Optional['UserFilter']
+    and_: Optional[List["CommentCollectionFilter"]]
+    body: Optional["StringComparator"]
+    created_at: Optional["DateComparator"]
+    every: Optional["CommentFilter"]
+    id: Optional["IDComparator"]
+    issue: Optional["IssueFilter"]
+    length: Optional["NumberComparator"]
+    or_: Optional[List["CommentCollectionFilter"]]
+    some: Optional["CommentFilter"]
+    updated_at: Optional["DateComparator"]
+    user: Optional["UserFilter"]
 
 
 class CommentConnection(BaseModel):
-    edges: List['CommentEdge']
-    nodes: List['Comment']
-    page_info: 'PageInfo'
+    edges: List["CommentEdge"]
+    nodes: List["Comment"]
+    page_info: "PageInfo"
 
 
 class CommentCreateInput(BaseModel):
@@ -269,22 +270,22 @@ class CommentCreateInput(BaseModel):
 
 class CommentEdge(BaseModel):
     cursor: str
-    node: 'Comment'
+    node: "Comment"
 
 
 class CommentFilter(BaseModel):
-    and_: Optional[List['CommentFilter']]
-    body: Optional['StringComparator']
-    created_at: Optional['DateComparator']
-    id: Optional['IDComparator']
-    issue: Optional['IssueFilter']
-    or_: Optional[List['CommentFilter']]
-    updated_at: Optional['DateComparator']
-    user: Optional['UserFilter']
+    and_: Optional[List["CommentFilter"]]
+    body: Optional["StringComparator"]
+    created_at: Optional["DateComparator"]
+    id: Optional["IDComparator"]
+    issue: Optional["IssueFilter"]
+    or_: Optional[List["CommentFilter"]]
+    updated_at: Optional["DateComparator"]
+    user: Optional["UserFilter"]
 
 
 class CommentPayload(BaseModel):
-    comment: 'Comment'
+    comment: "Comment"
     last_sync_id: float
     success: bool
 
@@ -324,8 +325,8 @@ class CreateCsvExportReportPayload(BaseModel):
 
 
 class CreateOrJoinOrganizationResponse(BaseModel):
-    organization: 'Organization'
-    user: 'User'
+    organization: "Organization"
+    user: "User"
 
 
 class CreateOrganizationInput(BaseModel):
@@ -340,23 +341,23 @@ class CustomView(BaseModel):
     archived_at: Any
     color: Optional[str]
     created_at: Any
-    creator: 'User'
+    creator: "User"
     description: Optional[str]
     filter_data: Any
     icon: Optional[str]
     id: str
     name: str
-    organization: 'Organization'
+    organization: "Organization"
     project_filter_data: Any
     shared: bool
-    team: Optional['Team']
+    team: Optional["Team"]
     updated_at: Any
 
 
 class CustomViewConnection(BaseModel):
-    edges: List['CustomViewEdge']
-    nodes: List['CustomView']
-    page_info: 'PageInfo'
+    edges: List["CustomViewEdge"]
+    nodes: List["CustomView"]
+    page_info: "PageInfo"
 
 
 class CustomViewCreateInput(BaseModel):
@@ -374,11 +375,11 @@ class CustomViewCreateInput(BaseModel):
 
 class CustomViewEdge(BaseModel):
     cursor: str
-    node: 'CustomView'
+    node: "CustomView"
 
 
 class CustomViewPayload(BaseModel):
-    custom_view: 'CustomView'
+    custom_view: "CustomView"
     last_sync_id: float
     success: bool
 
@@ -413,21 +414,21 @@ class Cycle(BaseModel):
     id: str
     in_progress_scope_history: List[float]
     issue_count_history: List[float]
-    issues: 'IssueConnection'
+    issues: "IssueConnection"
     name: Optional[str]
     number: float
     progress: float
     scope_history: List[float]
     starts_at: Any
-    team: 'Team'
-    uncompleted_issues_upon_close: 'IssueConnection'
+    team: "Team"
+    uncompleted_issues_upon_close: "IssueConnection"
     updated_at: Any
 
 
 class CycleConnection(BaseModel):
-    edges: List['CycleEdge']
-    nodes: List['Cycle']
-    page_info: 'PageInfo'
+    edges: List["CycleEdge"]
+    nodes: List["Cycle"]
+    page_info: "PageInfo"
 
 
 class CycleCreateInput(BaseModel):
@@ -442,31 +443,31 @@ class CycleCreateInput(BaseModel):
 
 class CycleEdge(BaseModel):
     cursor: str
-    node: 'Cycle'
+    node: "Cycle"
 
 
 class CycleFilter(BaseModel):
-    and_: Optional[List['CycleFilter']]
-    completed_at: Optional['DateComparator']
-    created_at: Optional['DateComparator']
-    ends_at: Optional['DateComparator']
-    id: Optional['IDComparator']
-    is_active: Optional['BooleanComparator']
-    is_future: Optional['BooleanComparator']
-    is_next: Optional['BooleanComparator']
-    is_past: Optional['BooleanComparator']
-    is_previous: Optional['BooleanComparator']
-    issues: Optional['IssueCollectionFilter']
-    name: Optional['StringComparator']
-    number: Optional['NumberComparator']
-    or_: Optional[List['CycleFilter']]
-    starts_at: Optional['DateComparator']
-    team: Optional['TeamFilter']
-    updated_at: Optional['DateComparator']
+    and_: Optional[List["CycleFilter"]]
+    completed_at: Optional["DateComparator"]
+    created_at: Optional["DateComparator"]
+    ends_at: Optional["DateComparator"]
+    id: Optional["IDComparator"]
+    is_active: Optional["BooleanComparator"]
+    is_future: Optional["BooleanComparator"]
+    is_next: Optional["BooleanComparator"]
+    is_past: Optional["BooleanComparator"]
+    is_previous: Optional["BooleanComparator"]
+    issues: Optional["IssueCollectionFilter"]
+    name: Optional["StringComparator"]
+    number: Optional["NumberComparator"]
+    or_: Optional[List["CycleFilter"]]
+    starts_at: Optional["DateComparator"]
+    team: Optional["TeamFilter"]
+    updated_at: Optional["DateComparator"]
 
 
 class CyclePayload(BaseModel):
-    cycle: Optional['Cycle']
+    cycle: Optional["Cycle"]
     last_sync_id: float
     success: bool
 
@@ -491,13 +492,13 @@ class DateComparator(BaseModel):
 
 
 class Day(str, Enum):
-    Friday = 'Friday'
-    Monday = 'Monday'
-    Saturday = 'Saturday'
-    Sunday = 'Sunday'
-    Thursday = 'Thursday'
-    Tuesday = 'Tuesday'
-    Wednesday = 'Wednesday'
+    Friday = "Friday"
+    Monday = "Monday"
+    Saturday = "Saturday"
+    Sunday = "Sunday"
+    Thursday = "Thursday"
+    Tuesday = "Tuesday"
+    Wednesday = "Wednesday"
 
 
 class DeleteOrganizationInput(BaseModel):
@@ -510,20 +511,20 @@ class Document(BaseModel):
     content: Optional[str]
     content_data: Any
     created_at: Any
-    creator: 'User'
+    creator: "User"
     icon: Optional[str]
     id: str
-    project: 'Project'
+    project: "Project"
     slug_id: str
     title: str
     updated_at: Any
-    updated_by: 'User'
+    updated_by: "User"
 
 
 class DocumentConnection(BaseModel):
-    edges: List['DocumentEdge']
-    nodes: List['Document']
-    page_info: 'PageInfo'
+    edges: List["DocumentEdge"]
+    nodes: List["Document"]
+    page_info: "PageInfo"
 
 
 class DocumentCreateInput(BaseModel):
@@ -538,11 +539,11 @@ class DocumentCreateInput(BaseModel):
 
 class DocumentEdge(BaseModel):
     cursor: str
-    node: 'Document'
+    node: "Document"
 
 
 class DocumentPayload(BaseModel):
-    document: 'Document'
+    document: "Document"
     last_sync_id: float
     success: bool
 
@@ -589,19 +590,19 @@ class EmailUserAccountAuthChallengeResponse(BaseModel):
 class Emoji(BaseModel):
     archived_at: Any
     created_at: Any
-    creator: 'User'
+    creator: "User"
     id: str
     name: str
-    organization: 'Organization'
+    organization: "Organization"
     source: str
     updated_at: Any
     url: str
 
 
 class EmojiConnection(BaseModel):
-    edges: List['EmojiEdge']
-    nodes: List['Emoji']
-    page_info: 'PageInfo'
+    edges: List["EmojiEdge"]
+    nodes: List["Emoji"]
+    page_info: "PageInfo"
 
 
 class EmojiCreateInput(BaseModel):
@@ -612,17 +613,17 @@ class EmojiCreateInput(BaseModel):
 
 class EmojiEdge(BaseModel):
     cursor: str
-    node: 'Emoji'
+    node: "Emoji"
 
 
 class EmojiPayload(BaseModel):
-    emoji: 'Emoji'
+    emoji: "Emoji"
     last_sync_id: float
     success: bool
 
 
 class EstimateComparator(BaseModel):
-    and_: Optional[List['NullableNumberComparator']]
+    and_: Optional[List["NullableNumberComparator"]]
     eq: Optional[float]
     gt: Optional[float]
     gte: Optional[float]
@@ -632,7 +633,7 @@ class EstimateComparator(BaseModel):
     neq: Optional[float]
     nin: Optional[List[float]]
     null: Optional[bool]
-    or_: Optional[List['NullableNumberComparator']]
+    or_: Optional[List["NullableNumberComparator"]]
 
 
 class EventCreateInput(BaseModel):
@@ -656,48 +657,48 @@ class ExternalUser(BaseModel):
     id: str
     last_seen: Any
     name: str
-    organization: 'Organization'
+    organization: "Organization"
     updated_at: Any
 
 
 class ExternalUserConnection(BaseModel):
-    edges: List['ExternalUserEdge']
-    nodes: List['ExternalUser']
-    page_info: 'PageInfo'
+    edges: List["ExternalUserEdge"]
+    nodes: List["ExternalUser"]
+    page_info: "PageInfo"
 
 
 class ExternalUserEdge(BaseModel):
     cursor: str
-    node: 'ExternalUser'
+    node: "ExternalUser"
 
 
 class Favorite(BaseModel):
     archived_at: Any
-    children: 'FavoriteConnection'
+    children: "FavoriteConnection"
     created_at: Any
-    custom_view: Optional['CustomView']
-    cycle: Optional['Cycle']
-    document: Optional['Document']
+    custom_view: Optional["CustomView"]
+    cycle: Optional["Cycle"]
+    document: Optional["Document"]
     folder_name: Optional[str]
     id: str
-    issue: Optional['Issue']
-    label: Optional['IssueLabel']
-    parent: Optional['Favorite']
-    predefined_view_team: Optional['Team']
+    issue: Optional["Issue"]
+    label: Optional["IssueLabel"]
+    parent: Optional["Favorite"]
+    predefined_view_team: Optional["Team"]
     predefined_view_type: Optional[str]
-    project: Optional['Project']
-    project_team: Optional['Team']
-    roadmap: Optional['Roadmap']
+    project: Optional["Project"]
+    project_team: Optional["Team"]
+    roadmap: Optional["Roadmap"]
     sort_order: float
     type: str
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class FavoriteConnection(BaseModel):
-    edges: List['FavoriteEdge']
-    nodes: List['Favorite']
-    page_info: 'PageInfo'
+    edges: List["FavoriteEdge"]
+    nodes: List["Favorite"]
+    page_info: "PageInfo"
 
 
 class FavoriteCreateInput(BaseModel):
@@ -719,11 +720,11 @@ class FavoriteCreateInput(BaseModel):
 
 class FavoriteEdge(BaseModel):
     cursor: str
-    node: 'Favorite'
+    node: "Favorite"
 
 
 class FavoritePayload(BaseModel):
-    favorite: 'Favorite'
+    favorite: "Favorite"
     last_sync_id: float
     success: bool
 
@@ -742,7 +743,7 @@ class FigmaEmbed(BaseModel):
 
 
 class FigmaEmbedPayload(BaseModel):
-    figma_embed: Optional['FigmaEmbed']
+    figma_embed: Optional["FigmaEmbed"]
     success: bool
 
 
@@ -768,7 +769,7 @@ class FrontSettingsInput(BaseModel):
 
 
 class GitHubCommitIntegrationPayload(BaseModel):
-    integration: Optional['Integration']
+    integration: Optional["Integration"]
     last_sync_id: float
     success: bool
     webhook_secret: str
@@ -785,7 +786,7 @@ class GitHubSettingsInput(BaseModel):
 
 
 class GithubOAuthTokenPayload(BaseModel):
-    organizations: Optional[List['GithubOrg']]
+    organizations: Optional[List["GithubOrg"]]
     token: Optional[str]
 
 
@@ -794,7 +795,7 @@ class GithubOrg(BaseModel):
     is_personal: Optional[bool]
     login: str
     name: str
-    repositories: List['GithubRepo']
+    repositories: List["GithubRepo"]
 
 
 class GithubRepo(BaseModel):
@@ -840,27 +841,27 @@ class ImageUploadFromUrlPayload(BaseModel):
 class Integration(BaseModel):
     archived_at: Any
     created_at: Any
-    creator: 'User'
+    creator: "User"
     id: str
-    organization: 'Organization'
+    organization: "Organization"
     service: str
-    team: Optional['Team']
+    team: Optional["Team"]
     updated_at: Any
 
 
 class IntegrationConnection(BaseModel):
-    edges: List['IntegrationEdge']
-    nodes: List['Integration']
-    page_info: 'PageInfo'
+    edges: List["IntegrationEdge"]
+    nodes: List["Integration"]
+    page_info: "PageInfo"
 
 
 class IntegrationEdge(BaseModel):
     cursor: str
-    node: 'Integration'
+    node: "Integration"
 
 
 class IntegrationPayload(BaseModel):
-    integration: Optional['Integration']
+    integration: Optional["Integration"]
     last_sync_id: float
     success: bool
 
@@ -875,46 +876,46 @@ class IntegrationRequestPayload(BaseModel):
 
 
 class IntegrationSettings(BaseModel):
-    front: Optional['FrontSettings']
-    git_hub: Optional['GitHubSettings']
-    google_sheets: Optional['GoogleSheetsSettings']
-    intercom: Optional['IntercomSettings']
-    jira: Optional['JiraSettings']
-    notion: Optional['NotionSettings']
-    sentry: Optional['SentrySettings']
-    slack_org_project_updates_post: Optional['SlackPostSettings']
-    slack_post: Optional['SlackPostSettings']
-    slack_project_post: Optional['SlackPostSettings']
-    zendesk: Optional['ZendeskSettings']
+    front: Optional["FrontSettings"]
+    git_hub: Optional["GitHubSettings"]
+    google_sheets: Optional["GoogleSheetsSettings"]
+    intercom: Optional["IntercomSettings"]
+    jira: Optional["JiraSettings"]
+    notion: Optional["NotionSettings"]
+    sentry: Optional["SentrySettings"]
+    slack_org_project_updates_post: Optional["SlackPostSettings"]
+    slack_post: Optional["SlackPostSettings"]
+    slack_project_post: Optional["SlackPostSettings"]
+    zendesk: Optional["ZendeskSettings"]
 
 
 class IntegrationSettingsInput(BaseModel):
-    front: Optional['FrontSettingsInput']
-    git_hub: Optional['GitHubSettingsInput']
-    google_sheets: Optional['GoogleSheetsSettingsInput']
-    intercom: Optional['IntercomSettingsInput']
-    jira: Optional['JiraSettingsInput']
-    notion: Optional['NotionSettingsInput']
-    sentry: Optional['SentrySettingsInput']
-    slack_org_project_updates_post: Optional['SlackPostSettingsInput']
-    slack_post: Optional['SlackPostSettingsInput']
-    slack_project_post: Optional['SlackPostSettingsInput']
-    zendesk: Optional['ZendeskSettingsInput']
+    front: Optional["FrontSettingsInput"]
+    git_hub: Optional["GitHubSettingsInput"]
+    google_sheets: Optional["GoogleSheetsSettingsInput"]
+    intercom: Optional["IntercomSettingsInput"]
+    jira: Optional["JiraSettingsInput"]
+    notion: Optional["NotionSettingsInput"]
+    sentry: Optional["SentrySettingsInput"]
+    slack_org_project_updates_post: Optional["SlackPostSettingsInput"]
+    slack_post: Optional["SlackPostSettingsInput"]
+    slack_project_post: Optional["SlackPostSettingsInput"]
+    zendesk: Optional["ZendeskSettingsInput"]
 
 
 class IntegrationTemplate(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
-    integration: 'Integration'
-    template: 'Template'
+    integration: "Integration"
+    template: "Template"
     updated_at: Any
 
 
 class IntegrationTemplateConnection(BaseModel):
-    edges: List['IntegrationTemplateEdge']
-    nodes: List['IntegrationTemplate']
-    page_info: 'PageInfo'
+    edges: List["IntegrationTemplateEdge"]
+    nodes: List["IntegrationTemplate"]
+    page_info: "PageInfo"
 
 
 class IntegrationTemplateCreateInput(BaseModel):
@@ -925,11 +926,11 @@ class IntegrationTemplateCreateInput(BaseModel):
 
 class IntegrationTemplateEdge(BaseModel):
     cursor: str
-    node: 'IntegrationTemplate'
+    node: "IntegrationTemplate"
 
 
 class IntegrationTemplatePayload(BaseModel):
-    integration_template: 'IntegrationTemplate'
+    integration_template: "IntegrationTemplate"
     last_sync_id: float
     success: bool
 
@@ -938,7 +939,7 @@ class IntegrationsSettings(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
-    project: Optional['Project']
+    project: Optional["Project"]
     slack_issue_added_to_triage: Optional[bool]
     slack_issue_created: Optional[bool]
     slack_issue_new_comment: Optional[bool]
@@ -949,14 +950,14 @@ class IntegrationsSettings(BaseModel):
     slack_project_update_created: Optional[bool]
     slack_project_update_created_to_team: Optional[bool]
     slack_project_update_created_to_workspace: Optional[bool]
-    team: Optional['Team']
+    team: Optional["Team"]
     updated_at: Any
 
 
 class IntegrationsSettingsConnection(BaseModel):
-    edges: List['IntegrationsSettingsEdge']
-    nodes: List['IntegrationsSettings']
-    page_info: 'PageInfo'
+    edges: List["IntegrationsSettingsEdge"]
+    nodes: List["IntegrationsSettings"]
+    page_info: "PageInfo"
 
 
 class IntegrationsSettingsCreateInput(BaseModel):
@@ -977,11 +978,11 @@ class IntegrationsSettingsCreateInput(BaseModel):
 
 class IntegrationsSettingsEdge(BaseModel):
     cursor: str
-    node: 'IntegrationsSettings'
+    node: "IntegrationsSettings"
 
 
 class IntegrationsSettingsPayload(BaseModel):
-    integrations_settings: 'IntegrationsSettings'
+    integrations_settings: "IntegrationsSettings"
     last_sync_id: float
     success: bool
 
@@ -1045,6 +1046,7 @@ class User(BaseModel):
     # updated_at: Any
     # url: str
 
+
 class AssigneeUser(BaseModel):
     # active: bool
     # admin: bool
@@ -1077,7 +1079,7 @@ class AssigneeUser(BaseModel):
 
 
 class IssueConnection(BaseModel):
-    edges: list['IssueEdge']
+    edges: list["IssueEdge"]
     # nodes: List['Issue']
     page_info: PageInfo
 
@@ -1095,8 +1097,8 @@ class Issue(BaseModel):
     # auto_closed_at: Any
     # branch_name: str
     # canceled_at: Any
-    #children: 'IssueConnection'
-    children: Optional[list['Issue']]
+    # children: 'IssueConnection'
+    children: Optional[list["Issue"]]
     # comments: 'CommentConnection'
     # completed_at: Any
     # created_at: Any
@@ -1114,7 +1116,7 @@ class Issue(BaseModel):
     # inverse_relations: 'IssueRelationConnection'
     # labels: 'IssueLabelConnection'
     # number: float
-    parent: Optional['Issue']
+    parent: Optional["Issue"]
     # previous_identifiers: List[str]
     priority: float
     # priority_label: str
@@ -1138,54 +1140,55 @@ class Issue(BaseModel):
     # updated_at: Any
     # url: str
 
+
 class IssueBatchPayload(BaseModel):
-    issues: List['Issue']
+    issues: List["Issue"]
     last_sync_id: float
     success: bool
 
 
 class IssueCollectionFilter(BaseModel):
-    and_: Optional[List['IssueCollectionFilter']]
-    assignee: Optional['NullableUserFilter']
-    attachments: Optional['AttachmentCollectionFilter']
-    auto_archived_at: Optional['NullableDateComparator']
-    auto_closed_at: Optional['NullableDateComparator']
-    canceled_at: Optional['NullableDateComparator']
-    children: Optional['IssueCollectionFilter']
-    comments: Optional['CommentCollectionFilter']
-    completed_at: Optional['NullableDateComparator']
-    created_at: Optional['DateComparator']
-    creator: Optional['NullableUserFilter']
-    cycle: Optional['NullableCycleFilter']
-    description: Optional['NullableStringComparator']
-    due_date: Optional['NullableTimelessDateComparator']
-    estimate: Optional['EstimateComparator']
-    every: Optional['IssueFilter']
-    has_blocked_by_relations: Optional['RelationExistsComparator']
-    has_blocking_relations: Optional['RelationExistsComparator']
-    has_duplicate_relations: Optional['RelationExistsComparator']
-    has_related_relations: Optional['RelationExistsComparator']
-    id: Optional['IDComparator']
-    labels: Optional['IssueLabelCollectionFilter']
-    length: Optional['NumberComparator']
-    number: Optional['NumberComparator']
-    or_: Optional[List['IssueCollectionFilter']]
-    parent: Optional['NullableIssueFilter']
-    priority: Optional['NullableNumberComparator']
-    project: Optional['NullableProjectFilter']
-    project_milestone: Optional['NullableProjectMilestoneFilter']
-    searchable_content: Optional['ContentComparator']
-    sla_status: Optional['SlaStatusComparator']
-    snoozed_by: Optional['NullableUserFilter']
-    snoozed_until_at: Optional['NullableDateComparator']
-    some: Optional['IssueFilter']
-    started_at: Optional['NullableDateComparator']
-    state: Optional['WorkflowStateFilter']
-    subscribers: Optional['UserCollectionFilter']
-    team: Optional['TeamFilter']
-    title: Optional['StringComparator']
-    triaged_at: Optional['NullableDateComparator']
-    updated_at: Optional['DateComparator']
+    and_: Optional[List["IssueCollectionFilter"]]
+    assignee: Optional["NullableUserFilter"]
+    attachments: Optional["AttachmentCollectionFilter"]
+    auto_archived_at: Optional["NullableDateComparator"]
+    auto_closed_at: Optional["NullableDateComparator"]
+    canceled_at: Optional["NullableDateComparator"]
+    children: Optional["IssueCollectionFilter"]
+    comments: Optional["CommentCollectionFilter"]
+    completed_at: Optional["NullableDateComparator"]
+    created_at: Optional["DateComparator"]
+    creator: Optional["NullableUserFilter"]
+    cycle: Optional["NullableCycleFilter"]
+    description: Optional["NullableStringComparator"]
+    due_date: Optional["NullableTimelessDateComparator"]
+    estimate: Optional["EstimateComparator"]
+    every: Optional["IssueFilter"]
+    has_blocked_by_relations: Optional["RelationExistsComparator"]
+    has_blocking_relations: Optional["RelationExistsComparator"]
+    has_duplicate_relations: Optional["RelationExistsComparator"]
+    has_related_relations: Optional["RelationExistsComparator"]
+    id: Optional["IDComparator"]
+    labels: Optional["IssueLabelCollectionFilter"]
+    length: Optional["NumberComparator"]
+    number: Optional["NumberComparator"]
+    or_: Optional[List["IssueCollectionFilter"]]
+    parent: Optional["NullableIssueFilter"]
+    priority: Optional["NullableNumberComparator"]
+    project: Optional["NullableProjectFilter"]
+    project_milestone: Optional["NullableProjectMilestoneFilter"]
+    searchable_content: Optional["ContentComparator"]
+    sla_status: Optional["SlaStatusComparator"]
+    snoozed_by: Optional["NullableUserFilter"]
+    snoozed_until_at: Optional["NullableDateComparator"]
+    some: Optional["IssueFilter"]
+    started_at: Optional["NullableDateComparator"]
+    state: Optional["WorkflowStateFilter"]
+    subscribers: Optional["UserCollectionFilter"]
+    team: Optional["TeamFilter"]
+    title: Optional["StringComparator"]
+    triaged_at: Optional["NullableDateComparator"]
+    updated_at: Optional["DateComparator"]
 
 
 class IssueCreateInput(BaseModel):
@@ -1220,15 +1223,15 @@ class IssueDraft(BaseModel):
     assignee_id: Optional[str]
     attachments: Any
     created_at: Any
-    creator: 'User'
+    creator: "User"
     cycle_id: Optional[str]
     description: Optional[str]
     description_data: Any
     due_date: Any
     estimate: Optional[float]
     id: str
-    parent: Optional['IssueDraft']
-    parent_issue: Optional['Issue']
+    parent: Optional["IssueDraft"]
+    parent_issue: Optional["Issue"]
     priority: float
     priority_label: str
     project_id: Optional[str]
@@ -1241,95 +1244,95 @@ class IssueDraft(BaseModel):
 
 
 class IssueFilter(BaseModel):
-    and_: Optional[List['IssueFilter']]
-    assignee: Optional['NullableUserFilter']
-    attachments: Optional['AttachmentCollectionFilter']
-    auto_archived_at: Optional['NullableDateComparator']
-    auto_closed_at: Optional['NullableDateComparator']
-    canceled_at: Optional['NullableDateComparator']
-    children: Optional['IssueCollectionFilter']
-    comments: Optional['CommentCollectionFilter']
-    completed_at: Optional['NullableDateComparator']
-    created_at: Optional['DateComparator']
-    creator: Optional['NullableUserFilter']
-    cycle: Optional['NullableCycleFilter']
-    description: Optional['NullableStringComparator']
-    due_date: Optional['NullableTimelessDateComparator']
-    estimate: Optional['EstimateComparator']
-    has_blocked_by_relations: Optional['RelationExistsComparator']
-    has_blocking_relations: Optional['RelationExistsComparator']
-    has_duplicate_relations: Optional['RelationExistsComparator']
-    has_related_relations: Optional['RelationExistsComparator']
-    id: Optional['IDComparator']
-    labels: Optional['IssueLabelCollectionFilter']
-    number: Optional['NumberComparator']
-    or_: Optional[List['IssueFilter']]
-    parent: Optional['NullableIssueFilter']
-    priority: Optional['NullableNumberComparator']
-    project: Optional['NullableProjectFilter']
-    project_milestone: Optional['NullableProjectMilestoneFilter']
-    searchable_content: Optional['ContentComparator']
-    sla_status: Optional['SlaStatusComparator']
-    snoozed_by: Optional['NullableUserFilter']
-    snoozed_until_at: Optional['NullableDateComparator']
-    started_at: Optional['NullableDateComparator']
-    state: Optional['WorkflowStateFilter']
-    subscribers: Optional['UserCollectionFilter']
-    team: Optional['TeamFilter']
-    title: Optional['StringComparator']
-    triaged_at: Optional['NullableDateComparator']
-    updated_at: Optional['DateComparator']
+    and_: Optional[List["IssueFilter"]]
+    assignee: Optional["NullableUserFilter"]
+    attachments: Optional["AttachmentCollectionFilter"]
+    auto_archived_at: Optional["NullableDateComparator"]
+    auto_closed_at: Optional["NullableDateComparator"]
+    canceled_at: Optional["NullableDateComparator"]
+    children: Optional["IssueCollectionFilter"]
+    comments: Optional["CommentCollectionFilter"]
+    completed_at: Optional["NullableDateComparator"]
+    created_at: Optional["DateComparator"]
+    creator: Optional["NullableUserFilter"]
+    cycle: Optional["NullableCycleFilter"]
+    description: Optional["NullableStringComparator"]
+    due_date: Optional["NullableTimelessDateComparator"]
+    estimate: Optional["EstimateComparator"]
+    has_blocked_by_relations: Optional["RelationExistsComparator"]
+    has_blocking_relations: Optional["RelationExistsComparator"]
+    has_duplicate_relations: Optional["RelationExistsComparator"]
+    has_related_relations: Optional["RelationExistsComparator"]
+    id: Optional["IDComparator"]
+    labels: Optional["IssueLabelCollectionFilter"]
+    number: Optional["NumberComparator"]
+    or_: Optional[List["IssueFilter"]]
+    parent: Optional["NullableIssueFilter"]
+    priority: Optional["NullableNumberComparator"]
+    project: Optional["NullableProjectFilter"]
+    project_milestone: Optional["NullableProjectMilestoneFilter"]
+    searchable_content: Optional["ContentComparator"]
+    sla_status: Optional["SlaStatusComparator"]
+    snoozed_by: Optional["NullableUserFilter"]
+    snoozed_until_at: Optional["NullableDateComparator"]
+    started_at: Optional["NullableDateComparator"]
+    state: Optional["WorkflowStateFilter"]
+    subscribers: Optional["UserCollectionFilter"]
+    team: Optional["TeamFilter"]
+    title: Optional["StringComparator"]
+    triaged_at: Optional["NullableDateComparator"]
+    updated_at: Optional["DateComparator"]
 
 
 class IssueHistory(BaseModel):
-    actor: Optional['User']
+    actor: Optional["User"]
     actor_id: Optional[str]
     added_label_ids: Optional[List[str]]
     archived: Optional[bool]
     archived_at: Any
-    attachment: Optional['Attachment']
+    attachment: Optional["Attachment"]
     attachment_id: Optional[str]
     auto_archived: Optional[bool]
     auto_closed: Optional[bool]
     changes: Any
     created_at: Any
-    from_assignee: Optional['User']
+    from_assignee: Optional["User"]
     from_assignee_id: Optional[str]
-    from_cycle: Optional['Cycle']
+    from_cycle: Optional["Cycle"]
     from_cycle_id: Optional[str]
     from_due_date: Any
     from_estimate: Optional[float]
-    from_parent: Optional['Issue']
+    from_parent: Optional["Issue"]
     from_parent_id: Optional[str]
     from_priority: Optional[float]
-    from_project: Optional['Project']
+    from_project: Optional["Project"]
     from_project_id: Optional[str]
-    from_state: Optional['WorkflowState']
+    from_state: Optional["WorkflowState"]
     from_state_id: Optional[str]
-    from_team: Optional['Team']
+    from_team: Optional["Team"]
     from_team_id: Optional[str]
     from_title: Optional[str]
     id: str
-    issue: 'Issue'
-    issue_import: Optional['IssueImport']
-    relation_changes: Optional[List['IssueRelationHistoryPayload']]
+    issue: "Issue"
+    issue_import: Optional["IssueImport"]
+    relation_changes: Optional[List["IssueRelationHistoryPayload"]]
     removed_label_ids: Optional[List[str]]
-    to_assignee: Optional['User']
+    to_assignee: Optional["User"]
     to_assignee_id: Optional[str]
-    to_converted_project: Optional['Project']
+    to_converted_project: Optional["Project"]
     to_converted_project_id: Optional[str]
-    to_cycle: Optional['Cycle']
+    to_cycle: Optional["Cycle"]
     to_cycle_id: Optional[str]
     to_due_date: Any
     to_estimate: Optional[float]
-    to_parent: Optional['Issue']
+    to_parent: Optional["Issue"]
     to_parent_id: Optional[str]
     to_priority: Optional[float]
-    to_project: Optional['Project']
+    to_project: Optional["Project"]
     to_project_id: Optional[str]
-    to_state: Optional['WorkflowState']
+    to_state: Optional["WorkflowState"]
     to_state_id: Optional[str]
-    to_team: Optional['Team']
+    to_team: Optional["Team"]
     to_team_id: Optional[str]
     to_title: Optional[str]
     trashed: Optional[bool]
@@ -1338,14 +1341,14 @@ class IssueHistory(BaseModel):
 
 
 class IssueHistoryConnection(BaseModel):
-    edges: List['IssueHistoryEdge']
-    nodes: List['IssueHistory']
-    page_info: 'PageInfo'
+    edges: List["IssueHistoryEdge"]
+    nodes: List["IssueHistory"]
+    page_info: "PageInfo"
 
 
 class IssueHistoryEdge(BaseModel):
     cursor: str
-    node: 'IssueHistory'
+    node: "IssueHistory"
 
 
 class IssueImport(BaseModel):
@@ -1364,7 +1367,7 @@ class IssueImport(BaseModel):
 
 
 class IssueImportDeletePayload(BaseModel):
-    issue_import: Optional['IssueImport']
+    issue_import: Optional["IssueImport"]
     last_sync_id: float
     success: bool
 
@@ -1376,7 +1379,7 @@ class IssueImportMappingInput(BaseModel):
 
 
 class IssueImportPayload(BaseModel):
-    issue_import: Optional['IssueImport']
+    issue_import: Optional["IssueImport"]
     last_sync_id: float
     success: bool
 
@@ -1387,38 +1390,38 @@ class IssueImportUpdateInput(BaseModel):
 
 class IssueLabel(BaseModel):
     archived_at: Any
-    children: 'IssueLabelConnection'
+    children: "IssueLabelConnection"
     color: str
     created_at: Any
-    creator: Optional['User']
+    creator: Optional["User"]
     description: Optional[str]
     id: str
-    issues: 'IssueConnection'
+    issues: "IssueConnection"
     name: str
-    parent: Optional['IssueLabel']
-    team: Optional['Team']
+    parent: Optional["IssueLabel"]
+    team: Optional["Team"]
     updated_at: Any
 
 
 class IssueLabelCollectionFilter(BaseModel):
-    and_: Optional[List['IssueLabelCollectionFilter']]
-    created_at: Optional['DateComparator']
-    creator: Optional['NullableUserFilter']
-    every: Optional['IssueLabelFilter']
-    id: Optional['IDComparator']
-    length: Optional['NumberComparator']
-    name: Optional['StringComparator']
-    or_: Optional[List['IssueLabelCollectionFilter']]
-    parent: Optional['IssueLabelFilter']
-    some: Optional['IssueLabelFilter']
-    team: Optional['TeamFilter']
-    updated_at: Optional['DateComparator']
+    and_: Optional[List["IssueLabelCollectionFilter"]]
+    created_at: Optional["DateComparator"]
+    creator: Optional["NullableUserFilter"]
+    every: Optional["IssueLabelFilter"]
+    id: Optional["IDComparator"]
+    length: Optional["NumberComparator"]
+    name: Optional["StringComparator"]
+    or_: Optional[List["IssueLabelCollectionFilter"]]
+    parent: Optional["IssueLabelFilter"]
+    some: Optional["IssueLabelFilter"]
+    team: Optional["TeamFilter"]
+    updated_at: Optional["DateComparator"]
 
 
 class IssueLabelConnection(BaseModel):
-    edges: List['IssueLabelEdge']
-    nodes: List['IssueLabel']
-    page_info: 'PageInfo'
+    edges: List["IssueLabelEdge"]
+    nodes: List["IssueLabel"]
+    page_info: "PageInfo"
 
 
 class IssueLabelCreateInput(BaseModel):
@@ -1432,23 +1435,23 @@ class IssueLabelCreateInput(BaseModel):
 
 class IssueLabelEdge(BaseModel):
     cursor: str
-    node: 'IssueLabel'
+    node: "IssueLabel"
 
 
 class IssueLabelFilter(BaseModel):
-    and_: Optional[List['IssueLabelFilter']]
-    created_at: Optional['DateComparator']
-    creator: Optional['NullableUserFilter']
-    id: Optional['IDComparator']
-    name: Optional['StringComparator']
-    or_: Optional[List['IssueLabelFilter']]
-    parent: Optional['IssueLabelFilter']
-    team: Optional['TeamFilter']
-    updated_at: Optional['DateComparator']
+    and_: Optional[List["IssueLabelFilter"]]
+    created_at: Optional["DateComparator"]
+    creator: Optional["NullableUserFilter"]
+    id: Optional["IDComparator"]
+    name: Optional["StringComparator"]
+    or_: Optional[List["IssueLabelFilter"]]
+    parent: Optional["IssueLabelFilter"]
+    team: Optional["TeamFilter"]
+    updated_at: Optional["DateComparator"]
 
 
 class IssueLabelPayload(BaseModel):
-    issue_label: 'IssueLabel'
+    issue_label: "IssueLabel"
     last_sync_id: float
     success: bool
 
@@ -1468,7 +1471,7 @@ class Entity(BaseModel):
 
 
 class Notification(BaseModel):
-    actor: Optional['User']
+    actor: Optional["User"]
     archived_at: Any
     created_at: Any
     emailed_at: Any
@@ -1478,29 +1481,29 @@ class Notification(BaseModel):
     type: str
     unsnoozed_at: Any
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class IssueNotification(Entity, Node, Notification):
-    actor: Optional['User']
+    actor: Optional["User"]
     archived_at: Any
-    comment: Optional['Comment']
+    comment: Optional["Comment"]
     created_at: Any
     emailed_at: Any
     id: str
-    issue: 'Issue'
+    issue: "Issue"
     reaction_emoji: Optional[str]
     read_at: Any
     snoozed_until_at: Any
-    team: 'Team'
+    team: "Team"
     type: str
     unsnoozed_at: Any
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class IssuePayload(BaseModel):
-    issue: Optional['Issue']
+    issue: Optional["Issue"]
     last_sync_id: float
     success: bool
 
@@ -1514,28 +1517,28 @@ class IssueRelation(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
-    issue: 'Issue'
-    related_issue: 'Issue'
+    issue: "Issue"
+    related_issue: "Issue"
     type: str
     updated_at: Any
 
 
 class IssueRelationConnection(BaseModel):
-    edges: List['IssueRelationEdge']
-    nodes: List['IssueRelation']
-    page_info: 'PageInfo'
+    edges: List["IssueRelationEdge"]
+    nodes: List["IssueRelation"]
+    page_info: "PageInfo"
 
 
 class IssueRelationCreateInput(BaseModel):
     id: Optional[str]
     issue_id: str
     related_issue_id: str
-    type: 'IssueRelationType'
+    type: "IssueRelationType"
 
 
 class IssueRelationEdge(BaseModel):
     cursor: str
-    node: 'IssueRelation'
+    node: "IssueRelation"
 
 
 class IssueRelationHistoryPayload(BaseModel):
@@ -1544,15 +1547,15 @@ class IssueRelationHistoryPayload(BaseModel):
 
 
 class IssueRelationPayload(BaseModel):
-    issue_relation: 'IssueRelation'
+    issue_relation: "IssueRelation"
     last_sync_id: float
     success: bool
 
 
 class IssueRelationType(str, Enum):
-    blocks = 'blocks'
-    duplicate = 'duplicate'
-    related = 'related'
+    blocks = "blocks"
+    duplicate = "duplicate"
+    related = "related"
 
 
 class IssueRelationUpdateInput(BaseModel):
@@ -1616,13 +1619,13 @@ class JiraProjectDataInput(BaseModel):
 
 
 class JiraSettings(BaseModel):
-    project_mapping: Optional[List['JiraLinearMapping']]
-    projects: List['JiraProjectData']
+    project_mapping: Optional[List["JiraLinearMapping"]]
+    projects: List["JiraProjectData"]
 
 
 class JiraSettingsInput(BaseModel):
-    project_mapping: Optional[List['JiraLinearMappingInput']]
-    projects: List['JiraProjectDataInput']
+    project_mapping: Optional[List["JiraLinearMappingInput"]]
+    projects: List["JiraProjectDataInput"]
 
 
 class JoinOrganizationInput(BaseModel):
@@ -1634,226 +1637,230 @@ class LogoutResponse(BaseModel):
 
 
 class Mutation(BaseModel):
-    airbyte_integration_connect: 'IntegrationPayload'
-    api_key_create: 'ApiKeyPayload'
-    api_key_delete: 'ArchivePayload'
-    attachment_create: 'AttachmentPayload'
-    attachment_delete: 'ArchivePayload'
-    attachment_link_discord: 'AttachmentPayload'
-    attachment_link_front: 'FrontAttachmentPayload'
-    attachment_link_intercom: 'AttachmentPayload'
-    attachment_link_jira_issue: 'AttachmentPayload'
-    attachment_link_url: 'AttachmentPayload'
-    attachment_link_zendesk: 'AttachmentPayload'
-    attachment_update: 'AttachmentPayload'
-    comment_create: 'CommentPayload'
-    comment_delete: 'ArchivePayload'
-    comment_update: 'CommentPayload'
-    contact_create: 'ContactPayload'
-    contact_sales_create: 'ContactPayload'
-    create_csv_export_report: 'CreateCsvExportReportPayload'
-    create_organization_from_onboarding: 'CreateOrJoinOrganizationResponse'
-    custom_view_create: 'CustomViewPayload'
-    custom_view_delete: 'ArchivePayload'
-    custom_view_update: 'CustomViewPayload'
-    cycle_archive: 'ArchivePayload'
-    cycle_create: 'CyclePayload'
-    cycle_update: 'CyclePayload'
-    document_create: 'DocumentPayload'
-    document_delete: 'ArchivePayload'
-    document_update: 'DocumentPayload'
-    email_subscribe: 'EmailSubscribePayload'
-    email_token_user_account_auth: 'AuthResolverResponse'
-    email_unsubscribe: 'EmailUnsubscribePayload'
-    email_user_account_auth_challenge: 'EmailUserAccountAuthChallengeResponse'
-    emoji_create: 'EmojiPayload'
-    emoji_delete: 'ArchivePayload'
-    event_create: 'EventPayload'
-    favorite_create: 'FavoritePayload'
-    favorite_delete: 'ArchivePayload'
-    favorite_update: 'FavoritePayload'
-    file_upload: 'UploadPayload'
-    google_user_account_auth: 'AuthResolverResponse'
-    image_upload_from_url: 'ImageUploadFromUrlPayload'
-    integration_delete: 'ArchivePayload'
-    integration_discord: 'IntegrationPayload'
-    integration_figma: 'IntegrationPayload'
-    integration_front: 'IntegrationPayload'
-    integration_github_commit_create: 'GitHubCommitIntegrationPayload'
-    integration_github_connect: 'IntegrationPayload'
-    integration_gitlab_connect: 'IntegrationPayload'
-    integration_google_sheets: 'IntegrationPayload'
-    integration_intercom: 'IntegrationPayload'
-    integration_intercom_delete: 'IntegrationPayload'
-    integration_request: 'IntegrationRequestPayload'
-    integration_sentry_connect: 'IntegrationPayload'
-    integration_settings_update: 'IntegrationPayload'
-    integration_slack: 'IntegrationPayload'
-    integration_slack_import_emojis: 'IntegrationPayload'
-    integration_slack_intake: 'IntegrationPayload'
-    integration_slack_org_project_updates_post: 'IntegrationPayload'
-    integration_slack_personal: 'IntegrationPayload'
-    integration_slack_post: 'IntegrationPayload'
-    integration_slack_project_post: 'IntegrationPayload'
-    integration_template_create: 'IntegrationTemplatePayload'
-    integration_template_delete: 'ArchivePayload'
-    integration_zendesk: 'IntegrationPayload'
-    integrations_settings_create: 'IntegrationsSettingsPayload'
-    integrations_settings_update: 'IntegrationsSettingsPayload'
-    issue_archive: 'ArchivePayload'
-    issue_batch_update: 'IssueBatchPayload'
-    issue_create: 'IssuePayload'
-    issue_delete: 'ArchivePayload'
-    issue_description_update_from_front: 'IssuePayload'
-    issue_import_create_asana: 'IssueImportPayload'
-    issue_import_create_clubhouse: 'IssueImportPayload'
-    issue_import_create_github: 'IssueImportPayload'
-    issue_import_create_jira: 'IssueImportPayload'
-    issue_import_delete: 'IssueImportDeletePayload'
-    issue_import_process: 'IssueImportPayload'
-    issue_import_update: 'IssueImportPayload'
-    issue_label_create: 'IssueLabelPayload'
-    issue_label_delete: 'ArchivePayload'
-    issue_label_update: 'IssueLabelPayload'
-    issue_relation_create: 'IssueRelationPayload'
-    issue_relation_delete: 'ArchivePayload'
-    issue_relation_update: 'IssueRelationPayload'
-    issue_reminder: 'IssuePayload'
-    issue_unarchive: 'ArchivePayload'
-    issue_update: 'IssuePayload'
-    jira_integration_connect: 'IntegrationPayload'
-    join_organization_from_onboarding: 'CreateOrJoinOrganizationResponse'
-    leave_organization: 'CreateOrJoinOrganizationResponse'
-    logout: 'LogoutResponse'
-    notification_archive: 'ArchivePayload'
-    notification_subscription_create: 'NotificationSubscriptionPayload'
-    notification_subscription_delete: 'ArchivePayload'
-    notification_subscription_update: 'NotificationSubscriptionPayload'
-    notification_unarchive: 'ArchivePayload'
-    notification_update: 'NotificationPayload'
-    organization_cancel_delete: 'OrganizationCancelDeletePayload'
-    organization_delete: 'OrganizationDeletePayload'
-    organization_delete_challenge: 'OrganizationDeletePayload'
-    organization_domain_claim: 'OrganizationDomainSimplePayload'
-    organization_domain_create: 'OrganizationDomainPayload'
-    organization_domain_delete: 'ArchivePayload'
-    organization_domain_verify: 'OrganizationDomainPayload'
-    organization_invite_create: 'OrganizationInvitePayload'
-    organization_invite_delete: 'ArchivePayload'
-    organization_invite_update: 'OrganizationInvitePayload'
-    organization_start_plus_trial: 'OrganizationStartPlusTrialPayload'
-    organization_update: 'OrganizationPayload'
-    project_create: 'ProjectPayload'
-    project_delete: 'ArchivePayload'
-    project_link_create: 'ProjectLinkPayload'
-    project_link_delete: 'ArchivePayload'
-    project_link_update: 'ProjectLinkPayload'
-    project_milestone_create: 'ProjectMilestonePayload'
-    project_milestone_delete: 'ArchivePayload'
-    project_milestone_update: 'ProjectMilestonePayload'
-    project_unarchive: 'ArchivePayload'
-    project_update: 'ProjectPayload'
-    project_update_create: 'ProjectUpdatePayload'
-    project_update_delete: 'ArchivePayload'
-    project_update_interaction_create: 'ProjectUpdateInteractionPayload'
-    project_update_mark_as_read: 'ProjectUpdateWithInteractionPayload'
-    project_update_update: 'ProjectUpdatePayload'
-    push_subscription_create: 'PushSubscriptionPayload'
-    push_subscription_delete: 'PushSubscriptionPayload'
-    reaction_create: 'ReactionPayload'
-    reaction_delete: 'ArchivePayload'
-    refresh_google_sheets_data: 'IntegrationPayload'
-    resend_organization_invite: 'ArchivePayload'
-    roadmap_archive: 'ArchivePayload'
-    roadmap_create: 'RoadmapPayload'
-    roadmap_delete: 'ArchivePayload'
-    roadmap_to_project_create: 'RoadmapToProjectPayload'
-    roadmap_to_project_delete: 'ArchivePayload'
-    roadmap_to_project_update: 'RoadmapToProjectPayload'
-    roadmap_unarchive: 'ArchivePayload'
-    roadmap_update: 'RoadmapPayload'
-    saml_token_user_account_auth: 'AuthResolverResponse'
-    team_create: 'TeamPayload'
-    team_cycles_delete: 'TeamPayload'
-    team_delete: 'ArchivePayload'
-    team_key_delete: 'ArchivePayload'
-    team_membership_create: 'TeamMembershipPayload'
-    team_membership_delete: 'ArchivePayload'
-    team_membership_update: 'TeamMembershipPayload'
-    team_update: 'TeamPayload'
-    template_create: 'TemplatePayload'
-    template_delete: 'ArchivePayload'
-    template_update: 'TemplatePayload'
-    user_demote_admin: 'UserAdminPayload'
-    user_demote_member: 'UserAdminPayload'
-    user_discord_connect: 'UserPayload'
-    user_external_user_disconnect: 'UserPayload'
-    user_flag_update: 'UserSettingsFlagPayload'
-    user_git_hub_connect: 'UserPayload'
-    user_google_calendar_connect: 'UserPayload'
-    user_promote_admin: 'UserAdminPayload'
-    user_promote_member: 'UserAdminPayload'
-    user_settings_flag_increment: 'UserSettingsFlagPayload'
-    user_settings_flags_reset: 'UserSettingsFlagsResetPayload'
-    user_settings_update: 'UserSettingsPayload'
-    user_suspend: 'UserAdminPayload'
-    user_unsuspend: 'UserAdminPayload'
-    user_update: 'UserPayload'
-    view_preferences_create: 'ViewPreferencesPayload'
-    view_preferences_delete: 'ArchivePayload'
-    view_preferences_update: 'ViewPreferencesPayload'
-    webhook_create: 'WebhookPayload'
-    webhook_delete: 'ArchivePayload'
-    webhook_update: 'WebhookPayload'
-    workflow_state_archive: 'ArchivePayload'
-    workflow_state_create: 'WorkflowStatePayload'
-    workflow_state_update: 'WorkflowStatePayload'
+    airbyte_integration_connect: "IntegrationPayload"
+    api_key_create: "ApiKeyPayload"
+    api_key_delete: "ArchivePayload"
+    attachment_create: "AttachmentPayload"
+    attachment_delete: "ArchivePayload"
+    attachment_link_discord: "AttachmentPayload"
+    attachment_link_front: "FrontAttachmentPayload"
+    attachment_link_intercom: "AttachmentPayload"
+    attachment_link_jira_issue: "AttachmentPayload"
+    attachment_link_url: "AttachmentPayload"
+    attachment_link_zendesk: "AttachmentPayload"
+    attachment_update: "AttachmentPayload"
+    comment_create: "CommentPayload"
+    comment_delete: "ArchivePayload"
+    comment_update: "CommentPayload"
+    contact_create: "ContactPayload"
+    contact_sales_create: "ContactPayload"
+    create_csv_export_report: "CreateCsvExportReportPayload"
+    create_organization_from_onboarding: "CreateOrJoinOrganizationResponse"
+    custom_view_create: "CustomViewPayload"
+    custom_view_delete: "ArchivePayload"
+    custom_view_update: "CustomViewPayload"
+    cycle_archive: "ArchivePayload"
+    cycle_create: "CyclePayload"
+    cycle_update: "CyclePayload"
+    document_create: "DocumentPayload"
+    document_delete: "ArchivePayload"
+    document_update: "DocumentPayload"
+    email_subscribe: "EmailSubscribePayload"
+    email_token_user_account_auth: "AuthResolverResponse"
+    email_unsubscribe: "EmailUnsubscribePayload"
+    email_user_account_auth_challenge: "EmailUserAccountAuthChallengeResponse"
+    emoji_create: "EmojiPayload"
+    emoji_delete: "ArchivePayload"
+    event_create: "EventPayload"
+    favorite_create: "FavoritePayload"
+    favorite_delete: "ArchivePayload"
+    favorite_update: "FavoritePayload"
+    file_upload: "UploadPayload"
+    google_user_account_auth: "AuthResolverResponse"
+    image_upload_from_url: "ImageUploadFromUrlPayload"
+    integration_delete: "ArchivePayload"
+    integration_discord: "IntegrationPayload"
+    integration_figma: "IntegrationPayload"
+    integration_front: "IntegrationPayload"
+    integration_github_commit_create: "GitHubCommitIntegrationPayload"
+    integration_github_connect: "IntegrationPayload"
+    integration_gitlab_connect: "IntegrationPayload"
+    integration_google_sheets: "IntegrationPayload"
+    integration_intercom: "IntegrationPayload"
+    integration_intercom_delete: "IntegrationPayload"
+    integration_request: "IntegrationRequestPayload"
+    integration_sentry_connect: "IntegrationPayload"
+    integration_settings_update: "IntegrationPayload"
+    integration_slack: "IntegrationPayload"
+    integration_slack_import_emojis: "IntegrationPayload"
+    integration_slack_intake: "IntegrationPayload"
+    integration_slack_org_project_updates_post: "IntegrationPayload"
+    integration_slack_personal: "IntegrationPayload"
+    integration_slack_post: "IntegrationPayload"
+    integration_slack_project_post: "IntegrationPayload"
+    integration_template_create: "IntegrationTemplatePayload"
+    integration_template_delete: "ArchivePayload"
+    integration_zendesk: "IntegrationPayload"
+    integrations_settings_create: "IntegrationsSettingsPayload"
+    integrations_settings_update: "IntegrationsSettingsPayload"
+    issue_archive: "ArchivePayload"
+    issue_batch_update: "IssueBatchPayload"
+    issue_create: "IssuePayload"
+    issue_delete: "ArchivePayload"
+    issue_description_update_from_front: "IssuePayload"
+    issue_import_create_asana: "IssueImportPayload"
+    issue_import_create_clubhouse: "IssueImportPayload"
+    issue_import_create_github: "IssueImportPayload"
+    issue_import_create_jira: "IssueImportPayload"
+    issue_import_delete: "IssueImportDeletePayload"
+    issue_import_process: "IssueImportPayload"
+    issue_import_update: "IssueImportPayload"
+    issue_label_create: "IssueLabelPayload"
+    issue_label_delete: "ArchivePayload"
+    issue_label_update: "IssueLabelPayload"
+    issue_relation_create: "IssueRelationPayload"
+    issue_relation_delete: "ArchivePayload"
+    issue_relation_update: "IssueRelationPayload"
+    issue_reminder: "IssuePayload"
+    issue_unarchive: "ArchivePayload"
+    issue_update: "IssuePayload"
+    jira_integration_connect: "IntegrationPayload"
+    join_organization_from_onboarding: "CreateOrJoinOrganizationResponse"
+    leave_organization: "CreateOrJoinOrganizationResponse"
+    logout: "LogoutResponse"
+    notification_archive: "ArchivePayload"
+    notification_subscription_create: "NotificationSubscriptionPayload"
+    notification_subscription_delete: "ArchivePayload"
+    notification_subscription_update: "NotificationSubscriptionPayload"
+    notification_unarchive: "ArchivePayload"
+    notification_update: "NotificationPayload"
+    organization_cancel_delete: "OrganizationCancelDeletePayload"
+    organization_delete: "OrganizationDeletePayload"
+    organization_delete_challenge: "OrganizationDeletePayload"
+    organization_domain_claim: "OrganizationDomainSimplePayload"
+    organization_domain_create: "OrganizationDomainPayload"
+    organization_domain_delete: "ArchivePayload"
+    organization_domain_verify: "OrganizationDomainPayload"
+    organization_invite_create: "OrganizationInvitePayload"
+    organization_invite_delete: "ArchivePayload"
+    organization_invite_update: "OrganizationInvitePayload"
+    organization_start_plus_trial: "OrganizationStartPlusTrialPayload"
+    organization_update: "OrganizationPayload"
+    project_create: "ProjectPayload"
+    project_delete: "ArchivePayload"
+    project_link_create: "ProjectLinkPayload"
+    project_link_delete: "ArchivePayload"
+    project_link_update: "ProjectLinkPayload"
+    project_milestone_create: "ProjectMilestonePayload"
+    project_milestone_delete: "ArchivePayload"
+    project_milestone_update: "ProjectMilestonePayload"
+    project_unarchive: "ArchivePayload"
+    project_update: "ProjectPayload"
+    project_update_create: "ProjectUpdatePayload"
+    project_update_delete: "ArchivePayload"
+    project_update_interaction_create: "ProjectUpdateInteractionPayload"
+    project_update_mark_as_read: "ProjectUpdateWithInteractionPayload"
+    project_update_update: "ProjectUpdatePayload"
+    push_subscription_create: "PushSubscriptionPayload"
+    push_subscription_delete: "PushSubscriptionPayload"
+    reaction_create: "ReactionPayload"
+    reaction_delete: "ArchivePayload"
+    refresh_google_sheets_data: "IntegrationPayload"
+    resend_organization_invite: "ArchivePayload"
+    roadmap_archive: "ArchivePayload"
+    roadmap_create: "RoadmapPayload"
+    roadmap_delete: "ArchivePayload"
+    roadmap_to_project_create: "RoadmapToProjectPayload"
+    roadmap_to_project_delete: "ArchivePayload"
+    roadmap_to_project_update: "RoadmapToProjectPayload"
+    roadmap_unarchive: "ArchivePayload"
+    roadmap_update: "RoadmapPayload"
+    saml_token_user_account_auth: "AuthResolverResponse"
+    team_create: "TeamPayload"
+    team_cycles_delete: "TeamPayload"
+    team_delete: "ArchivePayload"
+    team_key_delete: "ArchivePayload"
+    team_membership_create: "TeamMembershipPayload"
+    team_membership_delete: "ArchivePayload"
+    team_membership_update: "TeamMembershipPayload"
+    team_update: "TeamPayload"
+    template_create: "TemplatePayload"
+    template_delete: "ArchivePayload"
+    template_update: "TemplatePayload"
+    user_demote_admin: "UserAdminPayload"
+    user_demote_member: "UserAdminPayload"
+    user_discord_connect: "UserPayload"
+    user_external_user_disconnect: "UserPayload"
+    user_flag_update: "UserSettingsFlagPayload"
+    user_git_hub_connect: "UserPayload"
+    user_google_calendar_connect: "UserPayload"
+    user_promote_admin: "UserAdminPayload"
+    user_promote_member: "UserAdminPayload"
+    user_settings_flag_increment: "UserSettingsFlagPayload"
+    user_settings_flags_reset: "UserSettingsFlagsResetPayload"
+    user_settings_update: "UserSettingsPayload"
+    user_suspend: "UserAdminPayload"
+    user_unsuspend: "UserAdminPayload"
+    user_update: "UserPayload"
+    view_preferences_create: "ViewPreferencesPayload"
+    view_preferences_delete: "ArchivePayload"
+    view_preferences_update: "ViewPreferencesPayload"
+    webhook_create: "WebhookPayload"
+    webhook_delete: "ArchivePayload"
+    webhook_update: "WebhookPayload"
+    workflow_state_archive: "ArchivePayload"
+    workflow_state_create: "WorkflowStatePayload"
+    workflow_state_update: "WorkflowStatePayload"
 
 
 class NotificationConnection(BaseModel):
-    edges: List['NotificationEdge']
-    nodes: List['Notification']
-    page_info: 'PageInfo'
+    edges: List["NotificationEdge"]
+    nodes: List["Notification"]
+    page_info: "PageInfo"
 
 
 class NotificationEdge(BaseModel):
     cursor: str
-    node: 'Notification'
+    node: "Notification"
 
 
 class NotificationPayload(BaseModel):
     last_sync_id: float
-    notification: 'Notification'
+    notification: "Notification"
     success: bool
 
 
 class NotificationSubscriptionConnection(BaseModel):
-    edges: List['NotificationSubscriptionEdge']
-    nodes: List['NotificationSubscription']
-    page_info: 'PageInfo'
+    edges: List["NotificationSubscriptionEdge"]
+    nodes: List["NotificationSubscription"]
+    page_info: "PageInfo"
 
 
 class NotificationSubscriptionCreateInput(BaseModel):
     id: Optional[str]
     project_id: Optional[str]
-    project_notification_subscription_type: Optional['ProjectNotificationSubscriptionType']
+    project_notification_subscription_type: Optional[
+        "ProjectNotificationSubscriptionType"
+    ]
     team_id: Optional[str]
     team_notification_subscription_types: Optional[List[str]]
 
 
 class NotificationSubscriptionEdge(BaseModel):
     cursor: str
-    node: 'NotificationSubscription'
+    node: "NotificationSubscription"
 
 
 class NotificationSubscriptionPayload(BaseModel):
     last_sync_id: float
-    notification_subscription: 'NotificationSubscription'
+    notification_subscription: "NotificationSubscription"
     success: bool
 
 
 class NotificationSubscriptionUpdateInput(BaseModel):
-    project_notification_subscription_type: Optional['ProjectNotificationSubscriptionType']
+    project_notification_subscription_type: Optional[
+        "ProjectNotificationSubscriptionType"
+    ]
     team_notification_subscription_types: Optional[List[str]]
 
 
@@ -1874,24 +1881,24 @@ class NotionSettingsInput(BaseModel):
 
 
 class NullableCycleFilter(BaseModel):
-    and_: Optional[List['NullableCycleFilter']]
-    completed_at: Optional['DateComparator']
-    created_at: Optional['DateComparator']
-    ends_at: Optional['DateComparator']
-    id: Optional['IDComparator']
-    is_active: Optional['BooleanComparator']
-    is_future: Optional['BooleanComparator']
-    is_next: Optional['BooleanComparator']
-    is_past: Optional['BooleanComparator']
-    is_previous: Optional['BooleanComparator']
-    issues: Optional['IssueCollectionFilter']
-    name: Optional['StringComparator']
+    and_: Optional[List["NullableCycleFilter"]]
+    completed_at: Optional["DateComparator"]
+    created_at: Optional["DateComparator"]
+    ends_at: Optional["DateComparator"]
+    id: Optional["IDComparator"]
+    is_active: Optional["BooleanComparator"]
+    is_future: Optional["BooleanComparator"]
+    is_next: Optional["BooleanComparator"]
+    is_past: Optional["BooleanComparator"]
+    is_previous: Optional["BooleanComparator"]
+    issues: Optional["IssueCollectionFilter"]
+    name: Optional["StringComparator"]
     null: Optional[bool]
-    number: Optional['NumberComparator']
-    or_: Optional[List['NullableCycleFilter']]
-    starts_at: Optional['DateComparator']
-    team: Optional['TeamFilter']
-    updated_at: Optional['DateComparator']
+    number: Optional["NumberComparator"]
+    or_: Optional[List["NullableCycleFilter"]]
+    starts_at: Optional["DateComparator"]
+    team: Optional["TeamFilter"]
+    updated_at: Optional["DateComparator"]
 
 
 class NullableDateComparator(BaseModel):
@@ -1907,45 +1914,45 @@ class NullableDateComparator(BaseModel):
 
 
 class NullableIssueFilter(BaseModel):
-    and_: Optional[List['NullableIssueFilter']]
-    assignee: Optional['NullableUserFilter']
-    attachments: Optional['AttachmentCollectionFilter']
-    auto_archived_at: Optional['NullableDateComparator']
-    auto_closed_at: Optional['NullableDateComparator']
-    canceled_at: Optional['NullableDateComparator']
-    children: Optional['IssueCollectionFilter']
-    comments: Optional['CommentCollectionFilter']
-    completed_at: Optional['NullableDateComparator']
-    created_at: Optional['DateComparator']
-    creator: Optional['NullableUserFilter']
-    cycle: Optional['NullableCycleFilter']
-    description: Optional['NullableStringComparator']
-    due_date: Optional['NullableTimelessDateComparator']
-    estimate: Optional['EstimateComparator']
-    has_blocked_by_relations: Optional['RelationExistsComparator']
-    has_blocking_relations: Optional['RelationExistsComparator']
-    has_duplicate_relations: Optional['RelationExistsComparator']
-    has_related_relations: Optional['RelationExistsComparator']
-    id: Optional['IDComparator']
-    labels: Optional['IssueLabelCollectionFilter']
+    and_: Optional[List["NullableIssueFilter"]]
+    assignee: Optional["NullableUserFilter"]
+    attachments: Optional["AttachmentCollectionFilter"]
+    auto_archived_at: Optional["NullableDateComparator"]
+    auto_closed_at: Optional["NullableDateComparator"]
+    canceled_at: Optional["NullableDateComparator"]
+    children: Optional["IssueCollectionFilter"]
+    comments: Optional["CommentCollectionFilter"]
+    completed_at: Optional["NullableDateComparator"]
+    created_at: Optional["DateComparator"]
+    creator: Optional["NullableUserFilter"]
+    cycle: Optional["NullableCycleFilter"]
+    description: Optional["NullableStringComparator"]
+    due_date: Optional["NullableTimelessDateComparator"]
+    estimate: Optional["EstimateComparator"]
+    has_blocked_by_relations: Optional["RelationExistsComparator"]
+    has_blocking_relations: Optional["RelationExistsComparator"]
+    has_duplicate_relations: Optional["RelationExistsComparator"]
+    has_related_relations: Optional["RelationExistsComparator"]
+    id: Optional["IDComparator"]
+    labels: Optional["IssueLabelCollectionFilter"]
     null: Optional[bool]
-    number: Optional['NumberComparator']
-    or_: Optional[List['NullableIssueFilter']]
-    parent: Optional['NullableIssueFilter']
-    priority: Optional['NullableNumberComparator']
-    project: Optional['NullableProjectFilter']
-    project_milestone: Optional['NullableProjectMilestoneFilter']
-    searchable_content: Optional['ContentComparator']
-    sla_status: Optional['SlaStatusComparator']
-    snoozed_by: Optional['NullableUserFilter']
-    snoozed_until_at: Optional['NullableDateComparator']
-    started_at: Optional['NullableDateComparator']
-    state: Optional['WorkflowStateFilter']
-    subscribers: Optional['UserCollectionFilter']
-    team: Optional['TeamFilter']
-    title: Optional['StringComparator']
-    triaged_at: Optional['NullableDateComparator']
-    updated_at: Optional['DateComparator']
+    number: Optional["NumberComparator"]
+    or_: Optional[List["NullableIssueFilter"]]
+    parent: Optional["NullableIssueFilter"]
+    priority: Optional["NullableNumberComparator"]
+    project: Optional["NullableProjectFilter"]
+    project_milestone: Optional["NullableProjectMilestoneFilter"]
+    searchable_content: Optional["ContentComparator"]
+    sla_status: Optional["SlaStatusComparator"]
+    snoozed_by: Optional["NullableUserFilter"]
+    snoozed_until_at: Optional["NullableDateComparator"]
+    started_at: Optional["NullableDateComparator"]
+    state: Optional["WorkflowStateFilter"]
+    subscribers: Optional["UserCollectionFilter"]
+    team: Optional["TeamFilter"]
+    title: Optional["StringComparator"]
+    triaged_at: Optional["NullableDateComparator"]
+    updated_at: Optional["DateComparator"]
 
 
 class NullableNumberComparator(BaseModel):
@@ -1961,31 +1968,31 @@ class NullableNumberComparator(BaseModel):
 
 
 class NullableProjectFilter(BaseModel):
-    and_: Optional[List['NullableProjectFilter']]
-    created_at: Optional['DateComparator']
-    creator: Optional['UserFilter']
-    id: Optional['IDComparator']
-    issues: Optional['IssueCollectionFilter']
-    lead: Optional['NullableUserFilter']
-    members: Optional['UserFilter']
-    name: Optional['StringComparator']
+    and_: Optional[List["NullableProjectFilter"]]
+    created_at: Optional["DateComparator"]
+    creator: Optional["UserFilter"]
+    id: Optional["IDComparator"]
+    issues: Optional["IssueCollectionFilter"]
+    lead: Optional["NullableUserFilter"]
+    members: Optional["UserFilter"]
+    name: Optional["StringComparator"]
     null: Optional[bool]
-    or_: Optional[List['NullableProjectFilter']]
-    roadmaps: Optional['RoadmapCollectionFilter']
-    slug_id: Optional['StringComparator']
-    start_date: Optional['NullableDateComparator']
-    state: Optional['StringComparator']
-    target_date: Optional['NullableDateComparator']
-    updated_at: Optional['DateComparator']
+    or_: Optional[List["NullableProjectFilter"]]
+    roadmaps: Optional["RoadmapCollectionFilter"]
+    slug_id: Optional["StringComparator"]
+    start_date: Optional["NullableDateComparator"]
+    state: Optional["StringComparator"]
+    target_date: Optional["NullableDateComparator"]
+    updated_at: Optional["DateComparator"]
 
 
 class NullableProjectMilestoneFilter(BaseModel):
-    and_: Optional[List['NullableProjectMilestoneFilter']]
-    created_at: Optional['DateComparator']
-    id: Optional['IDComparator']
+    and_: Optional[List["NullableProjectMilestoneFilter"]]
+    created_at: Optional["DateComparator"]
+    id: Optional["IDComparator"]
     null: Optional[bool]
-    or_: Optional[List['NullableProjectMilestoneFilter']]
-    updated_at: Optional['DateComparator']
+    or_: Optional[List["NullableProjectMilestoneFilter"]]
+    updated_at: Optional["DateComparator"]
 
 
 class NullableStringComparator(BaseModel):
@@ -2019,19 +2026,19 @@ class NullableTimelessDateComparator(BaseModel):
 
 
 class NullableUserFilter(BaseModel):
-    active: Optional['BooleanComparator']
-    admin: Optional['BooleanComparator']
-    and_: Optional[List['NullableUserFilter']]
-    assigned_issues: Optional['IssueCollectionFilter']
-    created_at: Optional['DateComparator']
-    display_name: Optional['StringComparator']
-    email: Optional['StringComparator']
-    id: Optional['IDComparator']
-    is_me: Optional['BooleanComparator']
-    name: Optional['StringComparator']
+    active: Optional["BooleanComparator"]
+    admin: Optional["BooleanComparator"]
+    and_: Optional[List["NullableUserFilter"]]
+    assigned_issues: Optional["IssueCollectionFilter"]
+    created_at: Optional["DateComparator"]
+    display_name: Optional["StringComparator"]
+    email: Optional["StringComparator"]
+    id: Optional["IDComparator"]
+    is_me: Optional["BooleanComparator"]
+    name: Optional["StringComparator"]
     null: Optional[bool]
-    or_: Optional[List['NullableUserFilter']]
-    updated_at: Optional['DateComparator']
+    or_: Optional[List["NullableUserFilter"]]
+    updated_at: Optional["DateComparator"]
 
 
 class NumberComparator(BaseModel):
@@ -2046,9 +2053,9 @@ class NumberComparator(BaseModel):
 
 
 class OAuthClientApprovalStatus(str, Enum):
-    approved = 'approved'
-    denied = 'denied'
-    requested = 'requested'
+    approved = "approved"
+    denied = "denied"
+    requested = "requested"
 
 
 class OauthClient(BaseModel):
@@ -2056,14 +2063,14 @@ class OauthClient(BaseModel):
     client_id: str
     client_secret: str
     created_at: Any
-    creator: 'User'
+    creator: "User"
     description: Optional[str]
     developer: str
     developer_url: str
     id: str
     image_url: Optional[str]
     name: str
-    organization: 'Organization'
+    organization: "Organization"
     public_enabled: bool
     redirect_uris: List[str]
     updated_at: Any
@@ -2082,34 +2089,34 @@ class OauthClientApproval(BaseModel):
     requester_id: str
     responder_id: Optional[str]
     scopes: List[str]
-    status: 'OAuthClientApprovalStatus'
+    status: "OAuthClientApprovalStatus"
     updated_at: Any
 
 
 class OauthClientApprovalNotification(Entity, Node, Notification):
-    actor: Optional['User']
+    actor: Optional["User"]
     archived_at: Any
     created_at: Any
     emailed_at: Any
     id: str
-    oauth_client_approval: 'OauthClientApproval'
+    oauth_client_approval: "OauthClientApproval"
     read_at: Any
     snoozed_until_at: Any
     type: str
     unsnoozed_at: Any
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class OauthClientConnection(BaseModel):
-    edges: List['OauthClientEdge']
-    nodes: List['OauthClient']
-    page_info: 'PageInfo'
+    edges: List["OauthClientEdge"]
+    nodes: List["OauthClient"]
+    page_info: "PageInfo"
 
 
 class OauthClientEdge(BaseModel):
     cursor: str
-    node: 'OauthClient'
+    node: "OauthClient"
 
 
 class OnboardingCustomerSurvey(BaseModel):
@@ -2127,27 +2134,27 @@ class Organization(BaseModel):
     git_linkback_messages_enabled: bool
     git_public_linkback_messages_enabled: bool
     id: str
-    integrations: 'IntegrationConnection'
-    labels: 'IssueLabelConnection'
+    integrations: "IntegrationConnection"
+    labels: "IssueLabelConnection"
     logo_url: Optional[str]
     name: str
     period_upload_volume: float
     previous_url_keys: List[str]
-    project_update_reminders_day: 'Day'
+    project_update_reminders_day: "Day"
     project_update_reminders_hour: float
-    project_updates_reminder_frequency: 'ProjectUpdateReminderFrequency'
-    release_channel: 'ReleaseChannel'
+    project_updates_reminder_frequency: "ProjectUpdateReminderFrequency"
+    release_channel: "ReleaseChannel"
     roadmap_enabled: bool
     saml_enabled: bool
     scim_enabled: bool
-    subscription: Optional['PaidSubscription']
-    teams: 'TeamConnection'
-    templates: 'TemplateConnection'
+    subscription: Optional["PaidSubscription"]
+    teams: "TeamConnection"
+    templates: "TemplateConnection"
     trial_ends_at: Any
     updated_at: Any
     url_key: str
     user_count: int
-    users: 'UserConnection'
+    users: "UserConnection"
 
 
 class OrganizationCancelDeletePayload(BaseModel):
@@ -2160,10 +2167,10 @@ class OrganizationDeletePayload(BaseModel):
 
 class OrganizationDomain(BaseModel):
     archived_at: Any
-    auth_type: 'OrganizationDomainAuthType'
+    auth_type: "OrganizationDomainAuthType"
     claimed: Optional[bool]
     created_at: Any
-    creator: Optional['User']
+    creator: Optional["User"]
     id: str
     name: str
     updated_at: Any
@@ -2172,8 +2179,8 @@ class OrganizationDomain(BaseModel):
 
 
 class OrganizationDomainAuthType(str, Enum):
-    general = 'general'
-    saml = 'saml'
+    general = "general"
+    saml = "saml"
 
 
 class OrganizationDomainClaimPayload(BaseModel):
@@ -2189,7 +2196,7 @@ class OrganizationDomainCreateInput(BaseModel):
 
 class OrganizationDomainPayload(BaseModel):
     last_sync_id: float
-    organization_domain: 'OrganizationDomain'
+    organization_domain: "OrganizationDomain"
     success: bool
 
 
@@ -2215,24 +2222,24 @@ class OrganizationInvite(BaseModel):
     expires_at: Any
     external: bool
     id: str
-    invitee: Optional['User']
-    inviter: 'User'
-    organization: 'Organization'
-    role: 'UserRoleType'
+    invitee: Optional["User"]
+    inviter: "User"
+    organization: "Organization"
+    role: "UserRoleType"
     updated_at: Any
 
 
 class OrganizationInviteConnection(BaseModel):
-    edges: List['OrganizationInviteEdge']
-    nodes: List['OrganizationInvite']
-    page_info: 'PageInfo'
+    edges: List["OrganizationInviteEdge"]
+    nodes: List["OrganizationInvite"]
+    page_info: "PageInfo"
 
 
 class OrganizationInviteCreateInput(BaseModel):
     email: str
     id: Optional[str]
     message: Optional[str]
-    role: Optional['UserRoleType']
+    role: Optional["UserRoleType"]
     team_ids: Optional[List[str]]
 
 
@@ -2245,17 +2252,17 @@ class OrganizationInviteDetailsPayload(BaseModel):
     organization_id: str
     organization_logo_url: Optional[str]
     organization_name: str
-    role: 'UserRoleType'
+    role: "UserRoleType"
 
 
 class OrganizationInviteEdge(BaseModel):
     cursor: str
-    node: 'OrganizationInvite'
+    node: "OrganizationInvite"
 
 
 class OrganizationInvitePayload(BaseModel):
     last_sync_id: float
-    organization_invite: 'OrganizationInvite'
+    organization_invite: "OrganizationInvite"
     success: bool
 
 
@@ -2265,7 +2272,7 @@ class OrganizationInviteUpdateInput(BaseModel):
 
 class OrganizationPayload(BaseModel):
     last_sync_id: float
-    organization: Optional['Organization']
+    organization: Optional["Organization"]
     success: bool
 
 
@@ -2273,20 +2280,19 @@ class OrganizationStartPlusTrialPayload(BaseModel):
     success: bool
 
 
-
 class PaginationOrderBy(str, Enum):
-    createdAt = 'createdAt'
-    updatedAt = 'updatedAt'
+    createdAt = "createdAt"
+    updatedAt = "updatedAt"
 
 
 class PaidSubscription(BaseModel):
     archived_at: Any
     canceled_at: Any
     created_at: Any
-    creator: Optional['User']
+    creator: Optional["User"]
     id: str
     next_billing_at: Any
-    organization: 'Organization'
+    organization: "Organization"
     pending_change_type: Optional[str]
     seats: float
     seats_maximum: Optional[float]
@@ -2301,34 +2307,34 @@ class PersonalNote(BaseModel):
     created_at: Any
     id: str
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class ProjectCollectionFilter(BaseModel):
-    and_: Optional[List['ProjectCollectionFilter']]
-    created_at: Optional['DateComparator']
-    creator: Optional['UserFilter']
-    every: Optional['ProjectFilter']
-    id: Optional['IDComparator']
-    issues: Optional['IssueCollectionFilter']
-    lead: Optional['NullableUserFilter']
-    length: Optional['NumberComparator']
-    members: Optional['UserFilter']
-    name: Optional['StringComparator']
-    or_: Optional[List['ProjectCollectionFilter']]
-    roadmaps: Optional['RoadmapCollectionFilter']
-    slug_id: Optional['StringComparator']
-    some: Optional['ProjectFilter']
-    start_date: Optional['NullableDateComparator']
-    state: Optional['StringComparator']
-    target_date: Optional['NullableDateComparator']
-    updated_at: Optional['DateComparator']
+    and_: Optional[List["ProjectCollectionFilter"]]
+    created_at: Optional["DateComparator"]
+    creator: Optional["UserFilter"]
+    every: Optional["ProjectFilter"]
+    id: Optional["IDComparator"]
+    issues: Optional["IssueCollectionFilter"]
+    lead: Optional["NullableUserFilter"]
+    length: Optional["NumberComparator"]
+    members: Optional["UserFilter"]
+    name: Optional["StringComparator"]
+    or_: Optional[List["ProjectCollectionFilter"]]
+    roadmaps: Optional["RoadmapCollectionFilter"]
+    slug_id: Optional["StringComparator"]
+    some: Optional["ProjectFilter"]
+    start_date: Optional["NullableDateComparator"]
+    state: Optional["StringComparator"]
+    target_date: Optional["NullableDateComparator"]
+    updated_at: Optional["DateComparator"]
 
 
 class ProjectConnection(BaseModel):
-    edges: List['ProjectEdge']
-    nodes: List['Project']
-    page_info: 'PageInfo'
+    edges: List["ProjectEdge"]
+    nodes: List["Project"]
+    page_info: "PageInfo"
 
 
 class ProjectCreateInput(BaseModel):
@@ -2349,42 +2355,42 @@ class ProjectCreateInput(BaseModel):
 
 class ProjectEdge(BaseModel):
     cursor: str
-    node: 'Project'
+    node: "Project"
 
 
 class ProjectFilter(BaseModel):
-    and_: Optional[List['ProjectFilter']]
-    created_at: Optional['DateComparator']
-    creator: Optional['UserFilter']
-    id: Optional['IDComparator']
-    issues: Optional['IssueCollectionFilter']
-    lead: Optional['NullableUserFilter']
-    members: Optional['UserFilter']
-    name: Optional['StringComparator']
-    or_: Optional[List['ProjectFilter']]
-    roadmaps: Optional['RoadmapCollectionFilter']
-    slug_id: Optional['StringComparator']
-    start_date: Optional['NullableDateComparator']
-    state: Optional['StringComparator']
-    target_date: Optional['NullableDateComparator']
-    updated_at: Optional['DateComparator']
+    and_: Optional[List["ProjectFilter"]]
+    created_at: Optional["DateComparator"]
+    creator: Optional["UserFilter"]
+    id: Optional["IDComparator"]
+    issues: Optional["IssueCollectionFilter"]
+    lead: Optional["NullableUserFilter"]
+    members: Optional["UserFilter"]
+    name: Optional["StringComparator"]
+    or_: Optional[List["ProjectFilter"]]
+    roadmaps: Optional["RoadmapCollectionFilter"]
+    slug_id: Optional["StringComparator"]
+    start_date: Optional["NullableDateComparator"]
+    state: Optional["StringComparator"]
+    target_date: Optional["NullableDateComparator"]
+    updated_at: Optional["DateComparator"]
 
 
 class ProjectLink(BaseModel):
     archived_at: Any
     created_at: Any
-    creator: 'User'
+    creator: "User"
     id: str
     label: str
-    project: 'Project'
+    project: "Project"
     updated_at: Any
     url: str
 
 
 class ProjectLinkConnection(BaseModel):
-    edges: List['ProjectLinkEdge']
-    nodes: List['ProjectLink']
-    page_info: 'PageInfo'
+    edges: List["ProjectLinkEdge"]
+    nodes: List["ProjectLink"]
+    page_info: "PageInfo"
 
 
 class ProjectLinkCreateInput(BaseModel):
@@ -2396,12 +2402,12 @@ class ProjectLinkCreateInput(BaseModel):
 
 class ProjectLinkEdge(BaseModel):
     cursor: str
-    node: 'ProjectLink'
+    node: "ProjectLink"
 
 
 class ProjectLinkPayload(BaseModel):
     last_sync_id: float
-    project_link: 'ProjectLink'
+    project_link: "ProjectLink"
     success: bool
 
 
@@ -2416,16 +2422,16 @@ class ProjectMilestone(BaseModel):
     description: Optional[str]
     id: str
     name: str
-    project: 'Project'
+    project: "Project"
     sort_order: float
     target_date: Any
     updated_at: Any
 
 
 class ProjectMilestoneConnection(BaseModel):
-    edges: List['ProjectMilestoneEdge']
-    nodes: List['ProjectMilestone']
-    page_info: 'PageInfo'
+    edges: List["ProjectMilestoneEdge"]
+    nodes: List["ProjectMilestone"]
+    page_info: "PageInfo"
 
 
 class ProjectMilestoneCreateInput(BaseModel):
@@ -2439,12 +2445,12 @@ class ProjectMilestoneCreateInput(BaseModel):
 
 class ProjectMilestoneEdge(BaseModel):
     cursor: str
-    node: 'ProjectMilestone'
+    node: "ProjectMilestone"
 
 
 class ProjectMilestonePayload(BaseModel):
     last_sync_id: float
-    project_milestone: 'ProjectMilestone'
+    project_milestone: "ProjectMilestone"
     success: bool
 
 
@@ -2457,19 +2463,19 @@ class ProjectMilestoneUpdateInput(BaseModel):
 
 
 class ProjectNotification(Entity, Node, Notification):
-    actor: Optional['User']
+    actor: Optional["User"]
     archived_at: Any
     created_at: Any
     emailed_at: Any
     id: str
-    project: 'Project'
-    project_update: Optional['ProjectUpdate']
+    project: "Project"
+    project_update: Optional["ProjectUpdate"]
     read_at: Any
     snoozed_until_at: Any
     type: str
     unsnoozed_at: Any
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class Project(BaseModel):
@@ -2480,25 +2486,25 @@ class Project(BaseModel):
     completed_at: Any
     completed_issue_count_history: List[float]
     completed_scope_history: List[float]
-    converted_from_issue: Optional['Issue']
+    converted_from_issue: Optional["Issue"]
     created_at: Any
-    creator: 'User'
+    creator: "User"
     description: str
-    documents: 'DocumentConnection'
+    documents: "DocumentConnection"
     icon: Optional[str]
     id: str
     in_progress_scope_history: List[float]
-    integrations_settings: Optional['IntegrationsSettings']
+    integrations_settings: Optional["IntegrationsSettings"]
     issue_count_history: List[float]
-    issues: 'IssueConnection'
-    lead: Optional['User']
-    links: 'ProjectLinkConnection'
-    members: 'UserConnection'
+    issues: "IssueConnection"
+    lead: Optional["User"]
+    links: "ProjectLinkConnection"
+    members: "UserConnection"
     name: str
     progress: float
-    project_milestones: 'ProjectMilestoneConnection'
+    project_milestones: "ProjectMilestoneConnection"
     project_update_reminders_paused_until_at: Any
-    project_updates: 'ProjectUpdateConnection'
+    project_updates: "ProjectUpdateConnection"
     scope: float
     scope_history: List[float]
     slack_issue_comments: bool
@@ -2510,13 +2516,13 @@ class Project(BaseModel):
     started_at: Any
     state: str
     target_date: Any
-    teams: 'TeamConnection'
+    teams: "TeamConnection"
     updated_at: Any
     url: str
 
 
 class Team(BaseModel):
-    active_cycle: Optional['Cycle']
+    active_cycle: Optional["Cycle"]
     archived_at: Any
     auto_archive_period: float
     auto_close_period: Optional[float]
@@ -2530,83 +2536,83 @@ class Team(BaseModel):
     cycle_issue_auto_assign_started: bool
     cycle_lock_to_active: bool
     cycle_start_day: float
-    cycles: 'CycleConnection'
+    cycles: "CycleConnection"
     cycles_enabled: bool
     default_issue_estimate: float
-    default_issue_state: Optional['WorkflowState']
-    default_template_for_members: Optional['Template']
-    default_template_for_non_members: Optional['Template']
+    default_issue_state: Optional["WorkflowState"]
+    default_template_for_members: Optional["Template"]
+    default_template_for_non_members: Optional["Template"]
     description: Optional[str]
-    draft_workflow_state: Optional['WorkflowState']
+    draft_workflow_state: Optional["WorkflowState"]
     group_issue_history: bool
     icon: Optional[str]
     id: str
-    integrations_settings: Optional['IntegrationsSettings']
+    integrations_settings: Optional["IntegrationsSettings"]
     invite_hash: str
     issue_estimation_allow_zero: bool
     issue_estimation_extended: bool
     issue_estimation_type: str
     issue_ordering_no_priority_first: bool
     issue_sort_order_default_to_bottom: bool
-    issues: 'IssueConnection'
+    issues: "IssueConnection"
     key: str
-    labels: 'IssueLabelConnection'
-    marked_as_duplicate_workflow_state: Optional['WorkflowState']
-    members: 'UserConnection'
-    memberships: 'TeamMembershipConnection'
-    merge_workflow_state: Optional['WorkflowState']
+    labels: "IssueLabelConnection"
+    marked_as_duplicate_workflow_state: Optional["WorkflowState"]
+    members: "UserConnection"
+    memberships: "TeamMembershipConnection"
+    merge_workflow_state: Optional["WorkflowState"]
     name: str
-    organization: 'Organization'
+    organization: "Organization"
     private: bool
-    projects: 'ProjectConnection'
+    projects: "ProjectConnection"
     require_priority_to_leave_triage: bool
-    review_workflow_state: Optional['WorkflowState']
+    review_workflow_state: Optional["WorkflowState"]
     slack_issue_comments: bool
     slack_issue_statuses: bool
     slack_new_issue: bool
-    start_workflow_state: Optional['WorkflowState']
-    states: 'WorkflowStateConnection'
-    templates: 'TemplateConnection'
+    start_workflow_state: Optional["WorkflowState"]
+    states: "WorkflowStateConnection"
+    templates: "TemplateConnection"
     timezone: str
     triage_enabled: bool
-    triage_issue_state: Optional['WorkflowState']
+    triage_issue_state: Optional["WorkflowState"]
     upcoming_cycle_count: float
     updated_at: Any
-    webhooks: 'WebhookConnection'
+    webhooks: "WebhookConnection"
 
 
 class NotificationSubscription(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
-    project: Optional['Project']
-    team: Optional['Team']
+    project: Optional["Project"]
+    team: Optional["Team"]
     type: str
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class ProjectNotificationSubscription(Entity, Node, NotificationSubscription):
     archived_at: Any
     created_at: Any
     id: str
-    project: 'Project'
-    project_notification_subscription_type: 'ProjectNotificationSubscriptionType'
-    team: Optional['Team']
+    project: "Project"
+    project_notification_subscription_type: "ProjectNotificationSubscriptionType"
+    team: Optional["Team"]
     type: str
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class ProjectNotificationSubscriptionType(str, Enum):
-    all = 'all'
-    custom = 'custom'
-    importantOnly = 'importantOnly'
+    all = "all"
+    custom = "custom"
+    importantOnly = "importantOnly"
 
 
 class ProjectPayload(BaseModel):
     last_sync_id: float
-    project: Optional['Project']
+    project: Optional["Project"]
     success: bool
 
 
@@ -2615,37 +2621,37 @@ class ProjectUpdate(BaseModel):
     body: str
     created_at: Any
     edited_at: Any
-    health: 'ProjectUpdateHealthType'
+    health: "ProjectUpdateHealthType"
     id: str
-    project: 'Project'
+    project: "Project"
     updated_at: Any
     url: str
-    user: 'User'
+    user: "User"
 
 
 class ProjectUpdateConnection(BaseModel):
-    edges: List['ProjectUpdateEdge']
-    nodes: List['ProjectUpdate']
-    page_info: 'PageInfo'
+    edges: List["ProjectUpdateEdge"]
+    nodes: List["ProjectUpdate"]
+    page_info: "PageInfo"
 
 
 class ProjectUpdateCreateInput(BaseModel):
     body: Optional[str]
     body_data: Any
-    health: Optional['ProjectUpdateHealthType']
+    health: Optional["ProjectUpdateHealthType"]
     id: Optional[str]
     project_id: str
 
 
 class ProjectUpdateEdge(BaseModel):
     cursor: str
-    node: 'ProjectUpdate'
+    node: "ProjectUpdate"
 
 
 class ProjectUpdateHealthType(str, Enum):
-    atRisk = 'atRisk'
-    offTrack = 'offTrack'
-    onTrack = 'onTrack'
+    atRisk = "atRisk"
+    offTrack = "offTrack"
+    onTrack = "onTrack"
 
 
 class ProjectUpdateInput(BaseModel):
@@ -2673,16 +2679,16 @@ class ProjectUpdateInteraction(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
-    project_update: 'ProjectUpdate'
+    project_update: "ProjectUpdate"
     read_at: Any
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class ProjectUpdateInteractionConnection(BaseModel):
-    edges: List['ProjectUpdateInteractionEdge']
-    nodes: List['ProjectUpdateInteraction']
-    page_info: 'PageInfo'
+    edges: List["ProjectUpdateInteractionEdge"]
+    nodes: List["ProjectUpdateInteraction"]
+    page_info: "PageInfo"
 
 
 class ProjectUpdateInteractionCreateInput(BaseModel):
@@ -2693,37 +2699,37 @@ class ProjectUpdateInteractionCreateInput(BaseModel):
 
 class ProjectUpdateInteractionEdge(BaseModel):
     cursor: str
-    node: 'ProjectUpdateInteraction'
+    node: "ProjectUpdateInteraction"
 
 
 class ProjectUpdateInteractionPayload(BaseModel):
     last_sync_id: float
-    project_update_interaction: 'ProjectUpdateInteraction'
+    project_update_interaction: "ProjectUpdateInteraction"
     success: bool
 
 
 class ProjectUpdatePayload(BaseModel):
     last_sync_id: float
-    project_update: 'ProjectUpdate'
+    project_update: "ProjectUpdate"
     success: bool
 
 
 class ProjectUpdateReminderFrequency(str, Enum):
-    never = 'never'
-    twoWeeks = 'twoWeeks'
-    week = 'week'
+    never = "never"
+    twoWeeks = "twoWeeks"
+    week = "week"
 
 
 class ProjectUpdateUpdateInput(BaseModel):
     body: Optional[str]
     body_data: Any
-    health: Optional['ProjectUpdateHealthType']
+    health: Optional["ProjectUpdateHealthType"]
 
 
 class ProjectUpdateWithInteractionPayload(BaseModel):
-    interaction: 'ProjectUpdateInteraction'
+    interaction: "ProjectUpdateInteraction"
     last_sync_id: float
-    project_update: 'ProjectUpdate'
+    project_update: "ProjectUpdate"
     success: bool
 
 
@@ -2735,21 +2741,21 @@ class PushSubscription(BaseModel):
 
 
 class PushSubscriptionConnection(BaseModel):
-    edges: List['PushSubscriptionEdge']
-    nodes: List['PushSubscription']
-    page_info: 'PageInfo'
+    edges: List["PushSubscriptionEdge"]
+    nodes: List["PushSubscription"]
+    page_info: "PageInfo"
 
 
 class PushSubscriptionCreateInput(BaseModel):
     data: str
     id: Optional[str]
-    type: Optional['PushSubscriptionType']
+    type: Optional["PushSubscriptionType"]
     user_id: str
 
 
 class PushSubscriptionEdge(BaseModel):
     cursor: str
-    node: 'PushSubscription'
+    node: "PushSubscription"
 
 
 class PushSubscriptionPayload(BaseModel):
@@ -2762,103 +2768,103 @@ class PushSubscriptionTestPayload(BaseModel):
 
 
 class PushSubscriptionType(str, Enum):
-    apple = 'apple'
-    web = 'web'
+    apple = "apple"
+    web = "web"
 
 
 class Query(BaseModel):
-    project_milestone: 'ProjectMilestone'
-    project_milestones: 'ProjectMilestoneConnection'
-    administrable_teams: 'TeamConnection'
-    api_keys: 'ApiKeyConnection'
-    application_info: 'Application'
-    application_info_by_ids: List['Application']
-    application_with_authorization: 'UserAuthorizedApplication'
-    attachment: 'Attachment'
-    attachments: 'AttachmentConnection'
-    attachments_for_url: 'AttachmentConnection'
-    audit_entries: 'AuditEntryConnection'
-    audit_entry_types: List['AuditEntryType']
-    authorized_applications: List['AuthorizedApplication']
-    available_users: 'AuthResolverResponse'
-    comment: 'Comment'
-    comments: 'CommentConnection'
-    custom_view: 'CustomView'
-    custom_view_suggestion: 'CustomViewSuggestionPayload'
-    custom_views: 'CustomViewConnection'
-    cycle: 'Cycle'
-    cycles: 'CycleConnection'
-    document: 'Document'
-    documents: 'DocumentConnection'
-    emoji: 'Emoji'
-    emojis: 'EmojiConnection'
-    external_user: 'ExternalUser'
-    external_users: 'ExternalUserConnection'
-    favorite: 'Favorite'
-    favorites: 'FavoriteConnection'
-    figma_embed_info: 'FigmaEmbedPayload'
-    integration: 'Integration'
-    integration_template: 'IntegrationTemplate'
-    integration_templates: 'IntegrationTemplateConnection'
-    integrations: 'IntegrationConnection'
-    integrations_settings: 'IntegrationsSettings'
-    issue: 'Issue'
-    issue_import_finish_github_o_auth: 'GithubOAuthTokenPayload'
-    issue_label: 'IssueLabel'
-    issue_labels: 'IssueLabelConnection'
-    issue_priority_values: List['IssuePriorityValue']
-    issue_relation: 'IssueRelation'
-    issue_relations: 'IssueRelationConnection'
-    issue_search: 'IssueConnection'
-    issue_vcs_branch_search: Optional['Issue']
-    issues: 'IssueConnection'
-    notification: 'Notification'
-    notification_subscription: 'NotificationSubscription'
-    notification_subscriptions: 'NotificationSubscriptionConnection'
-    notifications: 'NotificationConnection'
-    organization: 'Organization'
-    organization_domain_claim_request: 'OrganizationDomainClaimPayload'
-    organization_exists: 'OrganizationExistsPayload'
-    organization_invite: 'OrganizationInvite'
-    organization_invite_details: 'OrganizationInviteDetailsPayload'
-    organization_invites: 'OrganizationInviteConnection'
-    project: 'Project'
-    project_link: 'ProjectLink'
-    project_links: 'ProjectLinkConnection'
-    project_update: 'ProjectUpdate'
-    project_update_interaction: 'ProjectUpdateInteraction'
-    project_update_interactions: 'ProjectUpdateInteractionConnection'
-    project_updates: 'ProjectUpdateConnection'
-    projects: 'ProjectConnection'
-    push_subscription_test: 'PushSubscriptionTestPayload'
-    rate_limit_status: 'RateLimitPayload'
-    roadmap: 'Roadmap'
-    roadmap_to_project: 'RoadmapToProject'
-    roadmap_to_projects: 'RoadmapToProjectConnection'
-    roadmaps: 'RoadmapConnection'
-    sso_url_from_email: 'SsoUrlFromEmailResponse'
-    team: 'Team'
-    team_membership: 'TeamMembership'
-    team_memberships: 'TeamMembershipConnection'
-    teams: 'TeamConnection'
-    template: 'Template'
-    templates: List['Template']
-    user: 'User'
-    user_account_exists: Optional['UserAccountExistsPayload']
-    user_settings: 'UserSettings'
-    users: 'UserConnection'
-    viewer: 'User'
-    webhook: 'Webhook'
-    webhooks: 'WebhookConnection'
-    workflow_state: 'WorkflowState'
-    workflow_states: 'WorkflowStateConnection'
-    workspace_authorized_applications: List['WorkspaceAuthorizedApplication']
+    project_milestone: "ProjectMilestone"
+    project_milestones: "ProjectMilestoneConnection"
+    administrable_teams: "TeamConnection"
+    api_keys: "ApiKeyConnection"
+    application_info: "Application"
+    application_info_by_ids: List["Application"]
+    application_with_authorization: "UserAuthorizedApplication"
+    attachment: "Attachment"
+    attachments: "AttachmentConnection"
+    attachments_for_url: "AttachmentConnection"
+    audit_entries: "AuditEntryConnection"
+    audit_entry_types: List["AuditEntryType"]
+    authorized_applications: List["AuthorizedApplication"]
+    available_users: "AuthResolverResponse"
+    comment: "Comment"
+    comments: "CommentConnection"
+    custom_view: "CustomView"
+    custom_view_suggestion: "CustomViewSuggestionPayload"
+    custom_views: "CustomViewConnection"
+    cycle: "Cycle"
+    cycles: "CycleConnection"
+    document: "Document"
+    documents: "DocumentConnection"
+    emoji: "Emoji"
+    emojis: "EmojiConnection"
+    external_user: "ExternalUser"
+    external_users: "ExternalUserConnection"
+    favorite: "Favorite"
+    favorites: "FavoriteConnection"
+    figma_embed_info: "FigmaEmbedPayload"
+    integration: "Integration"
+    integration_template: "IntegrationTemplate"
+    integration_templates: "IntegrationTemplateConnection"
+    integrations: "IntegrationConnection"
+    integrations_settings: "IntegrationsSettings"
+    issue: "Issue"
+    issue_import_finish_github_o_auth: "GithubOAuthTokenPayload"
+    issue_label: "IssueLabel"
+    issue_labels: "IssueLabelConnection"
+    issue_priority_values: List["IssuePriorityValue"]
+    issue_relation: "IssueRelation"
+    issue_relations: "IssueRelationConnection"
+    issue_search: "IssueConnection"
+    issue_vcs_branch_search: Optional["Issue"]
+    issues: "IssueConnection"
+    notification: "Notification"
+    notification_subscription: "NotificationSubscription"
+    notification_subscriptions: "NotificationSubscriptionConnection"
+    notifications: "NotificationConnection"
+    organization: "Organization"
+    organization_domain_claim_request: "OrganizationDomainClaimPayload"
+    organization_exists: "OrganizationExistsPayload"
+    organization_invite: "OrganizationInvite"
+    organization_invite_details: "OrganizationInviteDetailsPayload"
+    organization_invites: "OrganizationInviteConnection"
+    project: "Project"
+    project_link: "ProjectLink"
+    project_links: "ProjectLinkConnection"
+    project_update: "ProjectUpdate"
+    project_update_interaction: "ProjectUpdateInteraction"
+    project_update_interactions: "ProjectUpdateInteractionConnection"
+    project_updates: "ProjectUpdateConnection"
+    projects: "ProjectConnection"
+    push_subscription_test: "PushSubscriptionTestPayload"
+    rate_limit_status: "RateLimitPayload"
+    roadmap: "Roadmap"
+    roadmap_to_project: "RoadmapToProject"
+    roadmap_to_projects: "RoadmapToProjectConnection"
+    roadmaps: "RoadmapConnection"
+    sso_url_from_email: "SsoUrlFromEmailResponse"
+    team: "Team"
+    team_membership: "TeamMembership"
+    team_memberships: "TeamMembershipConnection"
+    teams: "TeamConnection"
+    template: "Template"
+    templates: List["Template"]
+    user: "User"
+    user_account_exists: Optional["UserAccountExistsPayload"]
+    user_settings: "UserSettings"
+    users: "UserConnection"
+    viewer: "User"
+    webhook: "Webhook"
+    webhooks: "WebhookConnection"
+    workflow_state: "WorkflowState"
+    workflow_states: "WorkflowStateConnection"
+    workspace_authorized_applications: List["WorkspaceAuthorizedApplication"]
 
 
 class RateLimitPayload(BaseModel):
     identifier: Optional[str]
     kind: str
-    limits: List['RateLimitResultPayload']
+    limits: List["RateLimitResultPayload"]
 
 
 class RateLimitResultPayload(BaseModel):
@@ -2876,13 +2882,13 @@ class Reaction(BaseModel):
     emoji: str
     id: str
     updated_at: Any
-    user: Optional['User']
+    user: Optional["User"]
 
 
 class ReactionConnection(BaseModel):
-    edges: List['ReactionEdge']
-    nodes: List['Reaction']
-    page_info: 'PageInfo'
+    edges: List["ReactionEdge"]
+    nodes: List["Reaction"]
+    page_info: "PageInfo"
 
 
 class ReactionCreateInput(BaseModel):
@@ -2894,12 +2900,12 @@ class ReactionCreateInput(BaseModel):
 
 class ReactionEdge(BaseModel):
     cursor: str
-    node: 'Reaction'
+    node: "Reaction"
 
 
 class ReactionPayload(BaseModel):
     last_sync_id: float
-    reaction: 'Reaction'
+    reaction: "Reaction"
     success: bool
 
 
@@ -2909,46 +2915,46 @@ class RelationExistsComparator(BaseModel):
 
 
 class ReleaseChannel(str, Enum):
-    beta = 'beta'
-    internal = 'internal'
-    preRelease = 'preRelease'
-    public = 'public'
+    beta = "beta"
+    internal = "internal"
+    preRelease = "preRelease"
+    public = "public"
 
 
 class Roadmap(BaseModel):
     archived_at: Any
     color: Optional[str]
     created_at: Any
-    creator: 'User'
+    creator: "User"
     description: Optional[str]
     id: str
     name: str
-    organization: 'Organization'
-    owner: 'User'
-    projects: 'ProjectConnection'
+    organization: "Organization"
+    owner: "User"
+    projects: "ProjectConnection"
     slug_id: str
     sort_order: float
     updated_at: Any
 
 
 class RoadmapCollectionFilter(BaseModel):
-    and_: Optional[List['RoadmapCollectionFilter']]
-    created_at: Optional['DateComparator']
-    creator: Optional['UserFilter']
-    every: Optional['RoadmapFilter']
-    id: Optional['IDComparator']
-    length: Optional['NumberComparator']
-    name: Optional['StringComparator']
-    or_: Optional[List['RoadmapCollectionFilter']]
-    slug_id: Optional['StringComparator']
-    some: Optional['RoadmapFilter']
-    updated_at: Optional['DateComparator']
+    and_: Optional[List["RoadmapCollectionFilter"]]
+    created_at: Optional["DateComparator"]
+    creator: Optional["UserFilter"]
+    every: Optional["RoadmapFilter"]
+    id: Optional["IDComparator"]
+    length: Optional["NumberComparator"]
+    name: Optional["StringComparator"]
+    or_: Optional[List["RoadmapCollectionFilter"]]
+    slug_id: Optional["StringComparator"]
+    some: Optional["RoadmapFilter"]
+    updated_at: Optional["DateComparator"]
 
 
 class RoadmapConnection(BaseModel):
-    edges: List['RoadmapEdge']
-    nodes: List['Roadmap']
-    page_info: 'PageInfo'
+    edges: List["RoadmapEdge"]
+    nodes: List["Roadmap"]
+    page_info: "PageInfo"
 
 
 class RoadmapCreateInput(BaseModel):
@@ -2962,23 +2968,23 @@ class RoadmapCreateInput(BaseModel):
 
 class RoadmapEdge(BaseModel):
     cursor: str
-    node: 'Roadmap'
+    node: "Roadmap"
 
 
 class RoadmapFilter(BaseModel):
-    and_: Optional[List['RoadmapFilter']]
-    created_at: Optional['DateComparator']
-    creator: Optional['UserFilter']
-    id: Optional['IDComparator']
-    name: Optional['StringComparator']
-    or_: Optional[List['RoadmapFilter']]
-    slug_id: Optional['StringComparator']
-    updated_at: Optional['DateComparator']
+    and_: Optional[List["RoadmapFilter"]]
+    created_at: Optional["DateComparator"]
+    creator: Optional["UserFilter"]
+    id: Optional["IDComparator"]
+    name: Optional["StringComparator"]
+    or_: Optional[List["RoadmapFilter"]]
+    slug_id: Optional["StringComparator"]
+    updated_at: Optional["DateComparator"]
 
 
 class RoadmapPayload(BaseModel):
     last_sync_id: float
-    roadmap: 'Roadmap'
+    roadmap: "Roadmap"
     success: bool
 
 
@@ -2986,16 +2992,16 @@ class RoadmapToProject(BaseModel):
     archived_at: Any
     created_at: Any
     id: str
-    project: 'Project'
-    roadmap: 'Roadmap'
+    project: "Project"
+    roadmap: "Roadmap"
     sort_order: str
     updated_at: Any
 
 
 class RoadmapToProjectConnection(BaseModel):
-    edges: List['RoadmapToProjectEdge']
-    nodes: List['RoadmapToProject']
-    page_info: 'PageInfo'
+    edges: List["RoadmapToProjectEdge"]
+    nodes: List["RoadmapToProject"]
+    page_info: "PageInfo"
 
 
 class RoadmapToProjectCreateInput(BaseModel):
@@ -3007,12 +3013,12 @@ class RoadmapToProjectCreateInput(BaseModel):
 
 class RoadmapToProjectEdge(BaseModel):
     cursor: str
-    node: 'RoadmapToProject'
+    node: "RoadmapToProject"
 
 
 class RoadmapToProjectPayload(BaseModel):
     last_sync_id: float
-    roadmap_to_project: 'RoadmapToProject'
+    roadmap_to_project: "RoadmapToProject"
     success: bool
 
 
@@ -3060,19 +3066,19 @@ class SentrySettingsInput(BaseModel):
 
 
 class SlaStatus(str, Enum):
-    Breached = 'Breached'
-    Completed = 'Completed'
-    Failed = 'Failed'
-    HighRisk = 'HighRisk'
-    LowRisk = 'LowRisk'
-    MediumRisk = 'MediumRisk'
+    Breached = "Breached"
+    Completed = "Completed"
+    Failed = "Failed"
+    HighRisk = "HighRisk"
+    LowRisk = "LowRisk"
+    MediumRisk = "MediumRisk"
 
 
 class SlaStatusComparator(BaseModel):
-    eq: Optional['SlaStatus']
-    in_: Optional[List['SlaStatus']]
-    neq: Optional['SlaStatus']
-    nin: Optional[List['SlaStatus']]
+    eq: Optional["SlaStatus"]
+    in_: Optional[List["SlaStatus"]]
+    neq: Optional["SlaStatus"]
+    nin: Optional[List["SlaStatus"]]
     null: Optional[bool]
 
 
@@ -3140,9 +3146,9 @@ class SynchronizedPayload(BaseModel):
 
 
 class TeamConnection(BaseModel):
-    edges: List['TeamEdge']
-    nodes: List['Team']
-    page_info: 'PageInfo'
+    edges: List["TeamEdge"]
+    nodes: List["Team"]
+    page_info: "PageInfo"
 
 
 class TeamCreateInput(BaseModel):
@@ -3182,19 +3188,19 @@ class TeamCreateInput(BaseModel):
 
 class TeamEdge(BaseModel):
     cursor: str
-    node: 'Team'
+    node: "Team"
 
 
 class TeamFilter(BaseModel):
-    and_: Optional[List['TeamFilter']]
-    created_at: Optional['DateComparator']
-    description: Optional['NullableStringComparator']
-    id: Optional['IDComparator']
-    issues: Optional['IssueCollectionFilter']
-    key: Optional['StringComparator']
-    name: Optional['StringComparator']
-    or_: Optional[List['TeamFilter']]
-    updated_at: Optional['DateComparator']
+    and_: Optional[List["TeamFilter"]]
+    created_at: Optional["DateComparator"]
+    description: Optional["NullableStringComparator"]
+    id: Optional["IDComparator"]
+    issues: Optional["IssueCollectionFilter"]
+    key: Optional["StringComparator"]
+    name: Optional["StringComparator"]
+    or_: Optional[List["TeamFilter"]]
+    updated_at: Optional["DateComparator"]
 
 
 class TeamMembership(BaseModel):
@@ -3203,15 +3209,15 @@ class TeamMembership(BaseModel):
     id: str
     owner: Optional[bool]
     sort_order: float
-    team: 'Team'
+    team: "Team"
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class TeamMembershipConnection(BaseModel):
-    edges: List['TeamMembershipEdge']
-    nodes: List['TeamMembership']
-    page_info: 'PageInfo'
+    edges: List["TeamMembershipEdge"]
+    nodes: List["TeamMembership"]
+    page_info: "PageInfo"
 
 
 class TeamMembershipCreateInput(BaseModel):
@@ -3224,13 +3230,13 @@ class TeamMembershipCreateInput(BaseModel):
 
 class TeamMembershipEdge(BaseModel):
     cursor: str
-    node: 'TeamMembership'
+    node: "TeamMembership"
 
 
 class TeamMembershipPayload(BaseModel):
     last_sync_id: float
     success: bool
-    team_membership: Optional['TeamMembership']
+    team_membership: Optional["TeamMembership"]
 
 
 class TeamMembershipUpdateInput(BaseModel):
@@ -3242,17 +3248,17 @@ class TeamNotificationSubscription(Entity, Node, NotificationSubscription):
     archived_at: Any
     created_at: Any
     id: str
-    project: Optional['Project']
-    team: 'Team'
+    project: Optional["Project"]
+    team: "Team"
     type: str
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class TeamPayload(BaseModel):
     last_sync_id: float
     success: bool
-    team: Optional['Team']
+    team: Optional["Team"]
 
 
 class TeamUpdateInput(BaseModel):
@@ -3300,22 +3306,22 @@ class TeamUpdateInput(BaseModel):
 class Template(BaseModel):
     archived_at: Any
     created_at: Any
-    creator: Optional['User']
+    creator: Optional["User"]
     description: Optional[str]
     id: str
-    last_updated_by: Optional['User']
+    last_updated_by: Optional["User"]
     name: str
-    organization: Optional['Organization']
-    team: Optional['Team']
+    organization: Optional["Organization"]
+    team: Optional["Team"]
     template_data: Any
     type: str
     updated_at: Any
 
 
 class TemplateConnection(BaseModel):
-    edges: List['TemplateEdge']
-    nodes: List['Template']
-    page_info: 'PageInfo'
+    edges: List["TemplateEdge"]
+    nodes: List["Template"]
+    page_info: "PageInfo"
 
 
 class TemplateCreateInput(BaseModel):
@@ -3329,13 +3335,13 @@ class TemplateCreateInput(BaseModel):
 
 class TemplateEdge(BaseModel):
     cursor: str
-    node: 'Template'
+    node: "Template"
 
 
 class TemplatePayload(BaseModel):
     last_sync_id: float
     success: bool
-    template: 'Template'
+    template: "Template"
 
 
 class TemplateUpdateInput(BaseModel):
@@ -3372,9 +3378,9 @@ class UpdateOrganizationInput(BaseModel):
     logo_url: Optional[str]
     name: Optional[str]
     oauth_app_review: Optional[bool]
-    project_update_reminders_day: Optional['Day']
+    project_update_reminders_day: Optional["Day"]
     project_update_reminders_hour: Optional[float]
-    project_updates_reminder_frequency: Optional['ProjectUpdateReminderFrequency']
+    project_updates_reminder_frequency: Optional["ProjectUpdateReminderFrequency"]
     reduced_personal_information: Optional[bool]
     roadmap_enabled: Optional[bool]
     sla_enabled: Optional[bool]
@@ -3399,7 +3405,7 @@ class UploadFile(BaseModel):
     asset_url: str
     content_type: str
     filename: str
-    headers: List['UploadFileHeader']
+    headers: List["UploadFileHeader"]
     meta_data: Any
     size: int
     upload_url: str
@@ -3413,7 +3419,7 @@ class UploadFileHeader(BaseModel):
 class UploadPayload(BaseModel):
     last_sync_id: float
     success: bool
-    upload_file: Optional['UploadFile']
+    upload_file: Optional["UploadFile"]
 
 
 class UserAccount(BaseModel):
@@ -3424,7 +3430,7 @@ class UserAccount(BaseModel):
     name: Optional[str]
     service: str
     updated_at: Any
-    users: List['User']
+    users: List["User"]
 
 
 class UserAccountEmailChange(BaseModel):
@@ -3462,101 +3468,101 @@ class UserAuthorizedApplication(BaseModel):
 
 
 class UserCollectionFilter(BaseModel):
-    active: Optional['BooleanComparator']
-    admin: Optional['BooleanComparator']
-    and_: Optional[List['UserCollectionFilter']]
-    assigned_issues: Optional['IssueCollectionFilter']
-    created_at: Optional['DateComparator']
-    display_name: Optional['StringComparator']
-    email: Optional['StringComparator']
-    every: Optional['UserFilter']
-    id: Optional['IDComparator']
-    is_me: Optional['BooleanComparator']
-    length: Optional['NumberComparator']
-    name: Optional['StringComparator']
-    or_: Optional[List['UserCollectionFilter']]
-    some: Optional['UserFilter']
-    updated_at: Optional['DateComparator']
+    active: Optional["BooleanComparator"]
+    admin: Optional["BooleanComparator"]
+    and_: Optional[List["UserCollectionFilter"]]
+    assigned_issues: Optional["IssueCollectionFilter"]
+    created_at: Optional["DateComparator"]
+    display_name: Optional["StringComparator"]
+    email: Optional["StringComparator"]
+    every: Optional["UserFilter"]
+    id: Optional["IDComparator"]
+    is_me: Optional["BooleanComparator"]
+    length: Optional["NumberComparator"]
+    name: Optional["StringComparator"]
+    or_: Optional[List["UserCollectionFilter"]]
+    some: Optional["UserFilter"]
+    updated_at: Optional["DateComparator"]
 
 
 class UserConnection(BaseModel):
-    edges: List['UserEdge']
-    nodes: List['User']
-    page_info: 'PageInfo'
+    edges: List["UserEdge"]
+    nodes: List["User"]
+    page_info: "PageInfo"
 
 
 class UserEdge(BaseModel):
     cursor: str
-    node: 'User'
+    node: "User"
 
 
 class UserFilter(BaseModel):
-    active: Optional['BooleanComparator']
-    admin: Optional['BooleanComparator']
-    and_: Optional[List['UserFilter']]
-    assigned_issues: Optional['IssueCollectionFilter']
-    created_at: Optional['DateComparator']
-    display_name: Optional['StringComparator']
-    email: Optional['StringComparator']
-    id: Optional['IDComparator']
-    is_me: Optional['BooleanComparator']
-    name: Optional['StringComparator']
-    or_: Optional[List['UserFilter']]
-    updated_at: Optional['DateComparator']
+    active: Optional["BooleanComparator"]
+    admin: Optional["BooleanComparator"]
+    and_: Optional[List["UserFilter"]]
+    assigned_issues: Optional["IssueCollectionFilter"]
+    created_at: Optional["DateComparator"]
+    display_name: Optional["StringComparator"]
+    email: Optional["StringComparator"]
+    id: Optional["IDComparator"]
+    is_me: Optional["BooleanComparator"]
+    name: Optional["StringComparator"]
+    or_: Optional[List["UserFilter"]]
+    updated_at: Optional["DateComparator"]
 
 
 class UserFlagType(str, Enum):
-    all = 'all'
-    analyticsWelcomeDismissed = 'analyticsWelcomeDismissed'
-    canPlaySnake = 'canPlaySnake'
-    canPlayTetris = 'canPlayTetris'
-    completedOnboarding = 'completedOnboarding'
-    cycleWelcomeDismissed = 'cycleWelcomeDismissed'
-    desktopDownloadToastDismissed = 'desktopDownloadToastDismissed'
-    desktopInstalled = 'desktopInstalled'
-    desktopTabsOnboardingDismissed = 'desktopTabsOnboardingDismissed'
-    dueDateShortcutMigration = 'dueDateShortcutMigration'
-    emptyActiveIssuesDismissed = 'emptyActiveIssuesDismissed'
-    emptyBacklogDismissed = 'emptyBacklogDismissed'
-    emptyCustomViewsDismissed = 'emptyCustomViewsDismissed'
-    emptyMyIssuesDismissed = 'emptyMyIssuesDismissed'
-    figmaPromptDismissed = 'figmaPromptDismissed'
-    importBannerDismissed = 'importBannerDismissed'
-    insightsHelpDismissed = 'insightsHelpDismissed'
-    insightsWelcomeDismissed = 'insightsWelcomeDismissed'
-    issueLabelSuggestionUsed = 'issueLabelSuggestionUsed'
-    issueMovePromptCompleted = 'issueMovePromptCompleted'
-    joinTeamIntroductionDismissed = 'joinTeamIntroductionDismissed'
-    listSelectionTip = 'listSelectionTip'
-    migrateThemePreference = 'migrateThemePreference'
-    milestoneOnboardingIsSeenAndDismissed = 'milestoneOnboardingIsSeenAndDismissed'
-    projectBacklogWelcomeDismissed = 'projectBacklogWelcomeDismissed'
-    projectUpdatesWelcomeDismissed = 'projectUpdatesWelcomeDismissed'
-    projectWelcomeDismissed = 'projectWelcomeDismissed'
-    rewindBannerDismissed = 'rewindBannerDismissed'
-    slackCommentReactionTipShown = 'slackCommentReactionTipShown'
-    teamsPageIntroductionDismissed = 'teamsPageIntroductionDismissed'
-    threadedCommentsNudgeIsSeen = 'threadedCommentsNudgeIsSeen'
-    triageWelcomeDismissed = 'triageWelcomeDismissed'
+    all = "all"
+    analyticsWelcomeDismissed = "analyticsWelcomeDismissed"
+    canPlaySnake = "canPlaySnake"
+    canPlayTetris = "canPlayTetris"
+    completedOnboarding = "completedOnboarding"
+    cycleWelcomeDismissed = "cycleWelcomeDismissed"
+    desktopDownloadToastDismissed = "desktopDownloadToastDismissed"
+    desktopInstalled = "desktopInstalled"
+    desktopTabsOnboardingDismissed = "desktopTabsOnboardingDismissed"
+    dueDateShortcutMigration = "dueDateShortcutMigration"
+    emptyActiveIssuesDismissed = "emptyActiveIssuesDismissed"
+    emptyBacklogDismissed = "emptyBacklogDismissed"
+    emptyCustomViewsDismissed = "emptyCustomViewsDismissed"
+    emptyMyIssuesDismissed = "emptyMyIssuesDismissed"
+    figmaPromptDismissed = "figmaPromptDismissed"
+    importBannerDismissed = "importBannerDismissed"
+    insightsHelpDismissed = "insightsHelpDismissed"
+    insightsWelcomeDismissed = "insightsWelcomeDismissed"
+    issueLabelSuggestionUsed = "issueLabelSuggestionUsed"
+    issueMovePromptCompleted = "issueMovePromptCompleted"
+    joinTeamIntroductionDismissed = "joinTeamIntroductionDismissed"
+    listSelectionTip = "listSelectionTip"
+    migrateThemePreference = "migrateThemePreference"
+    milestoneOnboardingIsSeenAndDismissed = "milestoneOnboardingIsSeenAndDismissed"
+    projectBacklogWelcomeDismissed = "projectBacklogWelcomeDismissed"
+    projectUpdatesWelcomeDismissed = "projectUpdatesWelcomeDismissed"
+    projectWelcomeDismissed = "projectWelcomeDismissed"
+    rewindBannerDismissed = "rewindBannerDismissed"
+    slackCommentReactionTipShown = "slackCommentReactionTipShown"
+    teamsPageIntroductionDismissed = "teamsPageIntroductionDismissed"
+    threadedCommentsNudgeIsSeen = "threadedCommentsNudgeIsSeen"
+    triageWelcomeDismissed = "triageWelcomeDismissed"
 
 
 class UserFlagUpdateOperation(str, Enum):
-    clear = 'clear'
-    decr = 'decr'
-    incr = 'incr'
-    lock = 'lock'
+    clear = "clear"
+    decr = "decr"
+    incr = "incr"
+    lock = "lock"
 
 
 class UserPayload(BaseModel):
     last_sync_id: float
     success: bool
-    user: Optional['User']
+    user: Optional["User"]
 
 
 class UserRoleType(str, Enum):
-    admin = 'admin'
-    guest = 'guest'
-    user = 'user'
+    admin = "admin"
+    guest = "guest"
+    user = "user"
 
 
 class UserSettings(BaseModel):
@@ -3567,7 +3573,7 @@ class UserSettings(BaseModel):
     notification_preferences: Any
     unsubscribed_from: List[str]
     updated_at: Any
-    user: 'User'
+    user: "User"
 
 
 class UserSettingsFlagPayload(BaseModel):
@@ -3585,7 +3591,7 @@ class UserSettingsFlagsResetPayload(BaseModel):
 class UserSettingsPayload(BaseModel):
     last_sync_id: float
     success: bool
-    user_settings: 'UserSettings'
+    user_settings: "UserSettings"
 
 
 class UserSettingsUpdateInput(BaseModel):
@@ -3612,20 +3618,20 @@ class ViewPreferencesCreateInput(BaseModel):
     project_id: Optional[str]
     roadmap_id: Optional[str]
     team_id: Optional[str]
-    type: 'ViewPreferencesType'
+    type: "ViewPreferencesType"
     user_id: Optional[str]
-    view_type: 'ViewType'
+    view_type: "ViewType"
 
 
 class ViewPreferencesPayload(BaseModel):
     last_sync_id: float
     success: bool
-    view_preferences: 'ViewPreferences'
+    view_preferences: "ViewPreferences"
 
 
 class ViewPreferencesType(str, Enum):
-    organization = 'organization'
-    user = 'user'
+    organization = "organization"
+    user = "user"
 
 
 class ViewPreferencesUpdateInput(BaseModel):
@@ -3633,57 +3639,57 @@ class ViewPreferencesUpdateInput(BaseModel):
 
 
 class ViewType(str, Enum):
-    activeIssues = 'activeIssues'
-    allIssues = 'allIssues'
-    archive = 'archive'
-    backlog = 'backlog'
-    board = 'board'
-    completedCycle = 'completedCycle'
-    customRoadmap = 'customRoadmap'
-    customView = 'customView'
-    cycle = 'cycle'
-    inbox = 'inbox'
-    label = 'label'
-    myIssues = 'myIssues'
-    myIssuesActivity = 'myIssuesActivity'
-    myIssuesCreatedByMe = 'myIssuesCreatedByMe'
-    myIssuesSubscribedTo = 'myIssuesSubscribedTo'
-    project = 'project'
-    projects = 'projects'
-    projectsAll = 'projectsAll'
-    projectsBacklog = 'projectsBacklog'
-    projectsClosed = 'projectsClosed'
-    roadmap = 'roadmap'
-    roadmapAll = 'roadmapAll'
-    roadmapBacklog = 'roadmapBacklog'
-    roadmapClosed = 'roadmapClosed'
-    roadmaps = 'roadmaps'
-    search = 'search'
-    teams = 'teams'
-    triage = 'triage'
-    userProfile = 'userProfile'
-    userProfileCreatedByUser = 'userProfileCreatedByUser'
+    activeIssues = "activeIssues"
+    allIssues = "allIssues"
+    archive = "archive"
+    backlog = "backlog"
+    board = "board"
+    completedCycle = "completedCycle"
+    customRoadmap = "customRoadmap"
+    customView = "customView"
+    cycle = "cycle"
+    inbox = "inbox"
+    label = "label"
+    myIssues = "myIssues"
+    myIssuesActivity = "myIssuesActivity"
+    myIssuesCreatedByMe = "myIssuesCreatedByMe"
+    myIssuesSubscribedTo = "myIssuesSubscribedTo"
+    project = "project"
+    projects = "projects"
+    projectsAll = "projectsAll"
+    projectsBacklog = "projectsBacklog"
+    projectsClosed = "projectsClosed"
+    roadmap = "roadmap"
+    roadmapAll = "roadmapAll"
+    roadmapBacklog = "roadmapBacklog"
+    roadmapClosed = "roadmapClosed"
+    roadmaps = "roadmaps"
+    search = "search"
+    teams = "teams"
+    triage = "triage"
+    userProfile = "userProfile"
+    userProfileCreatedByUser = "userProfileCreatedByUser"
 
 
 class Webhook(BaseModel):
     all_public_teams: bool
     archived_at: Any
     created_at: Any
-    creator: Optional['User']
+    creator: Optional["User"]
     enabled: bool
     id: str
     label: Optional[str]
     resource_types: List[str]
     secret: Optional[str]
-    team: Optional['Team']
+    team: Optional["Team"]
     updated_at: Any
     url: Optional[str]
 
 
 class WebhookConnection(BaseModel):
-    edges: List['WebhookEdge']
-    nodes: List['Webhook']
-    page_info: 'PageInfo'
+    edges: List["WebhookEdge"]
+    nodes: List["Webhook"]
+    page_info: "PageInfo"
 
 
 class WebhookCreateInput(BaseModel):
@@ -3699,13 +3705,13 @@ class WebhookCreateInput(BaseModel):
 
 class WebhookEdge(BaseModel):
     cursor: str
-    node: 'Webhook'
+    node: "Webhook"
 
 
 class WebhookPayload(BaseModel):
     last_sync_id: float
     success: bool
-    webhook: 'Webhook'
+    webhook: "Webhook"
 
 
 class WebhookUpdateInput(BaseModel):
@@ -3717,34 +3723,34 @@ class WebhookUpdateInput(BaseModel):
 
 
 class WorkflowCondition(BaseModel):
-    issue_filter: Optional['IssueFilter']
-    project_filter: Optional['ProjectFilter']
+    issue_filter: Optional["IssueFilter"]
+    project_filter: Optional["ProjectFilter"]
 
 
 class WorkflowCronJobDefinition(BaseModel):
     activities: Any
     archived_at: Any
     created_at: Any
-    creator: 'User'
+    creator: "User"
     description: Optional[str]
     enabled: bool
     id: str
     name: str
     schedule: Any
     sort_order: str
-    team: 'Team'
+    team: "Team"
     updated_at: Any
 
 
 class WorkflowCronJobDefinitionConnection(BaseModel):
-    edges: List['WorkflowCronJobDefinitionEdge']
-    nodes: List['WorkflowCronJobDefinition']
-    page_info: 'PageInfo'
+    edges: List["WorkflowCronJobDefinitionEdge"]
+    nodes: List["WorkflowCronJobDefinition"]
+    page_info: "PageInfo"
 
 
 class WorkflowCronJobDefinitionEdge(BaseModel):
     cursor: str
-    node: 'WorkflowCronJobDefinition'
+    node: "WorkflowCronJobDefinition"
 
 
 class WorkflowDefinition(BaseModel):
@@ -3752,29 +3758,29 @@ class WorkflowDefinition(BaseModel):
     archived_at: Any
     conditions: Any
     created_at: Any
-    creator: 'User'
+    creator: "User"
     description: Optional[str]
     enabled: bool
     group_name: Optional[str]
     id: str
     name: str
     sort_order: str
-    team: Optional['Team']
-    trigger: 'WorkflowTrigger'
-    trigger_type: 'WorkflowTriggerType'
-    type: 'WorkflowType'
+    team: Optional["Team"]
+    trigger: "WorkflowTrigger"
+    trigger_type: "WorkflowTriggerType"
+    type: "WorkflowType"
     updated_at: Any
 
 
 class WorkflowDefinitionConnection(BaseModel):
-    edges: List['WorkflowDefinitionEdge']
-    nodes: List['WorkflowDefinition']
-    page_info: 'PageInfo'
+    edges: List["WorkflowDefinitionEdge"]
+    nodes: List["WorkflowDefinition"]
+    page_info: "PageInfo"
 
 
 class WorkflowDefinitionEdge(BaseModel):
     cursor: str
-    node: 'WorkflowDefinition'
+    node: "WorkflowDefinition"
 
 
 class WorkflowState(BaseModel):
@@ -3783,18 +3789,18 @@ class WorkflowState(BaseModel):
     created_at: Any
     description: Optional[str]
     id: str
-    issues: 'IssueConnection'
+    issues: "IssueConnection"
     name: str
     position: float
-    team: 'Team'
+    team: "Team"
     type: str
     updated_at: Any
 
 
 class WorkflowStateConnection(BaseModel):
-    edges: List['WorkflowStateEdge']
-    nodes: List['WorkflowState']
-    page_info: 'PageInfo'
+    edges: List["WorkflowStateEdge"]
+    nodes: List["WorkflowState"]
+    page_info: "PageInfo"
 
 
 class WorkflowStateCreateInput(BaseModel):
@@ -3809,27 +3815,27 @@ class WorkflowStateCreateInput(BaseModel):
 
 class WorkflowStateEdge(BaseModel):
     cursor: str
-    node: 'WorkflowState'
+    node: "WorkflowState"
 
 
 class WorkflowStateFilter(BaseModel):
-    and_: Optional[List['WorkflowStateFilter']]
-    created_at: Optional['DateComparator']
-    description: Optional['StringComparator']
-    id: Optional['IDComparator']
-    issues: Optional['IssueCollectionFilter']
-    name: Optional['StringComparator']
-    or_: Optional[List['WorkflowStateFilter']]
-    position: Optional['NumberComparator']
-    team: Optional['TeamFilter']
-    type: Optional['StringComparator']
-    updated_at: Optional['DateComparator']
+    and_: Optional[List["WorkflowStateFilter"]]
+    created_at: Optional["DateComparator"]
+    description: Optional["StringComparator"]
+    id: Optional["IDComparator"]
+    issues: Optional["IssueCollectionFilter"]
+    name: Optional["StringComparator"]
+    or_: Optional[List["WorkflowStateFilter"]]
+    position: Optional["NumberComparator"]
+    team: Optional["TeamFilter"]
+    type: Optional["StringComparator"]
+    updated_at: Optional["DateComparator"]
 
 
 class WorkflowStatePayload(BaseModel):
     last_sync_id: float
     success: bool
-    workflow_state: 'WorkflowState'
+    workflow_state: "WorkflowState"
 
 
 class WorkflowStateUpdateInput(BaseModel):
@@ -3840,28 +3846,28 @@ class WorkflowStateUpdateInput(BaseModel):
 
 
 class WorkflowTrigger(str, Enum):
-    entityCreated = 'entityCreated'
-    entityCreatedOrUpdated = 'entityCreatedOrUpdated'
-    entityRemoved = 'entityRemoved'
-    entityUnarchived = 'entityUnarchived'
-    entityUpdated = 'entityUpdated'
+    entityCreated = "entityCreated"
+    entityCreatedOrUpdated = "entityCreatedOrUpdated"
+    entityRemoved = "entityRemoved"
+    entityUnarchived = "entityUnarchived"
+    entityUpdated = "entityUpdated"
 
 
 class WorkflowTriggerType(str, Enum):
-    issue = 'issue'
-    project = 'project'
+    issue = "issue"
+    project = "project"
 
 
 class WorkflowType(str, Enum):
-    custom = 'custom'
-    sla = 'sla'
+    custom = "custom"
+    sla = "sla"
 
 
 class WorkspaceAuthorizedApplication(BaseModel):
     app_id: str
     client_id: str
     image_url: Optional[str]
-    memberships: List['AuthMembership']
+    memberships: List["AuthMembership"]
     name: str
     scope: List[str]
     total_members: float
