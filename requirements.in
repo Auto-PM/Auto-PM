@@ -1,3 +1,4 @@
+Pygments
 aiohttp
 aiosignal
 aiostream
@@ -18,13 +19,14 @@ hpack
 hyperframe
 idna
 importlib-metadata
+langchain
 markdown-it-py
 mdurl
 modal-client
 multidict
 protobuf
 pydantic
-Pygments
+requests
 rich
 sigtools
 sniffio
@@ -40,4 +42,3 @@ uvicorn
 watchfiles
 yarl
 zipp
-requests
