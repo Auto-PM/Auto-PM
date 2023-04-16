@@ -28,9 +28,6 @@ def get_project_summary(issue):
 
 def accomplish_issue(issue):
     template = """
-    You are part of a team and have been assigned a task. This is a summary of past work and open tasks on this team: 
-    {summary}
-
     You have been given this task:
     {task}
 
@@ -57,7 +54,8 @@ def accomplish_issue(issue):
 
     chain = LLMChain(llm=llm, prompt=prompt)
 
-    chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
+    #chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
+    chain_run = chain.run({"task": issue})
     print(chain_run)
     while True:
         if "∆" not in chain_run:
