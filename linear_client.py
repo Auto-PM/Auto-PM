@@ -59,6 +59,7 @@ class AssignIssueInput(BaseModel):
     issue_id: str
     assignee_id: str
 
+
 class IssueModificationInput(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
@@ -106,7 +107,7 @@ query Issues($filter: IssueFilter) {
   }
 }""",
     "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!) {
-    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId) {
+    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId}) {
         issue {
             id
             title
@@ -122,7 +123,7 @@ query Issues($filter: IssueFilter) {
   }
 }""",
     "update_issue": """mutation IssueUpdate($id: String!, $title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!) {
-    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId) {
+    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId}) {
         issue {
             id
             title
@@ -132,7 +133,7 @@ query Issues($filter: IssueFilter) {
               name
             }
             }}}""",
-            "assign_issue": """
+    "assign_issue": """
 mutation IssueUpdateAssignee($id: String!, $assigneeId: String!) {
   issueUpdate(id: $id, input: {assigneeId: $assigneeId}) {
     issue {
@@ -151,7 +152,7 @@ mutation IssueUpdateAssignee($id: String!, $assigneeId: String!) {
   }
 }
 """,
-"list_users": """
+    "list_users": """
 query Users {
   users {
     nodes {
@@ -263,7 +264,6 @@ class LinearClient:
             raise Exception(result["errors"])
         return Issue(**result["data"]["issue"])
 
-
     def assign_issue(self, issue_id: str, assignee_id: str) -> Issue:
         variables = {
             "id": issue_id,
@@ -281,4 +281,3 @@ class LinearClient:
         if "errors" in result:
             raise Exception(result["errors"])
         return [User(**user) for user in result["data"]["users"]["nodes"]]
-

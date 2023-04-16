@@ -1,5 +1,5 @@
 # main.py
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Body
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional, Any
@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from linear_types import Issue, User
 from linear_client import LinearClient
+from linear_client import IssueInput, AssignIssueInput
 
 app = FastAPI()
 stub = modal.Stub("form_generator")
@@ -36,8 +37,6 @@ class Task(BaseModel):
     description: Optional[str] = None
 
 
-from linear_client import IssueInput, AssignIssueInput
-
 @app.get("/issues/", response_model=List[Issue])
 async def list_issues():
     response = linear_client.list_issues()
@@ -50,11 +49,22 @@ async def create_issue(issue: IssueInput):
     return response
 
 
+@app.post("/issues/bulk/", response_model=List[Issue])
+async def create_issue(issues: List[IssueInput] = Body(..., embed=True)):
+    response = []
+    for issue in issues:
+        print("creating issue:", issue)
+        response += [linear_client.create_issue(issue)]
+        print("response:", response)
+    return response
+
+
 @app.patch("/issues/{issue_id}", response_model=Issue)
 async def patch_issue(issue_id: str, issue: IssueInput):
     print("patch")
     response = linear_client.update_issue(issue_id, issue)
     return response
+
 
 @app.get("/issues/{issueId}", response_model=Issue)
 async def get_issue(issueId: str):
@@ -62,13 +72,16 @@ async def get_issue(issueId: str):
     response = linear_client.get_issue(issueId)
     return response
 
+
 @app.post("/webhooks/linear")
 async def webhooks_linear(request: Request):
     # TODO: validate sig
     j = await request.json()
     print("webhook payload:")
     print(json.dumps(j))
+    # TODO: call /llm.py accomplish_issue() when an issue is assigned to the AI
     return "ok"
+
 
 @app.post("/issues/{issue_id}/assign", response_model=Issue)
 async def assign_issue(input: AssignIssueInput):
@@ -77,10 +90,12 @@ async def assign_issue(input: AssignIssueInput):
     response = linear_client.assign_issue(input.issue_id, input.assignee_id)
     return response
 
+
 @app.get("/users/", response_model=List[User])
 async def list_users():
     response = linear_client.list_users()
     return response
+
 
 # Create a custom image with the required dependencies installed
 # image = modal.Image.debian_slim().pip_install()
