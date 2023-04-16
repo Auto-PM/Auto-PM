@@ -9,15 +9,6 @@ from typing import Optional
 from linear_types import Issue, User
 
 
-# class Status(Enum):
-#     IN_REVIEW = "7c0bbc28-ffce-45b4-b432-d9223c2330a9"
-#     IN_PROGRESS = "f4bf4bfa-7a53-4b9c-8a5f-6efd2167afd4"
-#     # TODO = "Todo"
-#     # CANCELLED = "Cancelled"
-#     # DONE = "Done"
-#     # BACKLOG = "Backlog"
-
-
 from enum import Enum, auto
 from typing import Any
 
@@ -122,7 +113,7 @@ query Issues($filter: IssueFilter) {
     success
   }
 }""",
-    "update_issue": """mutation IssueUpdate($id: String!, $title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!) {
+    "update_issue": """mutation IssueUpdate($id: String!, $title: String, $description: String, $priority: Int, $teamId: String!, $stateId: String) {
     issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId}) {
         issue {
             id
