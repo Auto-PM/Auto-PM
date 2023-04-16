@@ -7,7 +7,7 @@ import modal
 from fastapi.middleware.cors import CORSMiddleware
 
 
-from linear_types import Issue
+from linear_types import Issue, User
 from linear_client import LinearClient
 
 app = FastAPI()
@@ -36,8 +36,7 @@ class Task(BaseModel):
     description: Optional[str] = None
 
 
-from linear_client import IssueInput
-
+from linear_client import IssueInput, AssignIssueInput
 
 @app.get("/issues/", response_model=List[Issue])
 async def list_issues():
@@ -70,6 +69,16 @@ async def webhooks_linear(request: Request):
     print(json.dumps(j))
     return "ok"
 
+@app.post("/issues/{issue_id}/assign", response_model=Issue)
+async def assign_issue(input: AssignIssueInput):
+    """Assign an issue to a user."""
+    response = linear_client.assign_issue(input.issue_id, input.assignee_id)
+    return response
+
+@app.get("/users/", response_model=List[User])
+async def list_users():
+    response = linear_client.list_users()
+    return response
 
 # Create a custom image with the required dependencies installed
 # image = modal.Image.debian_slim().pip_install()

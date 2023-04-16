@@ -6,7 +6,7 @@ import json
 from pydantic import BaseModel, Field
 from typing import Optional
 
-from linear_types import Issue
+from linear_types import Issue, User
 
 
 # class Status(Enum):
@@ -54,6 +54,10 @@ class IssueInput(BaseModel):
         example=IssueState.IN_REVIEW,
     )
 
+
+class AssignIssueInput(BaseModel):
+    issue_id: str
+    assignee_id: str
 
 class IssueModificationInput(BaseModel):
     title: Optional[str] = None
@@ -128,6 +132,36 @@ query Issues($filter: IssueFilter) {
               name
             }
             }}}""",
+            "assign_issue": """
+mutation IssueUpdateAssignee($id: String!, $assigneeId: String!) {
+  issueUpdate(id: $id, input: {assigneeId: $assigneeId}) {
+    issue {
+      id
+      title
+      identifier
+      priority
+      state {
+        name
+      }
+      assignee {
+        id
+        name
+      }
+    }
+  }
+}
+""",
+"list_users": """
+query Users {
+  users {
+    nodes {
+      id
+      name
+      email
+    }
+  }
+}
+""",
 }
 
 LINEAR_API_KEY = os.environ["LINEAR_API_KEY"]
@@ -228,3 +262,23 @@ class LinearClient:
         if "errors" in result:
             raise Exception(result["errors"])
         return Issue(**result["data"]["issue"])
+
+
+    def assign_issue(self, issue_id: str, assignee_id: str) -> Issue:
+        variables = {
+            "id": issue_id,
+            "assigneeId": assignee_id,
+        }
+        result = self._run_graphql_query(QUERIES["assign_issue"], variables)
+        print(f"Assign issue result: {result}")
+        if "errors" in result:
+            raise Exception(result["errors"])
+        return Issue(**result["data"]["issueUpdate"]["issue"])
+
+    def list_users(self) -> List[User]:
+        result = self._run_graphql_query(QUERIES["list_users"])
+        print(f"List users result: {result}")
+        if "errors" in result:
+            raise Exception(result["errors"])
+        return [User(**user) for user in result["data"]["users"]["nodes"]]
+
