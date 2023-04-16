@@ -94,7 +94,7 @@ async def webhooks_linear(request: Request):
         print("assigning to AI")
         issue_description = j["data"]["title"]
 
-        if j["data"]["description"]:
+        if j["data"].get("description"):
             issue_description += "\n\nDescription:" + j["data"]["description"]
             issue_description = (
                 j["data"]["description"]
