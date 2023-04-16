@@ -61,7 +61,7 @@ query Issues($filter: IssueFilter) {
   }
 }""",
     "update_issue": """mutation IssueUpdate($id: String!, $title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String) {
-    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, $stateId: $stateId}) {
+    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId}) {
         issue {
             id
             title

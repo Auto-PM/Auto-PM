@@ -21,10 +21,10 @@ origins = [
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"], # Allows all origins
+    allow_methods=["*"], # Allows all methods
+    allow_headers=["*"], # Allows all headers
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
 )
 
 linear_client = LinearClient(endpoint="https://api.linear.app/graphql")
@@ -38,43 +38,26 @@ class Task(BaseModel):
 from linear_client import IssueInput, ListIssueFilter
 
 
-@app.get("/issues/", response_model=List[Issue])
-async def list_issues(stateId: str | None = None):
-    filter = {}
-    if stateId:
-        filter["stateId"] = stateId
-    response = linear_client.list_issues(filter)
-    return response
-
 @app.get("/issues/{issueId}", response_model=Issue)
 async def get_issue(issueId: str):
     """Look up details for a specific issue."""
     response = linear_client.get_issue(issueId)
     return response
 
+@app.get("/issues/", response_model=List[Issue])
+async def list_issues(stateId: str | None = None):
+    print("list_issues")
+    filter = {}
+    if stateId:
+        filter["stateId"] = stateId
+    response = linear_client.list_issues(filter)
+    return response
 
 @app.post("/issues/", response_model=Issue)
 async def create_issue(issue: IssueInput):
     response = linear_client.create_issue(issue)
     return response
 
-
-@app.post("/tasks/", response_model=Task)
-async def create_task(task: Task):
-    task_id = len(tasks) + 1
-    tasks[task_id] = task
-    return task
-
-
-@app.post("/tasks/{task_id}/delete")
-async def delete_task(task_id: str):
-    response = linear_client.delete_issue(task_id)
-    return response
-
-
-@app.get("/tasks/", response_model=List[Task])
-async def read_tasks(skip: int = 0, limit: int = 10):
-    return list(tasks.values())[skip : skip + limit]
 
 @app.patch("/issues/{issue_id}", response_model=Issue)
 async def patch_issue(issue_id: str, issue: IssueInput):

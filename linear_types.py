@@ -1056,7 +1056,7 @@ class WorkflowState(BaseModel):
     name: str
     # position: float
     # team: 'Team'
-    type: Optional[str]    
+    # type: Optional[str]    
     # updated_at: Any
 
 
