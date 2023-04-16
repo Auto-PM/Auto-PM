@@ -1,3 +1,6 @@
+import os
+import sys
+import io
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -5,12 +8,10 @@ from langchain.agents import load_tools
 from langchain.agents import initialize_agent
 from langchain.agents import AgentType
 
-import sys
-import io
 from contextlib import redirect_stdout
 
 
-llm = OpenAI(temperature=0.9)
+llm = OpenAI(temperature=0.9, model_name=os.environ.get("OPENAI_MODEL", "gpt-3.5-turbo"))
 
 # make agent
 tools = load_tools(["serpapi", "llm-math"], llm=llm)
