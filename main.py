@@ -52,27 +52,11 @@ async def create_issue(issue: IssueInput):
     return response
 
 
-@app.post("/tasks/", response_model=Task)
-async def create_task(task: Task):
-    task_id = len(tasks) + 1
-    tasks[task_id] = task
-    return task
-
-
-@app.post("/tasks/{task_id}/delete")
-async def delete_task(task_id: str):
-    response = linear_client.delete_issue(task_id)
-    return response
-
-
-@app.get("/tasks/", response_model=List[Task])
-async def read_tasks(skip: int = 0, limit: int = 10):
-    return list(tasks.values())[skip : skip + limit]
-
 @app.patch("/issues/{issue_id}", response_model=Issue)
 async def patch_issue(issue_id: str, issue: IssueInput):
     response = linear_client.update_issue(issue_id, issue)
     return response
+
 
 # Create a custom image with the required dependencies installed
 # image = modal.Image.debian_slim().pip_install()
