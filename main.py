@@ -52,6 +52,7 @@ async def create_issue(issue: IssueInput):
 
 @app.patch("/issues/{issue_id}", response_model=Issue)
 async def patch_issue(issue_id: str, issue: IssueInput):
+    print("patch")
     response = linear_client.update_issue(issue_id, issue)
     return response
 
@@ -71,7 +72,8 @@ async def webhooks_linear(request: Request):
 
 @app.post("/issues/{issue_id}/assign", response_model=Issue)
 async def assign_issue(input: AssignIssueInput):
-    """Assign an issue to a user."""
+    """Assign an issue to a user/assignee."""
+    print("assign")
     response = linear_client.assign_issue(input.issue_id, input.assignee_id)
     return response
 
