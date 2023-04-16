@@ -238,12 +238,20 @@ class LinearClient:
     def update_issue(self, issue_id, issue):
         variables = {
             "id": issue_id,
-            "title": issue.title,
-            "description": issue.description,
-            "priority": issue.priority,
             "teamId": LINEAR_TEAM_ID,
+<<<<<<< HEAD
             "stateId": issue.state.state_id(),
+=======
+>>>>>>> ed6f2b2200ff9fddb4a71fb12a83ccf83afb840c
         }
+        if issue.title is not None:
+            variables["title"] = issue.title
+        if issue.description is not None:
+            variables["description"] = issue.description
+        if issue.priority is not None:
+            variables["priority"] = issue.priority
+        if issue.state is not None:
+            variables["stateId"] = issue.state.state_id()
         result = self._run_graphql_query(QUERIES["update_issue"], variables)
         print("variables:", json.dumps(variables))
         print(result)
