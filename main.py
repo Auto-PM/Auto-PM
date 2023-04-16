@@ -85,10 +85,10 @@ async def webhooks_linear(request: Request):
     print("webhook payload:")
     print(json.dumps(j))
     print("action:", j["action"])
-    print("data:", j["data"]["assignee"]["name"])
+    print("data:", j["data"])
     if (
         j["action"] == "update"
-        and j["data"]["assignee"]["name"] == "Rowe Baht"
+        and j["data"].get("assignee", {}).get("name") == "Rowe Baht"
         and "assigneeId" in j["updatedFrom"]
     ):
         print("assigning to AI")
@@ -105,7 +105,10 @@ async def webhooks_linear(request: Request):
             issue_description = accomplish_issue(issue_description)
         print("issue_description:", issue_description)
         linear_client.update_issue(
-            j["data"]["id"], IssueModificationInput(description=issue_description)
+            j["data"]["id"], IssueModificationInput(
+                description=issue_description,
+                status="in_review",
+            )
         )
 
     # TODO: call /llm.py accomplish_issue() when an issue is assigned to the AI
