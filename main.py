@@ -86,7 +86,11 @@ async def webhooks_linear(request: Request):
     print(json.dumps(j))
     print("action:", j["action"])
     print("data:", j["data"]["assignee"]["name"])
-    if j["action"] == "update" and j["data"]["assignee"]["name"] == "Rowe Baht":
+    if (
+        j["action"] == "update"
+        and j["data"]["assignee"]["name"] == "Rowe Baht"
+        and "assigneeId" in j["updatedFrom"]
+    ):
         print("assigning to AI")
         issue_description = j["data"]["title"]
 

@@ -34,10 +34,13 @@ def accomplish_issue(issue):
     {task}
 
     If you are unable to complete the task, please respond with ∆ followed by a list of todo items for someone else to assist you with. reasons you may not be able to complete this task include:
-    - you do not have the necessary tools (such as a messaging client, a web browser, etc.)
-    - you do not have the necessary knowledge
+    - you do not have a messaging client
+    - you do not know how to do complex math
+    - you must look up something specific that you do not know, like the weather today.
+
+    You should respond to the best of your abilities if the question asks for long form content such as an essay or project spec.
     
-    If you do have the ability to complete the task please do so now.
+    If you have the ability to complete the task please do so now.
 
     ---
     Your Response:
