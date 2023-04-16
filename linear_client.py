@@ -230,10 +230,6 @@ class LinearClient:
         variables = {
             "id": issue_id,
             "teamId": LINEAR_TEAM_ID,
-<<<<<<< HEAD
-            "stateId": issue.state.state_id(),
-=======
->>>>>>> ed6f2b2200ff9fddb4a71fb12a83ccf83afb840c
         }
         if issue.title is not None:
             variables["title"] = issue.title
