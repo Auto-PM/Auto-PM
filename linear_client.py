@@ -77,8 +77,6 @@ query Issue($id: String!) {
         assignee {
           id
           name
-          email
-          isMe
         }
         state {
           id
@@ -103,11 +101,10 @@ query Issues($filter: IssueFilter) {
     }
   }
 }""",
-    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!, $assigneeId: String) {
-    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId, assigneeId: $assigneeId}) {
+    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!) {
+    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId) {
         issue {
             id
-            assigneeId
             title
             identifier
             priority
@@ -120,11 +117,10 @@ query Issues($filter: IssueFilter) {
     success
   }
 }""",
-    "update_issue": """mutation IssueUpdate($id: String!, $title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!, $assigneeId: String) {
-    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId, assigneeId: $assigneeId}) {
+    "update_issue": """mutation IssueUpdate($id: String!, $title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!) {
+    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId) {
         issue {
             id
-            assigneeId
             title
             identifier
             priority
