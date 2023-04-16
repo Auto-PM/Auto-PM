@@ -15,7 +15,9 @@ custom_agent = initialize_agent(
 )
 
 
-def get_summary():
+def get_project_summary(issue):
+    """Gets a summary of content in the project relevant to a given issue"""
+    # TODO: embed all the linear issues, search the embedding db for issues similar to the task, return a summary of those issues.
     return ""
 
 
@@ -48,7 +50,7 @@ def accomplish_issue(issue):
 
     chain = LLMChain(llm=llm, prompt=prompt)
 
-    chain_run = chain.run({"task": issue, "summary": get_summary()})
+    chain_run = chain.run({"task": issue, "summary": get_summary(issue)})
     print(chain_run)
     while True:
         if "∆" not in chain_run:
