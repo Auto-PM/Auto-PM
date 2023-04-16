@@ -88,7 +88,7 @@ async def webhooks_linear(request: Request):
     print("data:", j["data"])
     if (
         j["action"] == "update"
-        and j["data"].get("assignee", {}).get("name") == "Rowe Baht"
+        and j["data"].get("assignee", {}).get("name") == "AutoPM Robot"
         and "assigneeId" in j["updatedFrom"]
     ):
         print("assigning to AI")
@@ -107,7 +107,7 @@ async def webhooks_linear(request: Request):
         linear_client.update_issue(
             j["data"]["id"], IssueModificationInput(
                 description=issue_description,
-                status="in_review",
+                state="in_review",
             )
         )
 

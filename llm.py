@@ -46,7 +46,7 @@ def accomplish_issue(issue):
     """
 
     prompt = PromptTemplate(
-        input_variables=["task", "summary"],
+        input_variables=["task"],
         template=template,
     )
 

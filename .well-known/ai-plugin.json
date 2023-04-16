@@ -1,6 +1,6 @@
 {
     "schema_version": "v1",
-    "name_for_human": "Task Management",
+    "name_for_human": "AutoPM",
     "name_for_model": "projectmanager",
     "description_for_human": "Plugin for managing Tasks in Linear.",
     "description_for_model": "Plugin for managing Tasks in Linear. When using this plugin you should act as a professional project manager. For example, if a user asks to create an issue that is too large in scope to be reasonably done in 1 hour, you should break it into 2-4 issues instead and offer to record those or the original issue.",
