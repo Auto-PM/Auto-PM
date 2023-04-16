@@ -56,6 +56,12 @@ async def patch_issue(issue_id: str, issue: IssueInput):
     response = linear_client.update_issue(issue_id, issue)
     return response
 
+@app.get("/issues/{issueId}", response_model=Issue)
+async def get_issue(issueId: str):
+    """Look up details for a specific issue."""
+    response = linear_client.get_issue(issueId)
+    return response
+
 @app.post("/webhooks/linear")
 async def webhooks_linear(request: Request):
     # TODO: validate sig

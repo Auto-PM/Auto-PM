@@ -55,6 +55,24 @@ class IssueInput(BaseModel):
 
 
 QUERIES = {
+    "get_issue": """
+query Issue($id: String!) {
+    issue(id: $id) {
+        id
+        title
+        identifier
+        priority
+        assignee {
+          id
+          name
+          email
+          isMe
+        }
+        state {
+          id
+          name
+        }
+        }}""",
     "list_issues": """
 query Issues($filter: IssueFilter) {
   issues(filter: $filter) {
@@ -65,36 +83,42 @@ query Issues($filter: IssueFilter) {
         priority
         state {
             name
-      }
+        }
+        assignee {
+          id
+          name
+        }
     }
   }
 }""",
-    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!) {
-    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId}) {
+    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!, $assigneeId: String) {
+    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId, assigneeId: $assigneeId}) {
         issue {
             id
+            assigneeId
             title
             identifier
             priority
             state {
-            name
-      }
+              name
+            }
             }}}""",
     "delete_issue": """mutation IssueDelete($issueDeleteId: String!) {
   issueDelete(id: $issueDeleteId) {
     success
   }
 }""",
-    "update_issue": """mutation IssueUpdate($id: String!, $title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!) {
-    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId}) {
+    "update_issue": """mutation IssueUpdate($id: String!, $title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!, $assigneeId: String) {
+    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId, assigneeId: $assigneeId}) {
         issue {
             id
+            assigneeId
             title
             identifier
             priority
             state {
-            name
-      }
+              name
+            }
             }}}""",
 }
 
@@ -183,3 +207,16 @@ class LinearClient:
         if "errors" in result:
             raise Exception(result["errors"])
         return Issue(**result["data"]["issueUpdate"]["issue"])
+
+    def get_issue(self, issue_id):
+
+        result = self._run_graphql_query(
+            QUERIES["get_issue"],
+            variables={
+                "id": issue_id,
+            },
+        )
+        print(result)
+        if "errors" in result:
+            raise Exception(result["errors"])
+        return Issue(**result["data"]["issue"])

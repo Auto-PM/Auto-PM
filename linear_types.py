@@ -1016,9 +1016,9 @@ class IntercomSettingsInput(BaseModel):
 
 
 class User(BaseModel):
-    active: bool
-    admin: bool
-    archived_at: Any
+    # active: bool
+    # admin: bool
+    # archived_at: Any
     # assigned_issues: 'IssueConnection'
     # avatar_url: Optional[str]
     # calendar_hash: Optional[str]
@@ -1032,9 +1032,39 @@ class User(BaseModel):
     # guest: bool
     id: str
     # invite_hash: str
-    # is_me: bool
+    is_me: Optional[bool]
     # last_seen: Any
-    # name: str
+    name: str
+    # organization: 'Organization'
+    # status_emoji: Optional[str]
+    # status_label: Optional[str]
+    # status_until_at: Any
+    # team_memberships: 'TeamMembershipConnection'
+    # teams: 'TeamConnection'
+    # timezone: Optional[str]
+    # updated_at: Any
+    # url: str
+
+class AssigneeUser(BaseModel):
+    # active: bool
+    # admin: bool
+    # archived_at: Any
+    # assigned_issues: 'IssueConnection'
+    # avatar_url: Optional[str]
+    # calendar_hash: Optional[str]
+    # created_at: Any
+    # created_issue_count: int
+    # created_issues: 'IssueConnection'
+    # description: Optional[str]
+    # disable_reason: Optional[str]
+    # display_name: str
+    email: Optional[str]
+    # guest: bool
+    id: Optional[str]
+    # invite_hash: str
+    is_me: Optional[bool]
+    # last_seen: Any
+    name: Optional[str]
     # organization: 'Organization'
     # status_emoji: Optional[str]
     # status_label: Optional[str]
@@ -1059,7 +1089,7 @@ class IssueEdge(BaseModel):
 
 class Issue(BaseModel):
     archived_at: Any
-    assignee: Optional[User]
+    assignee: Optional[AssigneeUser]
     # attachments: 'AttachmentConnection'
     # auto_archived_at: Any
     # auto_closed_at: Any
@@ -3861,4 +3891,4 @@ class ZendeskSettingsInput(BaseModel):
 
 
 # IssueEdge.update_forward_refs()
-# Issue.update_forward_refs()
+Issue.update_forward_refs()
