@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 from linear_types import Issue, User
-from linear_client import LinearClient
+from linear_client import IssueModificationInput, LinearClient
 from linear_client import IssueInput, AssignIssueInput
 
 app = FastAPI()
@@ -60,7 +60,7 @@ async def create_issue(issues: List[IssueInput] = Body(..., embed=True)):
 
 
 @app.patch("/issues/{issue_id}", response_model=Issue)
-async def patch_issue(issue_id: str, issue: IssueInput):
+async def patch_issue(issue_id: str, issue: IssueModificationInput):
     print("patch")
     response = linear_client.update_issue(issue_id, issue)
     return response
@@ -73,12 +73,36 @@ async def get_issue(issueId: str):
     return response
 
 
+import json
+from llm import accomplish_issue
+
+
 @app.post("/webhooks/linear")
 async def webhooks_linear(request: Request):
     # TODO: validate sig
     j = await request.json()
     print("webhook payload:")
     print(json.dumps(j))
+    print("action:", j["action"])
+    print("data:", j["data"]["assignee"]["name"])
+    if j["action"] == "update" and j["data"]["assignee"]["name"] == "Rowe Baht":
+        print("assigning to AI")
+        issue_description = j["data"]["title"]
+
+        if j["data"]["description"]:
+            issue_description += "\n\nDescription:" + j["data"]["description"]
+            issue_description = (
+                j["data"]["description"]
+                + "\n\n-------\n\n"
+                + accomplish_issue(issue_description)
+            )
+        else:
+            issue_description = accomplish_issue(issue_description)
+        print("issue_description:", issue_description)
+        linear_client.update_issue(
+            j["data"]["id"], IssueModificationInput(description=issue_description)
+        )
+
     # TODO: call /llm.py accomplish_issue() when an issue is assigned to the AI
     return "ok"
 

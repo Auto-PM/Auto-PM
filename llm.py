@@ -5,6 +5,10 @@ from langchain.agents import load_tools
 from langchain.agents import initialize_agent
 from langchain.agents import AgentType
 
+import sys
+import io
+from contextlib import redirect_stdout
+
 
 llm = OpenAI(temperature=0.9)
 
@@ -50,13 +54,24 @@ def accomplish_issue(issue):
 
     chain = LLMChain(llm=llm, prompt=prompt)
 
-    chain_run = chain.run({"task": issue, "summary": get_summary(issue)})
+    chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
     print(chain_run)
     while True:
         if "∆" not in chain_run:
             return chain_run
         else:
-            return custom_agent.run(issue)
+            print_buffer = io.StringIO()
+            with redirect_stdout(print_buffer):
+                agent_output = custom_agent.run(issue)
+            captured_prints = print_buffer.getvalue()
+            print_buffer.close()
+            return (
+                "Agent Reasoning"
+                + "\n\n"
+                + captured_prints
+                + "\n\n---------\n\n"
+                + agent_output
+            )
 
 
 # llm = OpenAI(temperature=0.9)

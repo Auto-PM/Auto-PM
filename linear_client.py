@@ -242,7 +242,7 @@ class LinearClient:
             "description": issue.description,
             "priority": issue.priority,
             "teamId": LINEAR_TEAM_ID,
-            "stateId": input.state.state_id(),
+            "stateId": issue.state.state_id(),
         }
         result = self._run_graphql_query(QUERIES["update_issue"], variables)
         print("variables:", json.dumps(variables))
