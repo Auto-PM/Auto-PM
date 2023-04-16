@@ -8,13 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 from linear_types import Issue, User
-<<<<<<< HEAD
-from linear_client import IssueModificationInput, LinearClient
-from linear_client import IssueInput, AssignIssueInput
-=======
 from linear_client import LinearClient
 from linear_client import IssueInput, AssignIssueInput, IssueModificationInput
->>>>>>> ed6f2b2200ff9fddb4a71fb12a83ccf83afb840c
 
 app = FastAPI()
 stub = modal.Stub("form_generator")
@@ -65,16 +60,9 @@ async def create_issue(issues: List[IssueInput] = Body(..., embed=True)):
     return response
 
 
-<<<<<<< HEAD
-@app.patch("/issues/{issue_id}", response_model=Issue)
-async def patch_issue(issue_id: str, issue: IssueModificationInput):
-    print("patch")
-=======
 @app.post("/issues/{issue_id}/", response_model=Issue)
 async def patch_issue(issue_id: str, issue: IssueModificationInput):
     """Patch an issue."""
-    print("post")
->>>>>>> ed6f2b2200ff9fddb4a71fb12a83ccf83afb840c
     response = linear_client.update_issue(issue_id, issue)
     return response
 
