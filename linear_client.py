@@ -156,15 +156,14 @@ query Users {
 """,
 }
 
+LINEAR_API_KEY = os.environ.get("LINEAR_API_KEY","")
+LINEAR_TEAM_ID = os.environ.get("LINEAR_TEAM_ID","")
 
 class LinearClient:
     def __init__(self, endpoint):
         self.endpoint = endpoint
         self.session = requests.Session()
         #    TODO: this is a hack, we should get the team id from the API
-
-        LINEAR_API_KEY = os.environ["LINEAR_API_KEY"]
-        LINEAR_TEAM_ID = os.environ["LINEAR_TEAM_ID"]
 
     def _run_graphql_query(self, query, variables=None):
         print("variables:", json.dumps(variables))
