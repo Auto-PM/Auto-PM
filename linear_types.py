@@ -1136,7 +1136,7 @@ class Issue(BaseModel):
     id: str
     identifier: str
     # inverse_relations: 'IssueRelationConnection'
-    labels: IssueLabelConnection
+    labels: Optional[IssueLabelConnection]
     # number: float
     parent: Optional["Issue"]
     # previous_identifiers: List[str]
