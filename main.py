@@ -1,5 +1,5 @@
 # main.py
-from fastapi import FastAPI, HTTPException, Request, Body
+from fastapi import FastAPI, HTTPException, Request, Body, Form, status
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional, Any
@@ -7,6 +7,10 @@ import modal
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv, set_key
 import os
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
+from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 
 
 load_dotenv()
@@ -17,14 +21,22 @@ from linear_client import IssueInput, AssignIssueInput, IssueModificationInput
 
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 stub = modal.Stub("form_generator")
 
 
 @app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
+async def check_setup(request: Request, call_next):
     setup_done = os.environ.get("SETUP_DONE", "false")
+    print(request.url.path)
     print("setup_done:", setup_done)
-    if not setup_done or request.url.path == "/setup":
+    if (
+        setup_done
+        or request.url.path == "/setup"
+        or request.url.path == "/get_setup"
+        or request.url.path == "/form_setup"
+        or request.url.path == "/favicon.ico"
+    ):
         response = await call_next(request)
     else:
         print("setup not done, returning 403")
@@ -89,7 +101,18 @@ async def get_issue(issueId: str):
     return response
 
 
-@app.post("/setup")
+class SetupModel(BaseModel):
+    linear_api_key: str
+    openai_api_key: str
+    serpapi_api_key: str
+    linear_team_id: str
+
+
+@app.get("/get_setup", response_class=HTMLResponse)
+async def get_setup(request: Request):
+    return templates.TemplateResponse("setup_form.html", {"request": request})
+
+
 async def setup(
     linear_api_key: str, openai_api_key: str, serpapi_api_key: str, linear_team_id: str
 ):
@@ -112,6 +135,43 @@ async def setup(
         }
     else:
         raise HTTPException(status_code=400, detail="API keys are already set")
+
+
+@app.post("/setup")
+async def api_setup(setup_data: SetupModel):
+    return await setup(
+        setup_data.linear_api_key,
+        setup_data.openai_api_key,
+        setup_data.serpapi_api_key,
+        setup_data.linear_team_id,
+    )
+
+
+@app.post("/form_setup")
+async def form_setup(request: Request, setup_data: SetupModel):
+    response = await setup(
+        setup_data.linear_api_key,
+        setup_data.openai_api_key,
+        setup_data.serpapi_api_key,
+        setup_data.linear_team_id,
+    )
+    print("response:")
+    print(response)
+
+    if response.get("message"):
+        return RedirectResponse(
+            url="/setup_confirmation", status_code=status.HTTP_303_SEE_OTHER
+        )
+    else:
+        return templates.TemplateResponse(
+            "setup_form.html",
+            {"request": request, "error": "Setup failed. Please try againrr."},
+        )
+
+
+@app.get("/setup_confirmation", response_class=HTMLResponse)
+async def setup_confirmation(request: Request):
+    return templates.TemplateResponse("setup_confirmation.html", {"request": request})
 
 
 import json

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      async function submitForm(event) {
+        event.preventDefault();
+        const linearApiKey = document.getElementById("linear_api_key").value;
+        const openaiApiKey = document.getElementById("openai_api_key").value;
+        const serpapiApiKey = document.getElementById("serpapi_api_key").value;
+        const linearTeamId = document.getElementById("linear_team_id").value;
+
+        const response = await fetch("/form_setup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            linear_api_key: linearApiKey,
+            openai_api_key: openaiApiKey,
+            serpapi_api_key: serpapiApiKey,
+            linear_team_id: linearTeamId,
+          }),
+        });
+
+        console.log("Response status:", response.status);
+        console.log("Response body:", await response.json());
+
+        if (response.status === 202) {
+          window.location.href = "/setup_confirmation";
+        } else {
+          alert("Setup failed. Please try again.");
+        }
+      }
+    </script>
+  </head>
+  <body class="w-full h-screen text-gray-900">
+    <div class="max-w-4xl mx-auto text-center my-8">
+      <h1 class="font-semibold text-2xl py-8">AutoPM API Key Setup</h1>
+      <form onsubmit="submitForm(event)">
+        <label for="linear_api_key" class="text-gray-800"
+          >Linear API Key:</label
+        >
+        <input
+          type="text"
+          id="linear_api_key"
+          name="linear_api_key"
+          required
+          class="border-2 border-gray-300 rounded-md"
+        /><br /><br />
+
+        <label class="text-gray-800" for="openai_api_key"
+          >OpenAI API Key:</label
+        >
+        <input
+          type="text"
+          id="openai_api_key"
+          name="openai_api_key"
+          required
+          class="border-2 border-gray-300 rounded-md"
+        /><br /><br />
+
+        <label class="text-gray-800" for="serpapi_api_key"
+          >SerpAPI API Key:</label
+        >
+        <input
+          type="text"
+          id="serpapi_api_key"
+          name="serpapi_api_key"
+          required
+          class="border-2 border-gray-300 rounded-md"
+        /><br /><br />
+
+        <label class="text-gray-800" for="linear_team_id"
+          >Linear Team ID:</label
+        >
+        <input
+          type="text"
+          id="linear_team_id"
+          name="linear_team_id"
+          required
+          class="border-2 border-gray-300 rounded-md"
+        /><br /><br />
+
+        <input
+          type="submit"
+          value="Submit"
+          class="rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        />
+      </form>
+    </div>
+  </body>
+</html>
