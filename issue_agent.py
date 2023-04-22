@@ -146,9 +146,8 @@ agent = LLMSingleActionAgent(
 )
 print("all tools:", tool_names)
 
-
 from langchain.memory import ConversationBufferWindowMemory
 memory=ConversationBufferWindowMemory(k=2)
 
 agent_executor = AgentExecutor.from_agent_and_tools(agent=agent, tools=tools, verbose=True, memory=memory)
-agent_executor.run("what issues exist? explain your reasoning step by step")
+agent_executor.run("what issues exist?")

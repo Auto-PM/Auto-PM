@@ -9,7 +9,7 @@
     },
     "api": {
         "type": "openapi",
-        "url": "/openapi.json",
+        "url": "http://localhost:8000/openapi.json",
         "is_user_authenticated": false
     },
     "logo_url": "http://localhost:8000/assets/logo.png",

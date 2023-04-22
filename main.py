@@ -15,21 +15,23 @@ from linear_types import Issue, User
 from linear_client import LinearClient
 from linear_client import IssueInput, AssignIssueInput, IssueModificationInput
 
+
 app = FastAPI(
-    title="AutoPM",
-    version="0.0.1",
-    servers=[
-        {"url": "http://localhost:8000", "description": "Production environment"},
-    ],
-)
+        title="AutoPM",
+        description="Automate your product management",
+        servers=[
+            {
+                "url": "http://localhost:8000/",
+                "description": "Production server",
+            }],
+        )
 stub = modal.Stub("form_generator")
 
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
-    setup_done = os.environ.get("SETUP_DONE", "false")
-    print("setup_done:", setup_done)
-    if not setup_done or request.url.path == "/setup":
+    setup_done = bool(os.environ.get("SETUP_DONE", "false"))
+    if setup_done or request.url.path == "/setup":
         response = await call_next(request)
     else:
         print("setup not done, returning 403")
