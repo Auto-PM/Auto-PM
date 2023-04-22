@@ -137,7 +137,8 @@ async def setup(
         set_key(".env", "SERPAPI_API_KEY", serpapi_api_key)
         set_key(".env", "SETUP_DONE", "true")
 
-        os.environ["SETUP_DONE"] = "true"
+        # re-run load dotenv to pick up changes
+        load_dotenv()
 
         return {
             "message": "API keys have been added to the .env file and setup is complete"
