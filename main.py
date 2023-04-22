@@ -5,14 +5,32 @@ from pydantic import BaseModel
 from typing import List, Optional, Any
 import modal
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv, set_key
+import os
 
+
+load_dotenv()
 
 from linear_types import Issue, User
 from linear_client import LinearClient
 from linear_client import IssueInput, AssignIssueInput, IssueModificationInput
 
+
 app = FastAPI()
 stub = modal.Stub("form_generator")
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    setup_done = os.environ.get("SETUP_DONE", "false")
+    print("setup_done:", setup_done)
+    if not setup_done or request.url.path == "/setup":
+        response = await call_next(request)
+    else:
+        print("setup not done, returning 403")
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return response
+
 
 app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
@@ -51,7 +69,6 @@ async def create_issue(issue: IssueInput):
 
 @app.post("/issues/bulk/", response_model=List[Issue])
 async def create_issue(issues: List[IssueInput] = Body(..., embed=True)):
-    """Create issues in bulk."""
     response = []
     for issue in issues:
         print("creating issue:", issue)
@@ -62,25 +79,45 @@ async def create_issue(issues: List[IssueInput] = Body(..., embed=True)):
 
 @app.post("/issues/{issue_id}/", response_model=Issue)
 async def patch_issue(issue_id: str, issue: IssueModificationInput):
-    """Patch an issue."""
     response = linear_client.update_issue(issue_id, issue)
     return response
 
 
 @app.get("/issues/{issueId}", response_model=Issue)
 async def get_issue(issueId: str):
-    """Look up details for a specific issue."""
     response = linear_client.get_issue(issueId)
     return response
 
 
+@app.post("/setup")
+async def setup(linear_api_key: str, openai_api_key: str, serpapi_api_key: str):
+    if not os.environ.get("SETUP_DONE", "false") == "true":
+        # Check if the .env file exists, if not, create one
+        if not os.path.exists(".env"):
+            with open(".env", "w") as env_file:
+                env_file.write("")
+
+        set_key(".env", "LINEAR_API_KEY", linear_api_key)
+        set_key(".env", "OPENAI_API_KEY", openai_api_key)
+        set_key(".env", "LINEAR_TEAM_ID", "T1")
+        set_key(".env", "SERPAPI_API_KEY", serpapi_api_key)
+        set_key(".env", "SETUP_DONE", "true")
+
+        os.environ["SETUP_DONE"] = "true"
+
+        return {
+            "message": "API keys have been added to the .env file and setup is complete"
+        }
+    else:
+        raise HTTPException(status_code=400, detail="API keys are already set")
+
+
 import json
-from llm import accomplish_issue
+from agents.llm import accomplish_issue
 
 
 @app.post("/webhooks/linear")
 async def webhooks_linear(request: Request):
-    # TODO: validate sig
     j = await request.json()
     print("webhook payload:")
     print(json.dumps(j))
@@ -105,19 +142,18 @@ async def webhooks_linear(request: Request):
             issue_description = accomplish_issue(issue_description)
         print("issue_description:", issue_description)
         linear_client.update_issue(
-            j["data"]["id"], IssueModificationInput(
+            j["data"]["id"],
+            IssueModificationInput(
                 description=issue_description,
                 state="in_review",
-            )
+            ),
         )
 
-    # TODO: call /llm.py accomplish_issue() when an issue is assigned to the AI
     return "ok"
 
 
 @app.post("/issues/{issue_id}/assign", response_model=Issue)
 async def assign_issue(input: AssignIssueInput):
-    """Assign an issue to a user/assignee."""
     print("assign")
     response = linear_client.assign_issue(input.issue_id, input.assignee_id)
     return response
@@ -143,39 +179,3 @@ asset_mount = modal.Mount.from_local_file(
 @stub.asgi(image=image, mounts=[template_mount, asset_mount])
 def fastapi_app():
     return app
-
-
-# @app.post("/items/", response_model=Item)
-# async def create_item(item: Item):
-#     item_id = len(items) + 1
-#     items[item_id] = item
-#     return item
-
-
-# @app.get("/items/", response_model=List[Item])
-# async def read_items(skip: int = 0, limit: int = 10):
-#     return list(items.values())[skip : skip + limit]
-
-
-# @app.get("/items/{item_id}", response_model=Item)
-# async def read_item(item_id: int):
-#     item = items.get(item_id)
-#     if item is None:
-#         raise HTTPException(status_code=404, detail="Item not found")
-#     return item
-
-
-# @app.put("/items/{item_id}", response_model=Item)
-# async def update_item(item_id: int, item: Item):
-#     if item_id not in items:
-#         raise HTTPException(status_code=404, detail="Item not found")
-#     items[item_id] = item
-#     return item
-
-
-# @app.delete("/items/{item_id}", response_model=Item)
-# async def delete_item(item_id: int):
-#     if item_id not in items:
-#         raise HTTPException(status_code=404, detail="Item not found")
-#     item = items.pop(item_id)
-#     return item
