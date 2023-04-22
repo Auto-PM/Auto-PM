@@ -177,17 +177,19 @@ query IssueLabels {
 """,
 }
 
-LINEAR_API_KEY = os.environ.get("LINEAR_API_KEY", "")
-LINEAR_TEAM_ID = os.environ.get("LINEAR_TEAM_ID", "")
-
-
 class LinearClient:
     def __init__(self, endpoint):
         self.endpoint = endpoint
         self.session = requests.Session()
         #    TODO: this is a hack, we should get the team id from the API
 
+    def _get_api_key_and_team_id(self):
+        LINEAR_API_KEY = os.environ.get("LINEAR_API_KEY", "")
+        LINEAR_TEAM_ID = os.environ.get("LINEAR_TEAM_ID", "")
+        return LINEAR_API_KEY, LINEAR_TEAM_ID
+
     def _run_graphql_query(self, query, variables=None):
+        LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
         print("variables:", json.dumps(variables))
         return self.session.post(
             self.endpoint,
@@ -202,6 +204,7 @@ class LinearClient:
         ).json()
 
     def list_issues(self):
+        LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
         result = self._run_graphql_query(
             QUERIES["list_issues"],
             variables={
@@ -220,6 +223,7 @@ class LinearClient:
         return [Issue(**issue) for issue in result["data"]["issues"]["nodes"]]
 
     def create_issue(self, input: IssueInput):
+        LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
         # TODO(Can we just pass the whole input as variables?)
         variables = {
             "teamId": LINEAR_TEAM_ID,
@@ -248,6 +252,7 @@ class LinearClient:
         return result["data"]["issueDelete"]["success"]
 
     def update_issue(self, issue_id, issue):
+        LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
         variables = {
             "id": issue_id,
             "teamId": LINEAR_TEAM_ID,
