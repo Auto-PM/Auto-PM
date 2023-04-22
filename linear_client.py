@@ -6,8 +6,7 @@ import json
 from pydantic import BaseModel, Field
 from typing import Optional
 
-from linear_types import Issue, User
-
+from linear_types import Issue, User, IssueLabel
 
 from enum import Enum, auto
 from typing import Any
@@ -78,6 +77,12 @@ query Issue($id: String!) {
           id
           name
         }
+        labels {
+          nodes {
+            id
+            name
+          }
+        }
         }}""",
     "list_issues": """
 query Issues($filter: IssueFilter) {
@@ -93,6 +98,12 @@ query Issues($filter: IssueFilter) {
         assignee {
           id
           name
+        }
+        labels {
+          nodes {
+            id
+            name
+          }
         }
     }
   }
@@ -150,6 +161,16 @@ query Users {
       id
       name
       email
+    }
+  }
+}
+""",
+    "list_issue_labels": """
+query IssueLabels {
+  issueLabels {
+    nodes {
+      id
+      name
     }
   }
 }
@@ -275,3 +296,10 @@ class LinearClient:
         if "errors" in result:
             raise Exception(result["errors"])
         return [User(**user) for user in result["data"]["users"]["nodes"]]
+
+    def list_issue_labels(self) -> List[IssueLabel]:
+        result = self._run_graphql_query(QUERIES["list_issue_labels"])
+        print(f"List issue_labels result: {result}")
+        if "errors" in result:
+            raise Exception(result["errors"])
+        return [IssueLabel(**user) for user in result["data"]["issueLabels"]["nodes"]]

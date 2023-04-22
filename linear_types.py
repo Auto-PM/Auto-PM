@@ -1078,6 +1078,28 @@ class AssigneeUser(BaseModel):
     # url: str
 
 
+class IssueLabelConnection(BaseModel):
+    #edges: List["IssueLabelEdge"]
+    nodes: List["IssueLabel"]
+    #page_info: "PageInfo"
+
+
+class IssueLabel(BaseModel):
+    # archived_at: Any
+    # children: "IssueLabelConnection"
+    # color: str
+    # created_at: Any
+    #creator: Optional["User"]
+    #description: Optional[str]
+    id: str
+    #issues: "IssueConnection"
+    name: str
+    #parent: Optional["IssueLabel"]
+    #team: Optional["Team"]
+    # updated_at: Any
+
+IssueLabelConnection.update_forward_refs()  
+
 class IssueConnection(BaseModel):
     edges: list["IssueEdge"]
     # nodes: List['Issue']
@@ -1114,7 +1136,7 @@ class Issue(BaseModel):
     id: str
     identifier: str
     # inverse_relations: 'IssueRelationConnection'
-    # labels: 'IssueLabelConnection'
+    labels: IssueLabelConnection
     # number: float
     parent: Optional["Issue"]
     # previous_identifiers: List[str]
@@ -1388,19 +1410,6 @@ class IssueImportUpdateInput(BaseModel):
     mapping: Any
 
 
-class IssueLabel(BaseModel):
-    archived_at: Any
-    children: "IssueLabelConnection"
-    color: str
-    created_at: Any
-    creator: Optional["User"]
-    description: Optional[str]
-    id: str
-    issues: "IssueConnection"
-    name: str
-    parent: Optional["IssueLabel"]
-    team: Optional["Team"]
-    updated_at: Any
 
 
 class IssueLabelCollectionFilter(BaseModel):
@@ -1416,12 +1425,6 @@ class IssueLabelCollectionFilter(BaseModel):
     some: Optional["IssueLabelFilter"]
     team: Optional["TeamFilter"]
     updated_at: Optional["DateComparator"]
-
-
-class IssueLabelConnection(BaseModel):
-    edges: List["IssueLabelEdge"]
-    nodes: List["IssueLabel"]
-    page_info: "PageInfo"
 
 
 class IssueLabelCreateInput(BaseModel):
