@@ -15,8 +15,13 @@ from linear_types import Issue, User
 from linear_client import LinearClient
 from linear_client import IssueInput, AssignIssueInput, IssueModificationInput
 
-
-app = FastAPI()
+app = FastAPI(
+    title="AutoPM",
+    version="0.0.1",
+    servers=[
+        {"url": "http://localhost:8000", "description": "Production environment"},
+    ],
+)
 stub = modal.Stub("form_generator")
 
 
