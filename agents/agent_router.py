@@ -1,3 +1,10 @@
+from gpt_4 import gpt_4_agent
+
+AGENTS = [
+    gpt_4_agent,
+]
+
+
 class AgentRouter:
     """
     A class to route input strings to specified agent functions.
@@ -21,7 +28,7 @@ class AgentRouter:
         print(router.run(input_str, "agent2"))  # Output: hello, world!
     """
 
-    def __init__(self, agents):
+    def __init__(self, agents=AGENTS):
         """
         Initializes the AgentRouter with a list of agent functions.
 
@@ -30,7 +37,11 @@ class AgentRouter:
         """
         self.agents = {}
         for agent in agents:
-            self.agents[agent.__name__] = agent
+            self.agents[agent.__name__] = {
+                "function": agent,
+                "description": agent.__doc__,
+            }
+            print(f"Loaded agent: {agent.__name__}")
 
     def run(self, input_str, agent_name):
         """
@@ -50,3 +61,18 @@ class AgentRouter:
             return self.agents[agent_name](input_str)
         else:
             raise ValueError(f"No agent found with name: {agent_name}")
+
+    def get_agents(self):
+        """
+        Returns a list of agent names and their descriptions.
+
+        Returns:
+            list: A list of tuples containing agent names and their descriptions.
+        """
+        return [(name, agent["description"]) for name, agent in self.agents.items()]
+
+
+# Agents = AgentRouter()
+# print(Agents.get_agents())
+
+# # print(AgentRouter().run("tell me what the sky is like", "gpt_4_agent"))
