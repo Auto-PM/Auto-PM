@@ -90,7 +90,9 @@ async def get_issue(issueId: str):
 
 
 @app.post("/setup")
-async def setup(linear_api_key: str, openai_api_key: str, serpapi_api_key: str):
+async def setup(
+    linear_api_key: str, openai_api_key: str, serpapi_api_key: str, linear_team_id: str
+):
     if not os.environ.get("SETUP_DONE", "false") == "true":
         # Check if the .env file exists, if not, create one
         if not os.path.exists(".env"):
@@ -99,7 +101,7 @@ async def setup(linear_api_key: str, openai_api_key: str, serpapi_api_key: str):
 
         set_key(".env", "LINEAR_API_KEY", linear_api_key)
         set_key(".env", "OPENAI_API_KEY", openai_api_key)
-        set_key(".env", "LINEAR_TEAM_ID", "T1")
+        set_key(".env", "LINEAR_TEAM_ID", linear_team_id)
         set_key(".env", "SERPAPI_API_KEY", serpapi_api_key)
         set_key(".env", "SETUP_DONE", "true")
 
