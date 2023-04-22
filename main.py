@@ -15,12 +15,21 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 load_dotenv()
 
-from linear_types import Issue, User
+from linear_types import Issue, User, IssueLabel
 from linear_client import LinearClient
 from linear_client import IssueInput, AssignIssueInput, IssueModificationInput
 
 
-app = FastAPI()
+app = FastAPI(
+    title="AutoPM",
+    description="Automate your product management",
+    servers=[
+        {
+            "url": "http://localhost:8000",
+            "description": "Production server",
+        }
+    ],
+)
 templates = Jinja2Templates(directory="templates")
 stub = modal.Stub("form_generator")
 
@@ -224,6 +233,12 @@ async def assign_issue(input: AssignIssueInput):
 @app.get("/users/", response_model=List[User])
 async def list_users():
     response = linear_client.list_users()
+    return response
+
+
+@app.get("/issue_labels", response_model=List[IssueLabel])
+async def list_issue_labels():
+    response = linear_client.list_issue_labels()
     return response
 
 

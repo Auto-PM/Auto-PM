@@ -1,7 +1,9 @@
 from gpt_4 import gpt_4_agent
+from nla_langchain_agent import nla_agent
 
 AGENTS = [
     gpt_4_agent,
+    nla_agent,
 ]
 
 
