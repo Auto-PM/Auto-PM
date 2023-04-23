@@ -138,14 +138,14 @@ class AgentRouter:
         )
         example_ai_response2 = json.dumps(
             {
-                "agent": "gpt_3_agent",
+                "agent": "GPT3",
                 "rationale": "This issue appears ready to complete",
             }
         )
         example_ai_response3 = json.dumps(
             {
-                "agent": "gpt_4_agent",
-                "rationale": "gpt_4_agent was specifically requested for this issue via a label",
+                "agent": "GPT4",
+                "rationale": "GPT4 was specifically requested for this issue via a label",
             }
         )
         output = await self.chain.arun(

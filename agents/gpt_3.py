@@ -8,7 +8,7 @@ import os
 llm = OpenAI(temperature=0.9, model_name="gpt-3.5-turbo")
 
 
-async def GPT35(issue: Issue):
+async def GPT35(issue: Issue, **kwargs):
     """Uses GPT-3.5 to accomplish an issue. Fast but leess powerful. Does not use any tools."""
     template = """
     You have been given this task:

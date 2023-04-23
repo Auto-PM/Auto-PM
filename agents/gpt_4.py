@@ -10,7 +10,7 @@ import json
 
 llm = OpenAI(temperature=0.9, model_name="gpt-4")
 
-async def issue_evaluator(issue):
+async def issue_evaluator(issue, **kwargs):
     """Evaluates an issue and returns a score from 0 to 1 as to how complete it is."""
     template = """
     You have been given this task:
@@ -30,7 +30,7 @@ async def issue_evaluator(issue):
     # chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
     return await chain.arun({"issue": json.dumps(issue)})
 
-async def issue_creator(issue: Issue, linear_client=None):
+async def issue_creator(issue: Issue, linear_client=None, **kwargs):
     """Creates new sub-issues for the provided issue."""
     template = """
     You have been given this task:
@@ -70,7 +70,7 @@ async def issue_creator(issue: Issue, linear_client=None):
     })
     '''
 
-    result = """
+    canned_result = """
 ```[
   {"title": "Understand macOS app distribution methods", "description": "Research the different ways a macOS app can be distributed, including the Mac App Store and direct downloads from a website."},
   {"title": "Study macOS app packaging and installation", "description": "Learn about the process of packaging a macOS app for distribution, including creating .dmg files or installer packages, and the user experience of installing the app."},
@@ -79,6 +79,7 @@ async def issue_creator(issue: Issue, linear_client=None):
   {"title": "Create a step-by-step guide for creating an easy-to-install macOS app", "description": "Combine the knowledge gathered from the above research to create a comprehensive guide outlining the steps for creating an easy-to-install macOS app."}
 ]```
     """
+    # result = canned_result
 
     regexp = re.compile(r"```(.*)```", re.DOTALL)
     extracted = regexp.search(result).group(1)
@@ -101,9 +102,9 @@ async def issue_creator(issue: Issue, linear_client=None):
         else:
             print("missing linear client")
         # todo: assign to bot
-    return "ok"
+    return parent_issue.description
 
-async def GPT4(issue: Issue):
+async def GPT4(issue: Issue, **kwargs):
     """Uses GPT-4 to accomplish an issue. Powerful but slower. Does not use any tools."""
     template = """
     You have been given this task:
