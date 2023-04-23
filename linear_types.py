@@ -1134,13 +1134,13 @@ class Issue(BaseModel):
     # external_user_creator: Optional['ExternalUser']
     # history: 'IssueHistoryConnection'
     id: str
-    identifier: str
+    identifier: Optional[str]
     # inverse_relations: 'IssueRelationConnection'
     labels: Optional[IssueLabelConnection]
     # number: float
     parent: Optional["Issue"]
     # previous_identifiers: List[str]
-    priority: float
+    priority: Optional[float]
     # priority_label: str
     # project: Optional['Project']
     # project_milestone: Optional['ProjectMilestone']
@@ -1152,11 +1152,11 @@ class Issue(BaseModel):
     # sort_order: float
     # started_at: Any
     # started_triage_at: Any
-    state: 'WorkflowState'
+    state: Optional['WorkflowState']
     # sub_issue_sort_order: Optional[float]
     # subscribers: 'UserConnection'
     # team: 'Team'
-    title: str
+    title: Optional[str]
     # trashed: Optional[bool]
     # triaged_at: Any
     # updated_at: Any

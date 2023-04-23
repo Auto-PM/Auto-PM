@@ -48,7 +48,7 @@ class IssueInput(BaseModel):
         example=IssueState.IN_REVIEW,
     )
     label_ids: Optional[List[str]] = None
-
+    parent_id: Optional[str] = None
 
 
 class AssignIssueInput(BaseModel):
@@ -76,6 +76,10 @@ query Issue($id: String!) {
         title
         identifier
         priority
+        parent {
+          id
+           identifier
+        }
         assignee {
           id
           name
@@ -99,6 +103,9 @@ query Issues($filter: IssueFilter) {
         title
         identifier
         priority
+        parent {
+          id
+        }
         state {
             name
         }
@@ -115,8 +122,8 @@ query Issues($filter: IssueFilter) {
     }
   }
 }""",
-    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!) {
-    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId}) {
+    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!, $parentId: String) {
+    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId, parentId: $parentId}) {
         issue {
             id
             title
@@ -262,6 +269,8 @@ class LinearClient:
             "priority": input.priority,
             "stateId": input.state.state_id(),
         }
+        if input.parent_id:
+            variables["parentId"] = input.parent_id
         result = self._run_graphql_query(QUERIES["create_issue"], variables)
         print("variables:", json.dumps(variables))
         print(result)
