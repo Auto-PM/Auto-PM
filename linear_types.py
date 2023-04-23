@@ -1091,7 +1091,7 @@ class IssueLabel(BaseModel):
     # created_at: Any
     #creator: Optional["User"]
     #description: Optional[str]
-    id: str
+    id: Optional[str]
     #issues: "IssueConnection"
     name: str
     #parent: Optional["IssueLabel"]
