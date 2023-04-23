@@ -16,7 +16,7 @@ load_dotenv()
 
 from linear_types import Issue, User, IssueLabel
 from linear_client import LinearClient
-from linear_client import IssueInput, AssignIssueInput, IssueModificationInput
+from linear_client import IssueInput, AssignIssueInput, IssueModificationInput, status_reversed
 
 from agents.agent_router import AgentRouter
 
@@ -104,7 +104,7 @@ async def patch_issue(issue_id: str, issue: IssueModificationInput):
 
 
 @app.get("/issues/{issueId}", response_model=Issue)
-async def get_issue(issueId: str):
+async def get_sssss(issueId: str) -> Issue:
     response = linear_client.get_issue(issueId)
     return response
 
@@ -206,24 +206,32 @@ async def webhooks_linear(request: Request):
 
     if all([is_update, assignee_changed, assigned_to_robot]):
         print("assigning to AI")
-        import time
-        issue = linear_client.get_issue(j["data"]["id"])
+        issue = await linear_client.get_issue(j["data"]["id"])
+
+        prior_state = status_reversed.get(issue.state.id, "todo")
 
         lables = []
         if issue.labels:
             lables = issue.labels.nodes
         label_ids = append_label_id_by_name(all_issue_labels, lables, "Running")
-        linear_client.update_issue(j["data"]["id"], IssueModificationInput(state="in_progress"))
-        print("set new labels:", linear_client.update_issue(j["data"]["id"], IssueModificationInput(label_ids=label_ids)))
+        await linear_client.update_issue(j["data"]["id"], IssueModificationInput(state="in_progress"))
+        print("set new labels:", await linear_client.update_issue(j["data"]["id"], IssueModificationInput(label_ids=label_ids)))
 
-        print("handing off to agent router")
+        print("ROUTER START!")
         result = await agent_router.accomplish_issue(issue)
-
-        linear_client.update_issue(j["data"]["id"], IssueModificationInput(label_ids=remove_label_by_name(lables, "Running")))
-        print(f"result: {result}")
+        print("ROUTER END!")
 
         if result:
-            linear_client.update_issue(j["data"]["id"], IssueModificationInput(state="in_review"))
+            await linear_client.update_issue(j["data"]["id"], IssueModificationInput(
+                description=result,
+                state="in_review",
+                label_ids=remove_label_by_name(lables, "Running"),
+            ))
+        else:
+            await linear_client.update_issue(j["data"]["id"], IssueModificationInput(
+                state=prior_state,
+                label_ids=remove_label_by_name(lables, "Running")))
+
     else:
         print("ignoring webhook")
         print({"is_update": is_update, "assignee_changed": assignee_changed, "assigned_to_robot": assigned_to_robot})

@@ -27,4 +27,7 @@ async def gpt_3_agent(issue):
 
     chain = LLMChain(llm=llm, prompt=prompt)
     # chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
-    return await chain.arun({"task": issue})
+    print(" LLM ARUN START")
+    r =  await chain.arun({"task": issue})
+    print(" LLM ARUN DONE")
+    return r

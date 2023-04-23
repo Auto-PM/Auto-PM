@@ -11,6 +11,9 @@ from linear_types import Issue, User, IssueLabel
 from enum import Enum, auto
 from typing import Any
 
+import httpx
+
+
 # TODO: don't hardcode these
 status = {
     "in_review": "7c0bbc28-ffce-45b4-b432-d9223c2330a9",
@@ -20,6 +23,7 @@ status = {
     "backlog": "15645ccf-4883-48fb-9483-d194b9cb19a1",
     "todo": "4781c172-be3b-43fd-9db1-55924c2d46d8",
 }
+status_reversed = {v: k for k, v in status.items()}
 
 
 class IssueState(Enum):
@@ -135,6 +139,7 @@ query Issues($filter: IssueFilter) {
             identifier
             priority
             state {
+              id
               name
             }
             labels {
@@ -190,7 +195,6 @@ class LinearClient:
     def __init__(self, endpoint):
         self.endpoint = endpoint
         self.session = requests.Session()
-        #    TODO: this is a hack, we should get the team id from the API
 
     def _get_api_key_and_team_id(self):
         LINEAR_API_KEY = os.environ.get("LINEAR_API_KEY", "")
@@ -211,6 +215,23 @@ class LinearClient:
                 "Authorization": f"Bearer {LINEAR_API_KEY}",
             },
         ).json()
+
+    async def _arun_graphql_query(self, query, variables=None):
+        LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
+        #print("variables:", json.dumps(variables))
+        async with httpx.AsyncClient() as client:
+            r = await client.post(
+                self.endpoint,
+                json={
+                    "query": query,
+                    "variables": variables or {},
+                },
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {LINEAR_API_KEY}",
+                },
+            )
+        return r.json()
 
     def list_issues(self):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
@@ -260,7 +281,7 @@ class LinearClient:
             raise Exception(result["errors"])
         return result["data"]["issueDelete"]["success"]
 
-    def update_issue(self, issue_id, issue: IssueInput):
+    async def update_issue(self, issue_id, issue: IssueInput):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
         variables = {
             "id": issue_id,
@@ -276,16 +297,16 @@ class LinearClient:
             variables["stateId"] = issue.state.state_id()
         if issue.label_ids is not None:
             variables["labelIds"] = issue.label_ids
-        result = self._run_graphql_query(QUERIES["update_issue"], variables)
+        result = await self._arun_graphql_query(QUERIES["update_issue"], variables)
         print("variables:", json.dumps(variables))
         print(result)
         if "errors" in result:
             raise Exception(result["errors"])
         return Issue(**result["data"]["issueUpdate"]["issue"])
 
-    def get_issue(self, issue_id):
+    async def get_issue(self, issue_id):
 
-        result = self._run_graphql_query(
+        result = await self._arun_graphql_query(
             QUERIES["get_issue"],
             variables={
                 "id": issue_id,
