@@ -7,6 +7,7 @@ from agents.gpt_3 import GPT35
 from agents.gpt_4 import GPT4  
 from agents.gpt_4 import issue_evaluator, issue_creator
 from agents.nla_langchain_agent import nla_agent
+from langchain.prompts import PromptTemplate
 
 from agents.langchain_baby_agi import baby_agi_agent
 
@@ -19,6 +20,7 @@ AGENTS = [
     # baby_agi_agent,
 ]
 
+from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain import PromptTemplate, LLMChain
 from langchain.prompts.chat import (
@@ -96,6 +98,7 @@ class AgentRouter:
 
         for agent in agents:
             self.agents[agent.__name__] = {
+                "name": agent.__name__,
                 "function": agent,
                 "description": agent.__doc__,
             }
@@ -151,6 +154,7 @@ class AgentRouter:
             print(f"warning: Agent from explicit label not found: {agent_name}")
             return None
         return agent_name
+     
     async def accomplish_issue(self, issue: Issue):
         """Determines the appropriate agent to accomplish the given issue and hands it off to the agent."""
         agent = await self.agent_for_issue(issue)
@@ -186,6 +190,49 @@ class AgentRouter:
         """
         return [(name, agent["description"]) for name, agent in self.agents.items()]
 
+    def agent_for_issue_short(self, issue: Issue):
+        """Determines the appropriate agent to accomplish the given issue."""
+
+        template = """
+        You are a task assignment AI that has been given this task:
+        {task}
+
+        You should not attempt the task. Instead, you should assign the task to one of the following agents:
+        {agents}
+
+        which agent would you like to assign it to? Please give your reasoning. For your final answer, please wrap the name of the agent you would like to choose in square brackets, like so: [agent_name]
+        Your Response:
+
+
+        """
+        llm = OpenAI(temperature=0.9, model_name="gpt-4")
+        agents = self.agents
+
+        prompt = PromptTemplate(
+            input_variables=["task", "agents"],
+            template=template,
+        )
+
+        from langchain.chains import LLMChain
+
+        chain = LLMChain(llm=llm, prompt=prompt)
+
+        formatted_agents = "\n".join(
+            [f"{agents[a]['name']}: {agents[a]['description']},\n" for a in agents]
+        )
+        issue_description = issue.title + "\n\n" + issue.description
+
+        # chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
+        chain_run = chain.run({"task": issue_description, "agents": formatted_agents})
+
+        print(chain_run)
+
+        for agent_name in agents.keys():
+            if f"[{agent_name}]" in chain_run:
+                return agent_name
+
+        return False
+
 
 async def runtests():
     Agents = AgentRouter()
@@ -212,4 +259,3 @@ async def runtests():
 if __name__ == "__main__":
     import asyncio
     asyncio.run(runtests())
-
