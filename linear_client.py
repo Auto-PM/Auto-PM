@@ -41,7 +41,7 @@ class IssueState(Enum):
 class IssueInput(BaseModel):
     title: str
     description: str
-    priority: float
+    priority: Optional[float]
     state: IssueState = Field(
         ...,
         description="Issue state/status. The current status of the issue. If a user asks to mark an issue a certain status you should not mention it anywhere in the title or description but instead just mark it here in 'state'. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
@@ -122,7 +122,7 @@ query Issues($filter: IssueFilter) {
     }
   }
 }""",
-    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int!, $teamId: String!, $stateId: String!, $parentId: String) {
+    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int, $teamId: String!, $stateId: String!, $parentId: String) {
     issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId, parentId: $parentId}) {
         issue {
             id
@@ -259,7 +259,7 @@ class LinearClient:
             raise Exception(result["errors"])
         return [Issue(**issue) for issue in result["data"]["issues"]["nodes"]]
 
-    def create_issue(self, input: IssueInput):
+    async def create_issue(self, input: IssueInput):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
         # TODO(Can we just pass the whole input as variables?)
         variables = {
@@ -271,7 +271,7 @@ class LinearClient:
         }
         if input.parent_id:
             variables["parentId"] = input.parent_id
-        result = self._run_graphql_query(QUERIES["create_issue"], variables)
+        result = await self._arun_graphql_query(QUERIES["create_issue"], variables)
         print("variables:", json.dumps(variables))
         print(result)
         if "errors" in result:

@@ -63,6 +63,7 @@ class AgentRouter:
             agents (list): A list of functions that expect a string input and have a string output.
         """
         self.agents = {}
+        self.agent_kwargs = agent_kwargs or {}
 
         self.llm = ChatOpenAI(temperature=0.1)
 
@@ -192,16 +193,14 @@ class AgentRouter:
     async def accomplish_issue(self, issue: Issue):
         """Determines the appropriate agent to accomplish the given issue and hands it off to the agent."""
         agent = await self.agent_for_issue(issue)
-        issue_description = issue.description or issue.title
-        # TODO: we should preprocess the issue description and other details here.
-        return await self.run(issue_description, agent)
+        return await self.run(issue, agent)
 
-    async def run(self, input_str, agent_name):
+    async def run(self, issue: Issue, agent_name: str):
         """
         Takes an input string and an agent name, and runs the input string through the chosen agent function.
 
         Args:
-            input_str (str): The input string to be processed.
+            issue (Issue): The input string to be processed.
             agent_name (str): The name of the agent function to process the input string.
 
         Returns:
@@ -211,7 +210,8 @@ class AgentRouter:
             ValueError: If no agent is found with the given name.
         """
         if agent_name in self.agents:
-            return await self.agents[agent_name]["function"](input_str)
+            fn = self.agents[agent_name]["function"]
+            return await self.agents[agent_name]["function"](issue, **self.agent_kwargs)
         else:
             raise ValueError(f"No agent found with name: {agent_name}")
 

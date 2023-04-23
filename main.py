@@ -33,7 +33,10 @@ app = FastAPI(
 templates = Jinja2Templates(directory="templates")
 stub = modal.Stub("form_generator")
 
-agent_router = AgentRouter()
+linear_client = LinearClient(endpoint="https://api.linear.app/graphql")
+agent_router = AgentRouter(agent_kwargs={
+    "linear_client": linear_client,
+})
 
 @app.middleware("http")
 async def check_setup(request: Request, call_next):
@@ -66,8 +69,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-linear_client = LinearClient(endpoint="https://api.linear.app/graphql")
 
 
 class Task(BaseModel):
