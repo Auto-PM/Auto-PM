@@ -11,6 +11,9 @@ from linear_types import Issue, User, IssueLabel
 from enum import Enum, auto
 from typing import Any
 
+import httpx
+
+
 # TODO: don't hardcode these
 status = {
     "in_review": "7c0bbc28-ffce-45b4-b432-d9223c2330a9",
@@ -20,6 +23,7 @@ status = {
     "backlog": "15645ccf-4883-48fb-9483-d194b9cb19a1",
     "todo": "4781c172-be3b-43fd-9db1-55924c2d46d8",
 }
+status_reversed = {v: k for k, v in status.items()}
 
 
 class IssueState(Enum):
@@ -43,6 +47,8 @@ class IssueInput(BaseModel):
         description="Issue state/status. The current status of the issue. If a user asks to mark an issue a certain status you should not mention it anywhere in the title or description but instead just mark it here in 'state'. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
         example=IssueState.IN_REVIEW,
     )
+    label_ids: Optional[List[str]] = None
+
 
 
 class AssignIssueInput(BaseModel):
@@ -59,6 +65,7 @@ class IssueModificationInput(BaseModel):
         description="Issue state/status. The current status of the issue. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
         example=IssueState.IN_REVIEW,
     )
+    label_ids: Optional[List[str]] = None
 
 
 QUERIES = {
@@ -124,19 +131,26 @@ query Issues($filter: IssueFilter) {
     success
   }
 }""",
-    "update_issue": """mutation IssueUpdate($id: String!, $title: String, $description: String, $priority: Int, $teamId: String!, $stateId: String) {
-    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId}) {
+    "update_issue": """mutation IssueUpdate($id: String!, $title: String, $description: String, $priority: Int, $teamId: String!, $stateId: String, $labelIds: [String!]) {
+    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId, labelIds: $labelIds}) {
         issue {
             id
             title
             identifier
             priority
             state {
+              id
               name
+            }
+            labels {
+              nodes {
+                id
+                name
+              }
             }
             }}}""",
     "assign_issue": """
-mutation IssueUpdateAssignee($id: String!, $assigneeId: String!) {
+mutation IssueUpdateAssignee($id: String!, $assigneeId: String) {
   issueUpdate(id: $id, input: {assigneeId: $assigneeId}) {
     issue {
       id
@@ -181,7 +195,6 @@ class LinearClient:
     def __init__(self, endpoint):
         self.endpoint = endpoint
         self.session = requests.Session()
-        #    TODO: this is a hack, we should get the team id from the API
 
     def _get_api_key_and_team_id(self):
         LINEAR_API_KEY = os.environ.get("LINEAR_API_KEY", "")
@@ -202,6 +215,23 @@ class LinearClient:
                 "Authorization": f"Bearer {LINEAR_API_KEY}",
             },
         ).json()
+
+    async def _arun_graphql_query(self, query, variables=None):
+        LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
+        #print("variables:", json.dumps(variables))
+        async with httpx.AsyncClient() as client:
+            r = await client.post(
+                self.endpoint,
+                json={
+                    "query": query,
+                    "variables": variables or {},
+                },
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {LINEAR_API_KEY}",
+                },
+            )
+        return r.json()
 
     def list_issues(self):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
@@ -251,7 +281,7 @@ class LinearClient:
             raise Exception(result["errors"])
         return result["data"]["issueDelete"]["success"]
 
-    def update_issue(self, issue_id, issue):
+    async def update_issue(self, issue_id, issue: IssueInput):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
         variables = {
             "id": issue_id,
@@ -265,16 +295,18 @@ class LinearClient:
             variables["priority"] = issue.priority
         if issue.state is not None:
             variables["stateId"] = issue.state.state_id()
-        result = self._run_graphql_query(QUERIES["update_issue"], variables)
+        if issue.label_ids is not None:
+            variables["labelIds"] = issue.label_ids
+        result = await self._arun_graphql_query(QUERIES["update_issue"], variables)
         print("variables:", json.dumps(variables))
         print(result)
         if "errors" in result:
             raise Exception(result["errors"])
         return Issue(**result["data"]["issueUpdate"]["issue"])
 
-    def get_issue(self, issue_id):
+    async def get_issue(self, issue_id):
 
-        result = self._run_graphql_query(
+        result = await self._arun_graphql_query(
             QUERIES["get_issue"],
             variables={
                 "id": issue_id,
@@ -285,12 +317,12 @@ class LinearClient:
             raise Exception(result["errors"])
         return Issue(**result["data"]["issue"])
 
-    def assign_issue(self, issue_id: str, assignee_id: str) -> Issue:
+    async def assign_issue(self, issue_id: str, assignee_id: Optional[str]) -> Issue:
         variables = {
             "id": issue_id,
             "assigneeId": assignee_id,
         }
-        result = self._run_graphql_query(QUERIES["assign_issue"], variables)
+        result = await self._arun_graphql_query(QUERIES["assign_issue"], variables)
         print(f"Assign issue result: {result}")
         if "errors" in result:
             raise Exception(result["errors"])
@@ -305,7 +337,6 @@ class LinearClient:
 
     def list_issue_labels(self) -> List[IssueLabel]:
         result = self._run_graphql_query(QUERIES["list_issue_labels"])
-        print(f"List issue_labels result: {result}")
         if "errors" in result:
             raise Exception(result["errors"])
         return [IssueLabel(**user) for user in result["data"]["issueLabels"]["nodes"]]

@@ -1,0 +1,43 @@
+explain: |md
+  AutoPM Architecture Overview
+| {
+  near: top-center
+}
+
+linear: Linear.app {
+  shape: cloud
+}
+human: {
+  shape: person
+}
+human -> ChatGPT : Conversational interface\nto AutoPM
+ChatGPT -> AutoPM: ChatGPT Plugin interface
+ChatGPT {
+	shape: cloud
+}
+
+AutoPM -> linear: Task storage, priorization
+human -> linear: Manual operations in Linear
+
+linear -> AutoPM: webhooks
+
+AutoPM: {
+		AgentRouter {
+				explain: |md
+				Selects appropriate agent for some task.
+				|
+		}
+  AgentRouter <-> vdb: Used for building context during \ntask creation, breakdown, prioritization.
+  vdb: AutoPM \nVector DB {
+    shape: cylinder
+  }
+
+  AgentRouter -> GPT4
+  AgentRouter -> Custom\nLangchain\nAgent
+  AgentRouter -> AutoGPT Agent
+  AgentRouter -> BabyAGI Agent
+
+  Custom\nLangchain\nAgent -> Custom\nLangchain\nAgent
+  AutoGPT Agent -> AutoGPT Agent
+  BabyAGI Agent -> BabyAGI Agent
+}

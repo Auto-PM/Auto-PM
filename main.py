@@ -12,13 +12,13 @@ from fastapi.responses import HTMLResponse
 from fastapi.responses import JSONResponse
 from fastapi.responses import HTMLResponse, RedirectResponse
 
-
 load_dotenv()
 
 from linear_types import Issue, User, IssueLabel
 from linear_client import LinearClient
-from linear_client import IssueInput, AssignIssueInput, IssueModificationInput
+from linear_client import IssueInput, AssignIssueInput, IssueModificationInput, status_reversed
 
+from agents.agent_router import AgentRouter
 
 app = FastAPI(
     title="AutoPM",
@@ -33,12 +33,11 @@ app = FastAPI(
 templates = Jinja2Templates(directory="templates")
 stub = modal.Stub("form_generator")
 
+agent_router = AgentRouter()
 
 @app.middleware("http")
 async def check_setup(request: Request, call_next):
     setup_done = os.environ.get("SETUP_DONE", "false")
-    print(request.url.path)
-    print("setup_done:", setup_done)
     if (
         setup_done
         or request.url.path == "/setup"
@@ -105,7 +104,7 @@ async def patch_issue(issue_id: str, issue: IssueModificationInput):
 
 
 @app.get("/issues/{issueId}", response_model=Issue)
-async def get_issue(issueId: str):
+async def get_sssss(issueId: str) -> Issue:
     response = linear_client.get_issue(issueId)
     return response
 
@@ -183,52 +182,67 @@ async def form_setup(request: Request, setup_data: SetupModel):
 async def setup_confirmation(request: Request):
     return templates.TemplateResponse("setup_confirmation.html", {"request": request})
 
-
 import json
-from agents.llm import accomplish_issue
 
+def append_label_id_by_name(all_labels: List[IssueLabel], current_labels: List[IssueLabel], label_name)-> List[str]:
+    label_ids = [i.id for i in current_labels]
+    # filter down by name:
+    filtered_label_ids = [i.id for i in all_labels if i.name == label_name]
+    label_ids.extend(filtered_label_ids)
+    return list(set(label_ids))
+
+def remove_label_by_name(labels: List[IssueLabel], label_name)-> List[str]:
+    return [i.id for i in labels if i.name != label_name]
 
 @app.post("/webhooks/linear")
 async def webhooks_linear(request: Request):
     j = await request.json()
-    print("webhook payload:")
-    print(json.dumps(j))
-    print("action:", j["action"])
-    print("data:", j["data"])
-    if (
-        j["action"] == "update"
-        and j["data"].get("assignee", {}).get("name") == "AutoPM Robot"
-        and "assigneeId" in j["updatedFrom"]
-    ):
-        print("assigning to AI")
-        linear_client.update_issue(j["data"]["id"], IssueModificationInput(state="in_progress"))
-        issue_description = j["data"]["title"]
+    is_update = j["action"] == "update"
+    assignee_changed = "assigneeId" in j["updatedFrom"]
+    assigned_to_robot = j["data"].get("assignee", {}).get("name") == "AutoPM Robot"
 
-        if j["data"].get("description"):
-            issue_description += "\n\nDescription:" + j["data"]["description"]
-            issue_description = (
-                j["data"]["description"]
-                + "\n\n-------\n\n"
-                + accomplish_issue(issue_description)
-            )
-        else:
-            issue_description = accomplish_issue(issue_description)
-        print("issue_description:", issue_description)
-        linear_client.update_issue(
-            j["data"]["id"],
-            IssueModificationInput(
-                description=issue_description,
+    # TODO: use something like cachetools here
+    all_issue_labels = linear_client.list_issue_labels()
+
+    if all([is_update, assignee_changed, assigned_to_robot]):
+        print("assigning to AI")
+        issue = await linear_client.get_issue(j["data"]["id"])
+
+        prior_state = status_reversed.get(issue.state.id, "todo")
+
+        lables = []
+        if issue.labels:
+            lables = issue.labels.nodes
+        label_ids = append_label_id_by_name(all_issue_labels, lables, "Running")
+        await linear_client.update_issue(j["data"]["id"], IssueModificationInput(state="in_progress"))
+        print("set new labels:", await linear_client.update_issue(j["data"]["id"], IssueModificationInput(label_ids=label_ids)))
+
+        print("ROUTER START!")
+        result = await agent_router.accomplish_issue(issue)
+        print("ROUTER END!")
+
+        if result:
+            await linear_client.update_issue(j["data"]["id"], IssueModificationInput(
+                description=result,
                 state="in_review",
-            ),
-        )
+                label_ids=remove_label_by_name(lables, "Running"),
+            ))
+        else:
+            await linear_client.update_issue(j["data"]["id"], IssueModificationInput(
+                state=prior_state,
+                label_ids=remove_label_by_name(lables, "Running")))
+        print(await linear_client.assign_issue(j["data"]["id"], None))
+
+    else:
+        print("ignoring webhook")
+        print({"is_update": is_update, "assignee_changed": assignee_changed, "assigned_to_robot": assigned_to_robot})
 
     return "ok"
 
 
 @app.post("/issues/{issue_id}/assign", response_model=Issue)
 async def assign_issue(input: AssignIssueInput):
-    print("assign")
-    response = linear_client.assign_issue(input.issue_id, input.assignee_id)
+    response = await linear_client.assign_issue(input.issue_id, input.assignee_id)
     return response
 
 
