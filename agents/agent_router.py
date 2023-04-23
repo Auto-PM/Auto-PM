@@ -3,9 +3,9 @@ import json
 from linear_types import Issue
 from linear_types import IssueLabelConnection, IssueLabelEdge, IssueLabel
 
-from agents.gpt_4 import gpt_4_agent  
+from agents.gpt_3 import GPT35
+from agents.gpt_4 import GPT4  
 from agents.gpt_4 import issue_evaluator, issue_creator
-from agents.gpt_3 import gpt_3_agent
 from agents.nla_langchain_agent import nla_agent
 
 from agents.langchain_baby_agi import baby_agi_agent
@@ -13,8 +13,8 @@ from agents.langchain_baby_agi import baby_agi_agent
 AGENTS = [
     # issue_evaluator,
     issue_creator,
-    gpt_4_agent,
-    gpt_3_agent,
+    GPT35,
+    GPT4,
     # nla_agent,
     # baby_agi_agent,
 ]
@@ -129,12 +129,13 @@ class AgentRouter:
         })
         try:
             result = json.loads(output)
-            return result.get("agent", "gpt_4_agent")
+            print(f"Agent response: {result}")
+            return result.get("agent", "GPT4")
         except Exception as e:
             print(f"Error parsing agent response: {e}")
-            return "gpt_4_agent"
+            return "GPT4"
 
-    async def model_from_labels(self, labels: IssueLabelConnection) -> str:
+    def model_from_labels(self, labels: IssueLabelConnection) -> str:
         """Determines the appropriate agent to accomplish the given issue and hands it off to the agent.
 
         If the issue contains an "Agent:<agent name>" label then we should short circuit and use that agent.
@@ -143,7 +144,9 @@ class AgentRouter:
         if labels:
             for label in labels.nodes:
                 if label.name.startswith("Agent:"):
-                    agent_name = label.name.split(":")[1].lower()
+                    agent_name = label.name.split(":")[1].strip()
+                    agent_name = agent_name.replace("-", "")
+                    agent_name = agent_name.replace(".", "")
         if agent_name not in self.agents:
             print(f"warning: Agent from explicit label not found: {agent_name}")
             return None
@@ -187,35 +190,24 @@ class AgentRouter:
 async def runtests():
     Agents = AgentRouter()
     print(Agents.get_agents())
-    Agents = AgentRouter()
-    print(Agents.get_agents())
+    # print(await Agents.agent_for_issue(Issue(
+    #     id="0", title="spec out the forgot password screen", description="the forgot password screen needs to be spec'd out so that we can implement it.")
+    #                              ))
 
-    import time
-    t0=time.time()
-    print(await Agents.agent_for_issue(Issue(
-        id="0", title="spec out the forgot password screen", description="the forgot password screen needs to be spec'd out so that we can implement it.")
-                                 ))
-    print(time.time()-t0); t0=time.time()
-
-    print("next issue:")
-
-    print(await Agents.agent_for_issue(Issue(
-        id="0", title="spec out the forgot password screen", description="create subissues for the forgot password screen")
-                                 ))
-    print(time.time()-t0); t0=time.time()
+    # print(await Agents.agent_for_issue(Issue(
+    #     id="0", title="spec out the forgot password screen", description="create subissues for the forgot password screen")
+    #                              ))
+    # print(await Agents.agent_for_issue(Issue(
+    #     id="0",
+    #     title="spec out the forgot password screen",
+    #     description="write out the spec for the forgot password screen",
+    #     )))
     print(await Agents.agent_for_issue(Issue(
         id="0",
         title="spec out the forgot password screen",
         description="write out the spec for the forgot password screen",
+        labels=IssueLabelConnection(nodes=[{"name":"Agent:GPT3.5"}]),
         )))
-    print(time.time()-t0); t0=time.time()
-    print(await Agents.agent_for_issue(Issue(
-        id="0",
-        title="spec out the forgot password screen",
-        description="write out the spec for the forgot password screen",
-        labels=IssueLabelConnection(nodes=[{"name":"Agent:GPT-4"}]),
-        )))
-    print(time.time()-t0); t0=time.time()
 
 if __name__ == "__main__":
     import asyncio

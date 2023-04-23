@@ -46,7 +46,7 @@ async def issue_creator(issue):
     # chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
     return await chain.arun({"issue": json.dumps(issue)})
 
-async def gpt_4_agent(issue):
+async def GPT4(issue):
     """Uses GPT-4 to accomplish an issue. Powerful but slower. Does not use any tools."""
     template = """
     You have been given this task:
