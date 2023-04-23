@@ -60,14 +60,14 @@ class AgentRouter:
     async def accomplish_issue(self, issue: Issue):
         """Determines the appropriate agent to accomplish the given issue and hands it off to the agent."""
         agent = self.get_agent_for_issue(issue)
-        issue_description = issue.description or issue.title
+        issue_description = issue.title + "\n\n" + issue.description
         # TODO: we should preprocess the issue description and other details here.
         return await self.run(issue_description, agent)
 
-    def get_agent_for_issue(self, issue: Issue):
-        """Determines the appropriate agent to accomplish the given issue."""
-        # TODO: Implement this
-        return "gpt_3_agent"
+    # def get_agent_for_issue(self, issue: Issue):
+    #     """Determines the appropriate agent to accomplish the given issue."""
+    #     # TODO: Implement this
+    #     return "gpt_3_agent"
 
     async def run(self, input_str, agent_name):
         """
@@ -97,7 +97,9 @@ class AgentRouter:
         """
         return [(name, agent["description"]) for name, agent in self.agents.items()]
 
-    def eval_issue(self, issue: Issue):
+    def get_agent_for_issue(self, issue: Issue):
+        """Determines the appropriate agent to accomplish the given issue."""
+
         template = """
         You are a task assignment AI that has been given this task:
         {task}
@@ -126,7 +128,6 @@ class AgentRouter:
             [f"{agents[a]['name']}: {agents[a]['description']},\n" for a in agents]
         )
         issue_description = issue.title + "\n\n" + issue.description
-        print(prompt.format(task=issue_description, agents=formatted_agents))
 
         # chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
         chain_run = chain.run({"task": issue_description, "agents": formatted_agents})
@@ -140,7 +141,7 @@ class AgentRouter:
         return False
 
 
-Agents = AgentRouter()
+# Agents = AgentRouter()
 # print(Agents.get_agents())
 # id
 #   field required (type=value_error.missing)
@@ -150,17 +151,17 @@ Agents = AgentRouter()
 #   field required (type=value_error.missing)
 # state
 #   field required (type=value_error.missing)
-print(
-    Agents.eval_issue(
-        Issue(
-            title="Write a poem.",
-            description="test",
-            id=1,
-            identifier=1,
-            priority=1,
-            state={},
-        )
-    )
-)
+# print(
+#     Agents.eval_issue(
+#         Issue(
+#             title="Write a poem.",
+#             description="test",
+#             id=1,
+#             identifier=1,
+#             priority=1,
+#             state={},
+#         )
+#     )
+# )
 
 # # print(AgentRouter().run("tell me what the sky is like", "gpt_4_agent"))
