@@ -231,6 +231,7 @@ async def webhooks_linear(request: Request):
             await linear_client.update_issue(j["data"]["id"], IssueModificationInput(
                 state=prior_state,
                 label_ids=remove_label_by_name(lables, "Running")))
+        print(await linear_client.assign_issue(j["data"]["id"], None))
 
     else:
         print("ignoring webhook")
@@ -241,8 +242,7 @@ async def webhooks_linear(request: Request):
 
 @app.post("/issues/{issue_id}/assign", response_model=Issue)
 async def assign_issue(input: AssignIssueInput):
-    print("assign")
-    response = linear_client.assign_issue(input.issue_id, input.assignee_id)
+    response = await linear_client.assign_issue(input.issue_id, input.assignee_id)
     return response
 
 

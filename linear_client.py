@@ -150,7 +150,7 @@ query Issues($filter: IssueFilter) {
             }
             }}}""",
     "assign_issue": """
-mutation IssueUpdateAssignee($id: String!, $assigneeId: String!) {
+mutation IssueUpdateAssignee($id: String!, $assigneeId: String) {
   issueUpdate(id: $id, input: {assigneeId: $assigneeId}) {
     issue {
       id
@@ -317,12 +317,12 @@ class LinearClient:
             raise Exception(result["errors"])
         return Issue(**result["data"]["issue"])
 
-    def assign_issue(self, issue_id: str, assignee_id: str) -> Issue:
+    async def assign_issue(self, issue_id: str, assignee_id: Optional[str]) -> Issue:
         variables = {
             "id": issue_id,
             "assigneeId": assignee_id,
         }
-        result = self._run_graphql_query(QUERIES["assign_issue"], variables)
+        result = await self._arun_graphql_query(QUERIES["assign_issue"], variables)
         print(f"Assign issue result: {result}")
         if "errors" in result:
             raise Exception(result["errors"])
