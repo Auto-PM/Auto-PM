@@ -1,12 +1,14 @@
 import json
 
 from linear_types import Issue
+from langchain.llms import OpenAI
 
 from agents.gpt_4 import gpt_4_agent
 from agents.gpt_3 import gpt_3_agent
 from agents.nla_langchain_agent import nla_agent
+from langchain.prompts import PromptTemplate
 
-from langchain_baby_agi import baby_agi_agent
+from agents.langchain_baby_agi import baby_agi_agent
 
 AGENTS = [
     gpt_4_agent,
@@ -49,6 +51,7 @@ class AgentRouter:
         self.agents = {}
         for agent in agents:
             self.agents[agent.__name__] = {
+                "name": agent.__name__,
                 "function": agent,
                 "description": agent.__doc__,
             }
@@ -94,8 +97,70 @@ class AgentRouter:
         """
         return [(name, agent["description"]) for name, agent in self.agents.items()]
 
+    def eval_issue(self, issue: Issue):
+        template = """
+        You are a task assignment AI that has been given this task:
+        {task}
+
+        You should not attempt the task. Instead, you should assign the task to one of the following agents:
+        {agents}
+
+        which agent would you like to assign it to? Please give your reasoning. For your final answer, please wrap the name of the agent you would like to choose in square brackets, like so: [agent_name]
+        Your Response:
+
+
+        """
+        llm = OpenAI(temperature=0.9, model_name="gpt-4")
+        agents = self.agents
+
+        prompt = PromptTemplate(
+            input_variables=["task", "agents"],
+            template=template,
+        )
+
+        from langchain.chains import LLMChain
+
+        chain = LLMChain(llm=llm, prompt=prompt)
+
+        formatted_agents = "\n".join(
+            [f"{agents[a]['name']}: {agents[a]['description']},\n" for a in agents]
+        )
+        issue_description = issue.title + "\n\n" + issue.description
+        print(prompt.format(task=issue_description, agents=formatted_agents))
+
+        # chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
+        chain_run = chain.run({"task": issue_description, "agents": formatted_agents})
+
+        print(chain_run)
+
+        for agent_name in agents.keys():
+            if f"[{agent_name}]" in chain_run:
+                return agent_name
+
+        return False
+
 
 Agents = AgentRouter()
-print(Agents.get_agents())
+# print(Agents.get_agents())
+# id
+#   field required (type=value_error.missing)
+# identifier
+#   field required (type=value_error.missing)
+# priority
+#   field required (type=value_error.missing)
+# state
+#   field required (type=value_error.missing)
+print(
+    Agents.eval_issue(
+        Issue(
+            title="Write a poem.",
+            description="test",
+            id=1,
+            identifier=1,
+            priority=1,
+            state={},
+        )
+    )
+)
 
 # # print(AgentRouter().run("tell me what the sky is like", "gpt_4_agent"))
