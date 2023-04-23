@@ -1,7 +1,10 @@
-from gpt_4 import gpt_4_agent
-from gpt_3 import gpt_3_agent
+import json
 
-from nla_langchain_agent import nla_agent
+from linear_types import Issue
+
+from agents.gpt_4 import gpt_4_agent
+from agents.gpt_3 import gpt_3_agent
+from agents.nla_langchain_agent import nla_agent
 
 AGENTS = [
     gpt_4_agent,
@@ -48,7 +51,19 @@ class AgentRouter:
             }
             print(f"Loaded agent: {agent.__name__}")
 
-    def run(self, input_str, agent_name):
+    async def accomplish_issue(self, issue: Issue):
+        """Determines the appropriate agent to accomplish the given issue and hands it off to the agent."""
+        agent = self.get_agent_for_issue(issue)
+        issue_description = issue.description or issue.title
+        # TODO: we should preprocess the issue description and other details here.
+        return await self.run(issue_description, agent)
+
+    def get_agent_for_issue(self, issue: Issue):
+        """Determines the appropriate agent to accomplish the given issue."""
+        # TODO: Implement this
+        return "gpt_4_agent"
+
+    async def run(self, input_str, agent_name):
         """
         Takes an input string and an agent name, and runs the input string through the chosen agent function.
 
@@ -63,7 +78,7 @@ class AgentRouter:
             ValueError: If no agent is found with the given name.
         """
         if agent_name in self.agents:
-            return self.agents[agent_name](input_str)
+            return self.agents[agent_name]["function"](input_str)
         else:
             raise ValueError(f"No agent found with name: {agent_name}")
 

@@ -43,6 +43,8 @@ class IssueInput(BaseModel):
         description="Issue state/status. The current status of the issue. If a user asks to mark an issue a certain status you should not mention it anywhere in the title or description but instead just mark it here in 'state'. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
         example=IssueState.IN_REVIEW,
     )
+    label_ids: Optional[List[str]] = None
+
 
 
 class AssignIssueInput(BaseModel):
@@ -59,6 +61,7 @@ class IssueModificationInput(BaseModel):
         description="Issue state/status. The current status of the issue. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
         example=IssueState.IN_REVIEW,
     )
+    label_ids: Optional[List[str]] = None
 
 
 QUERIES = {
@@ -124,8 +127,8 @@ query Issues($filter: IssueFilter) {
     success
   }
 }""",
-    "update_issue": """mutation IssueUpdate($id: String!, $title: String, $description: String, $priority: Int, $teamId: String!, $stateId: String) {
-    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId}) {
+    "update_issue": """mutation IssueUpdate($id: String!, $title: String, $description: String, $priority: Int, $teamId: String!, $stateId: String, $labelIds: [String!]) {
+    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId, labelIds: $labelIds}) {
         issue {
             id
             title
@@ -133,6 +136,12 @@ query Issues($filter: IssueFilter) {
             priority
             state {
               name
+            }
+            labels {
+              nodes {
+                id
+                name
+              }
             }
             }}}""",
     "assign_issue": """
@@ -251,7 +260,7 @@ class LinearClient:
             raise Exception(result["errors"])
         return result["data"]["issueDelete"]["success"]
 
-    def update_issue(self, issue_id, issue):
+    def update_issue(self, issue_id, issue: IssueInput):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
         variables = {
             "id": issue_id,
@@ -265,6 +274,8 @@ class LinearClient:
             variables["priority"] = issue.priority
         if issue.state is not None:
             variables["stateId"] = issue.state.state_id()
+        if issue.label_ids is not None:
+            variables["labelIds"] = issue.label_ids
         result = self._run_graphql_query(QUERIES["update_issue"], variables)
         print("variables:", json.dumps(variables))
         print(result)
@@ -305,7 +316,6 @@ class LinearClient:
 
     def list_issue_labels(self) -> List[IssueLabel]:
         result = self._run_graphql_query(QUERIES["list_issue_labels"])
-        print(f"List issue_labels result: {result}")
         if "errors" in result:
             raise Exception(result["errors"])
         return [IssueLabel(**user) for user in result["data"]["issueLabels"]["nodes"]]

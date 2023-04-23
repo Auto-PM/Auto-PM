@@ -27,5 +27,7 @@ def gpt_4_agent(issue):
 
     chain = LLMChain(llm=llm, prompt=prompt)
     # chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
+    print("gpt4 chain run")
     chain_run = chain.run({"task": issue})
+    print("gpt4 chain run done")
     return chain_run
