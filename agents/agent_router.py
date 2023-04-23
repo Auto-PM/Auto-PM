@@ -58,7 +58,7 @@ class AgentRouter:
         print(router.run(input_str, "agent2"))  # Output: hello, world!
     """
 
-    def __init__(self, agents=AGENTS):
+    def __init__(self, agents=AGENTS, verbose=False, agent_kwargs=None):
         """
         Initializes the AgentRouter with a list of agent functions.
 
