@@ -3,10 +3,13 @@ from gpt_3 import gpt_3_agent
 
 from nla_langchain_agent import nla_agent
 
+from langchain_baby_agi import baby_agi_agent
+
 AGENTS = [
     gpt_4_agent,
     gpt_3_agent,
     nla_agent,
+    baby_agi_agent,
 ]
 
 
@@ -77,7 +80,7 @@ class AgentRouter:
         return [(name, agent["description"]) for name, agent in self.agents.items()]
 
 
-# Agents = AgentRouter()
-# print(Agents.get_agents())
+Agents = AgentRouter()
+print(Agents.get_agents())
 
 # # print(AgentRouter().run("tell me what the sky is like", "gpt_4_agent"))

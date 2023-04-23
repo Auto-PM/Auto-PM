@@ -302,103 +302,27 @@ class BabyAGI(Chain, BaseModel):
         )
 
 
-OBJECTIVE = "what is the length of the bay bridge?"
+def baby_agi_agent(input):
+    """BabyAGI agent implemented in langchain."""
+    llm = OpenAI(temperature=0)
 
-llm = OpenAI(temperature=0)
-
-# Logging of LLMChains
-verbose = True
-# If None, will keep on going forever
-max_iterations: Optional[int] = 5
-baby_agi = BabyAGI.from_llm(
-    llm=llm, vectorstore=vectorstore, verbose=verbose, max_iterations=max_iterations
-)
-
-# print(baby_agi({"objective": OBJECTIVE}))
-
-# print(custom_agent.run("Tell me a story."))
-
-import re
-
-
-def normalize_boolean_output(
-    input_string: str, true_values: List[str] = ["1"], false_values: List[str] = ["0"]
-) -> bool:
-    """Outputs a boolean from a string. Allows a LLM's response to be parsed into a boolean. For example, if a LLM returns "1", this function will return True. Likewise if an LLM returns "The answer is: \n1\n", this function will also return True.
-    If value errors are common try changing the true and false values to rare characters so that it is unlikely the response could contain the character unless that was the 'intention' (insofar as that makes epistemological sense to say for a non-agential program) of the LLM.
-    Args:
-        input_string (str): The string to be parsed into a boolean.
-        true_values (list, optional): A list of strings that should be parsed as True. Defaults to ["1"].
-        false_values (list, optional): A list of strings that should be parsed as False. Defaults to ["0"].
-    Raises:
-        ValueError: If the input string is not a valid boolean.
-    Returns:
-        bool: The boolean value of the input string.
-    """
-    if any([true_value in false_values for true_value in true_values]):
-        raise ValueError(
-            "The true values and false values lists contain the same value."
-        )
-    input_string = re.sub(
-        r"[^" + "".join(true_values + false_values) + "]", "", input_string
-    )
-    if input_string == "":
-        raise ValueError(
-            "The input string contains neither true nor false characters and is therefore not a valid boolean."
-        )
-    # if the string has both true and false values, raise a value error
-    if any([true_value in input_string for true_value in true_values]) and any(
-        [false_value in input_string for false_value in false_values]
-    ):
-        raise ValueError(
-            "The input string contains both true and false characters and therefore is not a valid boolean."
-        )
-    return not input_string in false_values
-
-
-def do_thing(thing):
-    template = """
-    You have been given this task:
-    {task}
-
-    If you are unable to complete the task, please respond with ∆ followed by a list of todo items for someone else to assist you with. reasons you may not be able to complete this task include:
-    - you do not have the necessary tools (such as a messaging client, a web browser, etc.)
-    - you do not have the necessary knowledge
-    
-    If you do have the ability to complete the task please do so now.
-
-    ---
-    Your Response:
-
-
-    """
-
-    prompt = PromptTemplate(
-        input_variables=["task"],
-        template=template,
+    # Logging of LLMChains
+    verbose = True
+    # If None, will keep on going forever
+    max_iterations: Optional[int] = 5
+    baby_agi = BabyAGI.from_llm(
+        llm=llm, vectorstore=vectorstore, verbose=verbose, max_iterations=max_iterations
     )
 
-    from langchain.chains import LLMChain
-
-    chain = LLMChain(llm=llm, prompt=prompt)
-
-    chain_run = chain.run({"task": thing})
-    print(chain_run)
-    while True:
-        if "∆" not in chain_run:
-            return chain_run
-        else:
-            return custom_agent.run(thing)
-
-            # new_prompt = (
-            #     thing
-            #     + "Your assistant has accomplished your prior task ("
-            #     + chain_run
-            #     + ")and come up with this information for you:"
-            #     + agent_work
-            # )
-            # print(new_prompt)
-            # chain_run = chain.run({"task": new_prompt})
-
-
-print(do_thing("What is the weather in SF today?"))
+    print_buffer = io.StringIO()
+    with redirect_stdout(print_buffer):
+        agent_output = baby_agi({"objective": input})
+    captured_prints = print_buffer.getvalue()
+    print_buffer.close()
+    return (
+        "Agent Reasoning"
+        + "\n\n"
+        + captured_prints
+        + "\n\n---------\n\n"
+        + agent_output
+    )
