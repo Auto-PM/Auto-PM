@@ -161,8 +161,8 @@ if __name__ == "__main__":
     agent_executor.run("what issues exist?")
 
 
-def nla_agent(input_string):
+async def nla_agent(input_string):
     """Runs the natural language agent"""
     global agent_executor
-    return agent_executor.run(input_string)
+    return await agent_executor.arun(input_string)
 

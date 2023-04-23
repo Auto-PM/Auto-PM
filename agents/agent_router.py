@@ -61,7 +61,7 @@ class AgentRouter:
     def get_agent_for_issue(self, issue: Issue):
         """Determines the appropriate agent to accomplish the given issue."""
         # TODO: Implement this
-        return "gpt_4_agent"
+        return "gpt_3_agent"
 
     async def run(self, input_str, agent_name):
         """
@@ -78,7 +78,7 @@ class AgentRouter:
             ValueError: If no agent is found with the given name.
         """
         if agent_name in self.agents:
-            return self.agents[agent_name]["function"](input_str)
+            return await self.agents[agent_name]["function"](input_str)
         else:
             raise ValueError(f"No agent found with name: {agent_name}")
 

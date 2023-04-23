@@ -38,8 +38,6 @@ agent_router = AgentRouter()
 @app.middleware("http")
 async def check_setup(request: Request, call_next):
     setup_done = os.environ.get("SETUP_DONE", "false")
-    print(request.url.path)
-    print("setup_done:", setup_done)
     if (
         setup_done
         or request.url.path == "/setup"
@@ -199,37 +197,30 @@ def remove_label_by_name(labels: List[IssueLabel], label_name)-> List[str]:
 @app.post("/webhooks/linear")
 async def webhooks_linear(request: Request):
     j = await request.json()
-    # print("webhook payload:")
-    # print(json.dumps(j))
-
     is_update = j["action"] == "update"
     assignee_changed = "assigneeId" in j["updatedFrom"]
     assigned_to_robot = j["data"].get("assignee", {}).get("name") == "AutoPM Robot"
 
+    # TODO: use something like cachetools here
     all_issue_labels = linear_client.list_issue_labels()
 
     if all([is_update, assignee_changed, assigned_to_robot]):
         print("assigning to AI")
         import time
-        time.sleep(1)
-        linear_client.update_issue(j["data"]["id"], IssueModificationInput(state="in_progress"))
         issue = linear_client.get_issue(j["data"]["id"])
 
         lables = []
         if issue.labels:
             lables = issue.labels.nodes
         label_ids = append_label_id_by_name(all_issue_labels, lables, "Running")
-        time.sleep(1)
-        print("new labels:", label_ids)
+        linear_client.update_issue(j["data"]["id"], IssueModificationInput(state="in_progress"))
         print("set new labels:", linear_client.update_issue(j["data"]["id"], IssueModificationInput(label_ids=label_ids)))
 
         print("handing off to agent router")
         result = await agent_router.accomplish_issue(issue)
-        time.sleep(1)
 
-        # linear_client.update_issue(j["data"]["id"], IssueModificationInput(labelIds=remove_label_by_name(lables, "Running")))
+        linear_client.update_issue(j["data"]["id"], IssueModificationInput(label_ids=remove_label_by_name(lables, "Running")))
         print(f"result: {result}")
-        time.sleep(1)
 
         if result:
             linear_client.update_issue(j["data"]["id"], IssueModificationInput(state="in_review"))
