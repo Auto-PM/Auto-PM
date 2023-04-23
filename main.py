@@ -269,6 +269,39 @@ asset_mount = modal.Mount.from_local_file(
 )
 
 
+# print stack traces on SIGUSR2:
+import signal
+
+def print_stack_traces():
+    """Print the stack traces for all threads."""
+    import threading
+    import traceback
+    import sys
+    id2name = dict([(th.ident, th.name) for th in threading.enumerate()])
+    code = []
+    for threadId, stack in sys._current_frames().items():
+        code.append("\n# Thread: %s(%d)" % (id2name.get(threadId,""), threadId))
+        # get traceback from thread:
+        for filename, lineno, name, line in traceback.extract_stack(stack):
+            code.append('File: "%s", line %d, in %s' % (filename, lineno, name))
+            if line:
+                code.append("  %s" % (line.strip()))
+    # print to stderr:
+    for line in code:
+        print(line, file=sys.stderr)
+    print("Stack traces printed to stderr.", file=sys.stderr)
+
+# signal.signal(signal.SIGUSR2, print_stack_traces)
+import asyncio
+loop = asyncio.get_event_loop()
+loop.set_debug(True)
+loop.add_signal_handler(signal.SIGUSR2, print_stack_traces)
+async def dbg_loop():
+    while True:
+        print("DBG!")
+        await asyncio.sleep(1)
+# asyncio.create_task(dbg_loop())
+
 @stub.asgi(image=image, mounts=[template_mount, asset_mount])
 def fastapi_app():
     return app
