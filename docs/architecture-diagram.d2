@@ -10,8 +10,11 @@ linear: Linear.app {
 human: {
   shape: person
 }
-human -> ChatGPT Plugin: Conversational interface\nto Linear tasks.
-ChatGPT Plugin -> AutoPM: OpenAPI Natural Language Interface
+human -> ChatGPT : Conversational interface\nto AutoPM
+ChatGPT -> AutoPM: ChatGPT Plugin interface
+ChatGPT {
+	shape: cloud
+}
 
 AutoPM -> linear: Task storage, priorization
 human -> linear: Manual operations in Linear
@@ -30,10 +33,11 @@ AutoPM: {
   }
 
   AgentRouter -> GPT4
-  AgentRouter -> Langchain Agent
+  AgentRouter -> Custom\nLangchain\nAgent
   AgentRouter -> AutoGPT Agent
   AgentRouter -> BabyAGI Agent
-  Langchain Agent -> Langchain Agent
+
+  Custom\nLangchain\nAgent -> Custom\nLangchain\nAgent
   AutoGPT Agent -> AutoGPT Agent
   BabyAGI Agent -> BabyAGI Agent
 }
