@@ -6,7 +6,7 @@ from agents.gpt_4 import gpt_4_agent
 from agents.gpt_3 import gpt_3_agent
 from agents.nla_langchain_agent import nla_agent
 
-from langchain_baby_agi import baby_agi_agent
+from agents.langchain_baby_agi import baby_agi_agent
 
 AGENTS = [
     gpt_4_agent,
