@@ -1,13 +1,14 @@
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
+from linear_types import Issue
 import os
 
 
 llm = OpenAI(temperature=0.9, model_name="gpt-3.5-turbo")
 
 
-async def GPT35(issue):
+async def GPT35(issue: Issue):
     """Uses GPT-3.5 to accomplish an issue. Fast but leess powerful. Does not use any tools."""
     template = """
     You have been given this task:
@@ -27,7 +28,5 @@ async def GPT35(issue):
 
     chain = LLMChain(llm=llm, prompt=prompt)
     # chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
-    print(" LLM ARUN START")
-    r =  await chain.arun({"task": issue})
-    print(" LLM ARUN DONE")
+    r = await chain.arun({"task": issue.dict(include={"title", "description"})})
     return r
