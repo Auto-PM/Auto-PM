@@ -198,7 +198,7 @@ def remove_label_by_name(labels: List[IssueLabel], label_name)-> List[str]:
 async def webhooks_linear(request: Request):
     j = await request.json()
     is_update = j["action"] == "update"
-    assignee_changed = "assigneeId" in j["updatedFrom"]
+    assignee_changed = "assigneeId" in j.get("updatedFrom", {})
     assigned_to_robot = j["data"].get("assignee", {}).get("name") == "AutoPM Robot"
 
     # TODO: use something like cachetools here
