@@ -65,10 +65,10 @@ class AgentRouter:
         self.agents = {}
         self.agent_kwargs = agent_kwargs or {}
 
-        self.llm = ChatOpenAI(temperature=0.1)
+        self.llm = ChatOpenAI(temperature=0.0)
 
         template = """You are a helpful assistant that chooses the next agent to best handle a task.
-        Your answer must be JSON formatted and contain the name of the agent to use and the input string to pass to the agent. You must include these two fields in your response: 'agent' and 'rationale'. If an issue contains an "Agent:<agent name>" label then that should force the use of that agent. The agent should also include a rationale for why it chose that agent.
+        Your answer must be JSON formatted and contain the name of the agent to use and the input string to pass to the agent. You must include these two fields in your response: 'agent' and 'rationale'. If an issue contains an "Agent:<agent name>" label then that should force the use of that agent. The agent should also include a rationale for why it chose that agent and why it didn't choose the others.
 
         Availabile agents: {agents}
         """
@@ -128,7 +128,7 @@ class AgentRouter:
             id="1",
             title="spec out the forgot password screen",
             description="Acceptance Criteria:\n* The forgot password screen should have a field for the user to enter their email address.\n* The forgot password screen should have a button to submit the email address.\n* The forgot password screen should have a button to cancel the forgot password process.\n* The forgot password screen should have a link to the login screen.\n* The forgot password screen should have a link to the sign up screen.\n* The forgot password screen should have a link to the org",
-            labels=IssueLabelConnection(nodes=[{"name": "Agent:GPT-4"}]),
+            labels=IssueLabelConnection(nodes=[{"name": "Agent:GPT3.5"}]),
         )
         example_ai_response1 = json.dumps(
             {
@@ -138,14 +138,14 @@ class AgentRouter:
         )
         example_ai_response2 = json.dumps(
             {
-                "agent": "GPT3",
-                "rationale": "This issue appears ready to complete",
+                "agent": "GPT4",
+                "rationale": "This issue appears ready to complete (it already has enough detail).",
             }
         )
         example_ai_response3 = json.dumps(
             {
-                "agent": "GPT4",
-                "rationale": "GPT4 was specifically requested for this issue via a label",
+                "agent": "GPT35",
+                "rationale": "GPT35 was specifically requested for this issue via a label",
             }
         )
         output = await self.chain.arun(
@@ -267,7 +267,7 @@ class AgentRouter:
 
         return False
 
-    def evaluate_issue_completion(self, issue: Issue, past_work: str):
+    async def evaluate_issue_completion(self, issue: Issue, past_issues):
         """Determines whether a given issue has been completed"""
 
         template = """
@@ -275,7 +275,7 @@ class AgentRouter:
         {task}
 
         The following work has been done on this issue:
-        {past_work}
+        {past_issues}
 
         
         Given the work done on this issue, consider if it can be completed. If it can be completed then please compile the results of the work done and complete any remaining work. If it cannot be completed then please explain why it cannot be completed and include not completed in square brackets, like so: [not completed].
@@ -287,7 +287,7 @@ class AgentRouter:
         llm = OpenAI(temperature=0.9, model_name="gpt-4")
 
         prompt = PromptTemplate(
-            input_variables=["task", "past_work"],
+            input_variables=["task", "past_issues"],
             template=template,
         )
 
@@ -295,24 +295,24 @@ class AgentRouter:
 
         chain = LLMChain(llm=llm, prompt=prompt)
 
-        issue_description = issue.title + "\n\n" + issue.description
-
-        # chain_run = chain.run({"task": issue, "summary": get_project_summary(issue)})
-        chain_run = chain.run(
-            {"task": issue_description, "past_issues": issue.past_issues}
+        chain_run = await chain.arun(
+            {
+                "task": issue.dict(include={"title","description"}),
+                "past_issues": past_issues,
+             }
         )
 
         print(chain_run)
 
         if "[not completed]" in chain_run.lower():
-            Issue.description = (
-                Issue.description
-                + "\n\nAn evaluation agent has considered the work done so far on this issue and determined the following blocks the issue being completed: "
-                + chain_run
-            )
-            return self.agent_for_issue(Issue)
+            # issue.description = (
+            #     (issue.description or "")
+            #     + "\n\nAn evaluation agent has considered the work done so far on this issue and determined the following blocks the issue being completed: "
+            #     + (chain_run or "")
+            # )
+            return False
         else:
-            return chain_run
+            return True
 
 
 async def runtests():

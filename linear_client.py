@@ -75,6 +75,7 @@ query Issue($id: String!) {
         id
         title
         identifier
+        description
         priority
         parent {
           id
@@ -240,19 +241,22 @@ class LinearClient:
             )
         return r.json()
 
-    def list_issues(self):
+    async def list_issues(self, **kwargs):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
-        result = self._run_graphql_query(
+        variables={
+            "filter": {
+                "team": {
+                    "id": {
+                        "eq": LINEAR_TEAM_ID,
+                    }
+                },
+            }
+        }
+        for k,v in kwargs.items():
+            variables["filter"][k] = v
+        result = await self._arun_graphql_query(
             QUERIES["list_issues"],
-            variables={
-                "filter": {
-                    "team": {
-                        "id": {
-                            "eq": LINEAR_TEAM_ID,
-                        }
-                    },
-                }
-            },
+            variables=variables,
         )
         print(result)
         if "errors" in result:
@@ -337,8 +341,8 @@ class LinearClient:
             raise Exception(result["errors"])
         return Issue(**result["data"]["issueUpdate"]["issue"])
 
-    def list_users(self) -> List[User]:
-        result = self._run_graphql_query(QUERIES["list_users"])
+    async def list_users(self) -> List[User]:
+        result = await self._arun_graphql_query(QUERIES["list_users"])
         print(f"List users result: {result}")
         if "errors" in result:
             raise Exception(result["errors"])

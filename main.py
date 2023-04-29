@@ -19,6 +19,7 @@ from linear_client import LinearClient
 from linear_client import IssueInput, AssignIssueInput, IssueModificationInput, status_reversed
 
 from agents.agent_router import AgentRouter
+from agents.gpt_4 import issue_evaluator
 
 app = FastAPI(
     title="AutoPM",
@@ -38,7 +39,6 @@ agent_router = AgentRouter(agent_kwargs={
     "linear_client": linear_client,
 })
 
-@app.middleware("http")
 async def check_setup(request: Request, call_next):
     setup_done = os.environ.get("SETUP_DONE", "false")
     if (
@@ -78,13 +78,13 @@ class Task(BaseModel):
 
 @app.get("/issues/", response_model=List[Issue])
 async def list_issues():
-    response = linear_client.list_issues()
+    response = await linear_client.list_issues()
     return response
 
 
 @app.post("/issues/", response_model=Issue)
 async def create_issue(issue: IssueInput):
-    response = linear_client.create_issue(issue)
+    response = await linear_client.create_issue(issue)
     return response
 
 
@@ -93,7 +93,7 @@ async def create_issue(issues: List[IssueInput] = Body(..., embed=True)):
     response = []
     for issue in issues:
         print("creating issue:", issue)
-        response += [linear_client.create_issue(issue)]
+        response += [await linear_client.create_issue(issue)]
         print("response:", response)
     return response
 
@@ -195,18 +195,26 @@ def append_label_id_by_name(all_labels: List[IssueLabel], current_labels: List[I
 def remove_label_by_name(labels: List[IssueLabel], label_name)-> List[str]:
     return [i.id for i in labels if i.name != label_name]
 
+all_issue_labels = linear_client.list_issue_labels()
+
 @app.post("/webhooks/linear")
 async def webhooks_linear(request: Request):
     j = await request.json()
+
     is_update = j["action"] == "update"
     assignee_changed = "assigneeId" in j.get("updatedFrom", {})
     assigned_to_robot = j["data"].get("assignee", {}).get("name") == "AutoPM Robot"
+    status_changed = "stateId" in j.get("updatedFrom", {})
+
+    updated_to = j.get("data", {}).get("state")
+    updated_to_friendly = status_reversed.get(updated_to.get("id"), None)
+    issue_placed_in_review = updated_to_friendly == "in_review"
 
     # TODO: use something like cachetools here
-    all_issue_labels = linear_client.list_issue_labels()
+    # all_issue_labels = linear_client.list_issue_labels()
 
     if all([is_update, assignee_changed, assigned_to_robot]):
-        print("assigning to AI")
+        print("Assigning to AI")
         issue = await linear_client.get_issue(j["data"]["id"])
 
         prior_state = status_reversed.get(issue.state.id, "todo")
@@ -234,9 +242,34 @@ async def webhooks_linear(request: Request):
                 label_ids=remove_label_by_name(lables, "Running")))
         print(await linear_client.assign_issue(j["data"]["id"], None))
 
-    else:
-        print("ignoring webhook")
-        print({"is_update": is_update, "assignee_changed": assignee_changed, "assigned_to_robot": assigned_to_robot})
+    elif all([is_update, status_changed, issue_placed_in_review]):
+        print("considering issue evaluator")
+        issue = await linear_client.get_issue(j["data"]["id"])
+
+        child_issues = []
+        if issue.parent:
+            child_issues = await linear_client.list_issues(
+                        parent={"id":{"eq": issue.parent.id}},
+            )
+
+        child_issues = [{"title": i.title, "status": i.state.name} for i in child_issues if i.id != issue.id]
+
+        lables = []
+        if issue.labels:
+            lables = issue.labels.nodes
+        label_ids = append_label_id_by_name(all_issue_labels, lables, "Evaluating")
+        print("set new labels:", await linear_client.update_issue(j["data"]["id"], IssueModificationInput(label_ids=label_ids)))
+        eval_result = await agent_router.evaluate_issue_completion(issue, child_issues)
+        if eval_result:
+            await linear_client.update_issue(j["data"]["id"], IssueModificationInput(
+                state="done",
+                label_ids=remove_label_by_name(lables, "Evaluating"),
+            ))
+        else:
+            await linear_client.update_issue(j["data"]["id"], IssueModificationInput(
+                label_ids=remove_label_by_name(lables, "Evaluating"),
+            ))
+        print("eval result:", eval_result)
 
     return "ok"
 
