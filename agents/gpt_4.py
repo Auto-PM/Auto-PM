@@ -1,9 +1,7 @@
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
 from linear_types import Issue
 from linear_client import IssueInput
-import os
 import re
 import json
 
@@ -42,9 +40,11 @@ async def issue_creator(issue: Issue, linear_client=None, **kwargs):
     This task already has children tasks of:
     {current_child_tasks}
 
-    Given the title and description of the task and the sibling tasks, determine what (if any) sub-tasks should be created.
+    Given the title and description of the task and the sibling tasks, determine what (if any)
+    sub-tasks should be created.
 
-    Format your output as a JSON array of new sub-tasks. Each subtask should have a title and a description. Make sure to wrap the resulting JSON in triple backticks.
+    Format your output as a JSON array of new sub-tasks. Each subtask should have a title and a description.
+    Make sure to wrap the resulting JSON in triple backticks.
     
     For example:
     ```[{{"title": "My Title", "description": "My Description"}}]```
@@ -63,15 +63,6 @@ async def issue_creator(issue: Issue, linear_client=None, **kwargs):
     sibling_issues = []
     current_child_issues = []
 
-    canned_result = """
-```[
-  {"title": "Understand macOS app distribution methods", "description": "Research the different ways a macOS app can be distributed, including the Mac App Store and direct downloads from a website."},
-  {"title": "Study macOS app packaging and installation", "description": "Learn about the process of packaging a macOS app for distribution, including creating .dmg files or installer packages, and the user experience of installing the app."},
-  {"title": "Explore frameworks and tools for simplifying app installation", "description": "Research frameworks and tools that can help create easy-to-install macOS apps, such as Electron or other app bundling tools."},
-  {"title": "Analyze popular macOS apps for installation ease", "description": "Study popular macOS apps to understand what makes their installation process easy for users, and identify best practices to incorporate in your own app."},
-  {"title": "Create a step-by-step guide for creating an easy-to-install macOS app", "description": "Combine the knowledge gathered from the above research to create a comprehensive guide outlining the steps for creating an easy-to-install macOS app."}
-]```
-    """
     # result = canned_result
     result = await chain.arun({
         "issue": issue.dict(),
@@ -85,9 +76,7 @@ async def issue_creator(issue: Issue, linear_client=None, **kwargs):
 
     print(extracted)
     print(parsed)
-
     parent_issue = issue
-    print('update_to', updated_to)
 
     for issue in parsed:
         input = IssueInput(

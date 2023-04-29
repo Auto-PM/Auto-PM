@@ -1,5 +1,14 @@
 # This file contains useful helpers.
 
+.PHONY: lint
+lint:
+	./venv/bin/ruff check .
+	./venv/bin/mypy
+
+.PHONY: fmt
+fmt:
+	./venv/bin/ruff check --fix .
+
 run: venv
 	./venv/bin/uvicorn main:app --reload
 
@@ -8,6 +17,7 @@ venv: requirements.txt
 	./venv/bin/pip3 install wheel
 	./venv/bin/pip3 install -r requirements.txt
 	touch venv
+	./venv/bin/mypy --install-types
 
 .PHONY: e2e-test
 e2e-test: venv

@@ -1,24 +1,11 @@
 import json
 
 from linear_types import Issue
-from linear_types import IssueLabelConnection, IssueLabelEdge, IssueLabel
+from linear_types import IssueLabelConnection
 
 from agents.gpt_3 import GPT35
 from agents.gpt_4 import GPT4
-from agents.gpt_4 import issue_evaluator, issue_creator
-from agents.nla_langchain_agent import nla_agent
-from langchain.prompts import PromptTemplate
-
-from agents.langchain_baby_agi import baby_agi_agent
-
-AGENTS = [
-    # issue_evaluator,
-    issue_creator,
-    GPT35,
-    GPT4,
-    # nla_agent,
-    # baby_agi_agent,
-]
+from agents.gpt_4 import issue_creator
 
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
@@ -29,7 +16,15 @@ from langchain.prompts.chat import (
     AIMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
-from langchain.schema import AIMessage, HumanMessage, SystemMessage
+
+AGENTS = [
+    # issue_evaluator,
+    issue_creator,
+    GPT35,
+    GPT4,
+    # nla_agent,
+    # baby_agi_agent,
+]
 
 
 class AgentRouter:
@@ -67,11 +62,17 @@ class AgentRouter:
 
         self.llm = ChatOpenAI(temperature=0.0)
 
-        template = """You are a helpful assistant that chooses the next agent to best handle a task.
-        Your answer must be JSON formatted and contain the name of the agent to use and the input string to pass to the agent. You must include these two fields in your response: 'agent' and 'rationale'. If an issue contains an "Agent:<agent name>" label then that should force the use of that agent. The agent should also include a rationale for why it chose that agent and why it didn't choose the others.
 
-        Availabile agents: {agents}
+        template = """You are a helpful assistant that chooses the next agent to best handle a task.
+        Your answer must be JSON formatted and contain the name of the agent to use and the input string 
+        to pass to the agent. You must include these two fields in your response: 'agent' and 'rationale'.
+        If an issue contains an "Agent:<agent name>" label then that should force the use of that agent.
+        The agent should also include a rationale for why it chose that agent and why it didn't choose the others.
+
+        Available agents: {agents}
         """
+        # de-indent
+        template = "\n".join([line.strip() for line in template])
         system_message_prompt = SystemMessagePromptTemplate.from_template(template)
         example_human1 = HumanMessagePromptTemplate.from_template("{example_issue1}")
         example_human2 = HumanMessagePromptTemplate.from_template("{example_issue2}")
@@ -122,18 +123,31 @@ class AgentRouter:
         example_issue2 = Issue(
             id="1",
             title="spec out the forgot password screen",
-            description="Acceptance Criteria:\n* The forgot password screen should have a field for the user to enter their email address.\n* The forgot password screen should have a button to submit the email address.\n* The forgot password screen should have a button to cancel the forgot password process.\n* The forgot password screen should have a link to the login screen.\n* The forgot password screen should have a link to the sign up screen.\n* The forgot password screen should have a link to the forg",
+            description="""Acceptance Criteria:
+* The forgot password screen should have a field for the user to enter their email address.
+* The forgot password screen should have a button to submit the email address.
+* The forgot password screen should have a button to cancel the forgot password process.
+* The forgot password screen should have a link to the login screen.
+* The forgot password screen should have a link to the sign up screen.
+* The forgot password screen should have a link to the forg""",
         )
         example_issue3 = Issue(
             id="1",
             title="spec out the forgot password screen",
-            description="Acceptance Criteria:\n* The forgot password screen should have a field for the user to enter their email address.\n* The forgot password screen should have a button to submit the email address.\n* The forgot password screen should have a button to cancel the forgot password process.\n* The forgot password screen should have a link to the login screen.\n* The forgot password screen should have a link to the sign up screen.\n* The forgot password screen should have a link to the org",
+            description="""Acceptance Criteria:
+* The forgot password screen should have a field for the user to enter their email address.
+* The forgot password screen should have a button to submit the email address.
+* The forgot password screen should have a button to cancel the forgot password process.
+* The forgot password screen should have a link to the login screen.
+* The forgot password screen should have a link to the sign up screen.
+* The forgot password screen should have a link to the org""",
             labels=IssueLabelConnection(nodes=[{"name": "Agent:GPT3.5"}]),
         )
         example_ai_response1 = json.dumps(
             {
                 "agent": "issue_creator",
-                "rationale": "This issue seems like it needs more definition so we assign it to the agent that can break issues down into smaller issues.",
+                "rationale": "This issue seems like it needs more definition, so we assign it \
+                        to the agent that can break issues down into smaller issues.",
             }
         )
         example_ai_response2 = json.dumps(
@@ -210,7 +224,7 @@ class AgentRouter:
             ValueError: If no agent is found with the given name.
         """
         if agent_name in self.agents:
-            fn = self.agents[agent_name]["function"]
+            self.agents[agent_name]["function"]
             return await self.agents[agent_name]["function"](issue, **self.agent_kwargs)
         else:
             raise ValueError(f"No agent found with name: {agent_name}")
@@ -234,10 +248,12 @@ class AgentRouter:
         You should not attempt the task. Instead, you should assign the task to one of the following agents:
         {agents}
 
-        which agent would you like to assign it to? Please give your reasoning. For your final answer, please wrap the name of the agent you would like to choose in square brackets, like so: [agent_name]
+        which agent would you like to assign it to? Please give your reasoning.
+        For your final answer, please wrap the name of the agent you would like to choose in square brackets.
+
+        For example: [agent_name]
+
         Your Response:
-
-
         """
         llm = OpenAI(temperature=0.9, model_name="gpt-4")
         agents = self.agents
@@ -270,19 +286,19 @@ class AgentRouter:
     async def evaluate_issue_completion(self, issue: Issue, past_issues):
         """Determines whether a given issue has been completed"""
 
-        template = """
-        You are a task evaluation agent. Your job is to consider the following issue and attempt to either complete it or determine it cannot be completed:
+        template = """You are a task evaluation agent. Your job is to consider the following issue and 
+        attempt to either complete it or determine it cannot be completed:
         {task}
 
         The following work has been done on this issue:
         {past_issues}
 
-        
-        Given the work done on this issue, consider if it can be completed. If it can be completed then please compile the results of the work done and complete any remaining work. If it cannot be completed then please explain why it cannot be completed and include not completed in square brackets, like so: [not completed].
+        Given the work done on this issue, consider if it can be completed.
+        If it can be completed then please compile the results of the work done and complete 
+        any remaining work. If it cannot be completed then please explain why it cannot be 
+        completed and include not completed in square brackets, like so: [not completed].
 
         Your Response:
-
-
         """
         llm = OpenAI(temperature=0.9, model_name="gpt-4")
 
@@ -304,10 +320,12 @@ class AgentRouter:
 
         print(chain_run)
 
+        # TODO: come eup with a better way to connect this output to the issue
         if "[not completed]" in chain_run.lower():
             # issue.description = (
             #     (issue.description or "")
-            #     + "\n\nAn evaluation agent has considered the work done so far on this issue and determined the following blocks the issue being completed: "
+            #     + "\n\nAn evaluation agent has considered the work done so far on this issue"+
+            #     + "\nand determined the following blocks the issue being completed: "
             #     + (chain_run or "")
             # )
             return False
@@ -319,11 +337,14 @@ async def runtests():
     Agents = AgentRouter()
     print(Agents.get_agents())
     # print(await Agents.agent_for_issue(Issue(
-    #     id="0", title="spec out the forgot password screen", description="the forgot password screen needs to be spec'd out so that we can implement it.")
+    #     id="0",
+    # title="spec out the forgot password screen",
+    # description="the forgot password screen needs to be spec'd out so that we can implement it.")
     #                              ))
 
     # print(await Agents.agent_for_issue(Issue(
-    #     id="0", title="spec out the forgot password screen", description="create subissues for the forgot password screen")
+    #     id="0", title="spec out the forgot password screen", 
+    # description="create subissues for the forgot password screen")
     #                              ))
     # print(await Agents.agent_for_issue(Issue(
     #     id="0",

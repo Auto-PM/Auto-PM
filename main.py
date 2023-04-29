@@ -1,25 +1,23 @@
 # main.py
-from fastapi import FastAPI, HTTPException, Request, Body, Form, status
+from fastapi import FastAPI, HTTPException, Request, Body, status
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from typing import List, Optional, Any
+from typing import List, Optional
 import modal
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv, set_key
 import os
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from fastapi.responses import JSONResponse
-from fastapi.responses import HTMLResponse, RedirectResponse
-
-load_dotenv()
+from fastapi.responses import RedirectResponse
 
 from linear_types import Issue, User, IssueLabel
 from linear_client import LinearClient
 from linear_client import IssueInput, AssignIssueInput, IssueModificationInput, status_reversed
 
 from agents.agent_router import AgentRouter
-from agents.gpt_4 import issue_evaluator
+
+load_dotenv()
 
 app = FastAPI(
     title="AutoPM",
@@ -89,7 +87,7 @@ async def create_issue(issue: IssueInput):
 
 
 @app.post("/issues/bulk/", response_model=List[Issue])
-async def create_issue(issues: List[IssueInput] = Body(..., embed=True)):
+async def create_issue_bulk(issues: List[IssueInput] = Body(..., embed=True)):
     response = []
     for issue in issues:
         print("creating issue:", issue)
@@ -183,7 +181,6 @@ async def form_setup(request: Request, setup_data: SetupModel):
 async def setup_confirmation(request: Request):
     return templates.TemplateResponse("setup_confirmation.html", {"request": request})
 
-import json
 
 def append_label_id_by_name(all_labels: List[IssueLabel], current_labels: List[IssueLabel], label_name)-> List[str]:
     label_ids = [i.id for i in current_labels]
@@ -224,7 +221,10 @@ async def webhooks_linear(request: Request):
             lables = issue.labels.nodes
         label_ids = append_label_id_by_name(all_issue_labels, lables, "Running")
         await linear_client.update_issue(j["data"]["id"], IssueModificationInput(state="in_progress"))
-        print("set new labels:", await linear_client.update_issue(j["data"]["id"], IssueModificationInput(label_ids=label_ids)))
+        print("set new labels:", await linear_client.update_issue(
+            j["data"]["id"],
+            IssueModificationInput(label_ids=label_ids),
+        ))
 
         print("ROUTER START!")
         result = await agent_router.accomplish_issue(issue)
@@ -258,7 +258,10 @@ async def webhooks_linear(request: Request):
         if issue.labels:
             lables = issue.labels.nodes
         label_ids = append_label_id_by_name(all_issue_labels, lables, "Evaluating")
-        print("set new labels:", await linear_client.update_issue(j["data"]["id"], IssueModificationInput(label_ids=label_ids)))
+        print("set new labels:", await linear_client.update_issue(
+            j["data"]["id"],
+            IssueModificationInput(label_ids=label_ids),
+            ))
         eval_result = await agent_router.evaluate_issue_completion(issue, child_issues)
         if eval_result:
             await linear_client.update_issue(j["data"]["id"], IssueModificationInput(

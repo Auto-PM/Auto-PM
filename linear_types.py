@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Optional, List, ForwardRef
+from typing import Any, Optional, List
 from pydantic import BaseModel
 
 
@@ -3796,7 +3796,7 @@ class WorkflowState(BaseModel):
     name: Optional[str]
     # position: float
     # team: "Team"
-    # type: str
+    # _type: str
     # updated_at: Any
 
 

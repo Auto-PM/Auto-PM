@@ -1,0 +1,18 @@
+line-length = 120
+
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".nox",
+    ".pytype",
+    ".ruff_cache",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+	"agents/Auto-GPT-0.2.2",
+]

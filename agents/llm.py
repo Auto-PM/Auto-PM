@@ -1,9 +1,7 @@
 import os
-import sys
 import io
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
 from langchain.agents import load_tools
 from langchain.agents import initialize_agent
 from langchain.agents import AgentType
@@ -22,7 +20,8 @@ custom_agent = initialize_agent(
 
 def get_project_summary(issue):
     """Gets a summary of content in the project relevant to a given issue"""
-    # TODO: embed all the linear issues, search the embedding db for issues similar to the task, return a summary of those issues.
+    # TODO: embed all the linear issues, search the embedding db for issues similar to the task,
+    # return a summary of those issues.
     return ""
 
 
@@ -31,18 +30,18 @@ def accomplish_issue(issue):
     You have been given this task:
     {task}
 
-    If you are unable to complete the task, please respond with ∆ followed by a list of todo items for someone else to assist you with. reasons you may not be able to complete this task include:
+    If you are unable to complete the task, please respond with ∆ followed by a list of tasks
+    for someone else to assist you with. reasons you may not be able to complete this task include:
     - you do not have a messaging client
     - you do not know how to do complex math
 
-    You should respond to the best of your abilities if the question asks for long form content such as an essay or project spec.
+    You should respond to the best of your abilities if the question asks for long form content
+    such as an essay or project spec.
     
     If you have the ability to complete the task please do so now.
 
     ---
     Your Response:
-
-
     """
 
     prompt = PromptTemplate(
@@ -78,8 +77,9 @@ def accomplish_issue(issue):
 # llm = OpenAI(temperature=0.9)
 
 # template = """
-#     You are an expert project manager assigned to break projects down into manageable chunks. If the task is already small enough you do not need to break it down further. use your discretion as an expert project manager to determine what is  valid task and what is too large and must be broken down.
-
+#     You are an expert project manager assigned to break projects down into manageable chunks.
+#     If the task is already small enough you do not need to break it down further. Use your discretion
+#     as an expert project manager to determine what is  valid task and what is too large and must be broken down.
 
 #     Break the following task down into a list of steps:
 #     {task}
@@ -89,6 +89,7 @@ def accomplish_issue(issue):
 
 
 #     """
+#     # todo: dedent
 
 
 # prompt = PromptTemplate(

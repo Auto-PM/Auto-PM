@@ -4,11 +4,9 @@ import requests
 import json
 
 from pydantic import BaseModel, Field
-from typing import Optional
-
 from linear_types import Issue, User, IssueLabel
 
-from enum import Enum, auto
+from enum import Enum
 from typing import Any
 
 import httpx
@@ -44,7 +42,9 @@ class IssueInput(BaseModel):
     priority: Optional[float]
     state: IssueState = Field(
         ...,
-        description="Issue state/status. The current status of the issue. If a user asks to mark an issue a certain status you should not mention it anywhere in the title or description but instead just mark it here in 'state'. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
+        description="Issue state/status. The current status of the issue. If a user asks to mark an issue a \
+        certain status you should not mention it anywhere in the title or description but instead just mark it \
+        here in 'state'. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
         example=IssueState.IN_REVIEW,
     )
     label_ids: Optional[List[str]] = None
@@ -62,7 +62,8 @@ class IssueModificationInput(BaseModel):
     priority: Optional[float] = None
     state: Optional[IssueState] = Field(
         None,
-        description="Issue state/status. The current status of the issue. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
+        description="Issue state/status. The current status of the issue. (accepted values: \
+                'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
         example=IssueState.IN_REVIEW,
     )
     label_ids: Optional[List[str]] = None
@@ -123,40 +124,79 @@ query Issues($filter: IssueFilter) {
     }
   }
 }""",
-    "create_issue": """mutation IssueCreate($title: String!, $description: String!, $priority: Int, $teamId: String!, $stateId: String!, $parentId: String) {
-    issueCreate(input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId, parentId: $parentId}) {
+    "create_issue": """mutation IssueCreate(
+      $title: String!
+      $description: String!
+      $priority: Int
+      $teamId: String!
+      $stateId: String!
+      $parentId: String
+    ) {
+      issueCreate(
+        input: {
+          title: $title
+          description: $description
+          priority: $priority
+          teamId: $teamId
+          stateId: $stateId
+          parentId: $parentId
+        }
+      ) {
         issue {
-            id
-            title
-            identifier
-            priority
-            state {
-              name
-            }
-            }}}""",
+          id
+          title
+          identifier
+          priority
+          state {
+            name
+          }
+        }
+      }
+    }""",
     "delete_issue": """mutation IssueDelete($issueDeleteId: String!) {
   issueDelete(id: $issueDeleteId) {
     success
   }
 }""",
-    "update_issue": """mutation IssueUpdate($id: String!, $title: String, $description: String, $priority: Int, $teamId: String!, $stateId: String, $labelIds: [String!]) {
-    issueUpdate(id: $id, input: {title: $title, description: $description, priority: $priority, teamId: $teamId, stateId: $stateId, labelIds: $labelIds}) {
+    "update_issue": """mutation IssueUpdate(
+      $id: String!
+      $title: String
+      $description: String
+      $priority: Int
+      $teamId: String!
+      $stateId: String
+      $labelIds: [String!]
+    ) {
+      issueUpdate(
+        id: $id
+        input: {
+          title: $title
+          description: $description
+          priority: $priority
+          teamId: $teamId
+          stateId: $stateId
+          labelIds: $labelIds
+        }
+      ) {
         issue {
+          id
+          title
+          identifier
+          priority
+          state {
             id
-            title
-            identifier
-            priority
-            state {
+            name
+          }
+          labels {
+            nodes {
               id
               name
             }
-            labels {
-              nodes {
-                id
-                name
-              }
-            }
-            }}}""",
+          }
+        }
+      }
+    }""",
+
     "assign_issue": """
 mutation IssueUpdateAssignee($id: String!, $assigneeId: String) {
   issueUpdate(id: $id, input: {assigneeId: $assigneeId}) {

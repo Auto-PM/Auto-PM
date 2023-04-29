@@ -42,3 +42,5 @@ uvicorn
 watchfiles
 yarl
 zipp
+mypy
+ruff

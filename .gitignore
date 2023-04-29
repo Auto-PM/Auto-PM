@@ -1,5 +1,7 @@
 .ve
 venv
 .env
+.env.local*
 **/__pycache__/
 __pycache__/
+.DS_Store

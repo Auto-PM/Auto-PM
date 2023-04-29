@@ -1,8 +1,6 @@
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
 from linear_types import Issue
-import os
 
 
 llm = OpenAI(temperature=0.9, model_name="gpt-3.5-turbo")

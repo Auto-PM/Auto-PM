@@ -1,8 +1,8 @@
 import re
 from typing import Callable
-from typing import List, Union
+from typing import Union
 from langchain import OpenAI, LLMChain
-from langchain.agents import Tool, AgentExecutor, LLMSingleActionAgent, AgentOutputParser
+from langchain.agents import AgentExecutor, LLMSingleActionAgent, AgentOutputParser
 from langchain.agents.agent_toolkits import NLAToolkit
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.memory import ConversationBufferWindowMemory
