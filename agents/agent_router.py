@@ -72,7 +72,7 @@ class AgentRouter:
         Available agents: {agents}
         """
         # de-indent
-        template = "\n".join([line.strip() for line in template])
+        template = "\n".join([line.strip() for line in template.splitlines()])
         system_message_prompt = SystemMessagePromptTemplate.from_template(template)
         example_human1 = HumanMessagePromptTemplate.from_template("{example_issue1}")
         example_human2 = HumanMessagePromptTemplate.from_template("{example_issue2}")

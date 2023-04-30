@@ -11,9 +11,11 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi.responses import RedirectResponse
 
-from linear_types import Issue, User, IssueLabel
 from linear_client import LinearClient
 from linear_client import IssueInput, AssignIssueInput, IssueModificationInput, status_reversed
+# Project types:
+from linear_client import ProjectInput, DocumentInput
+from linear_types import Issue, User, IssueLabel, Project, Document
 
 from agents.agent_router import AgentRouter
 
@@ -74,19 +76,19 @@ class Task(BaseModel):
     description: Optional[str] = None
 
 
-@app.get("/issues/", response_model=List[Issue])
+@app.get("/issues/", response_model=List[Issue], response_model_exclude_none=True)
 async def list_issues():
     response = await linear_client.list_issues()
     return response
 
 
-@app.post("/issues/", response_model=Issue)
+@app.post("/issues/", response_model=Issue, response_model_exclude_none=True)
 async def create_issue(issue: IssueInput):
     response = await linear_client.create_issue(issue)
     return response
 
 
-@app.post("/issues/bulk/", response_model=List[Issue])
+@app.post("/issues/bulk/", response_model=List[Issue], response_model_exclude_none=True)
 async def create_issue_bulk(issues: List[IssueInput] = Body(..., embed=True)):
     response = []
     for issue in issues:
@@ -96,15 +98,21 @@ async def create_issue_bulk(issues: List[IssueInput] = Body(..., embed=True)):
     return response
 
 
-@app.post("/issues/{issue_id}/", response_model=Issue)
+@app.post("/issues/{issue_id}/", response_model=Issue, response_model_exclude_none=True)
 async def patch_issue(issue_id: str, issue: IssueModificationInput):
     response = linear_client.update_issue(issue_id, issue)
     return response
 
 
-@app.get("/issues/{issueId}", response_model=Issue)
-async def get_sssss(issueId: str) -> Issue:
+@app.get("/issues/{issueId}", response_model=Issue, response_model_exclude_none=True)
+async def get_issue(issueId: str) -> Issue:
     response = linear_client.get_issue(issueId)
+    return response
+
+
+@app.delete("/issues/{issueId}", response_model=Issue, response_model_exclude_none=True)
+async def delete_issue(issueId: str) -> Issue:
+    response = await linear_client.delete_issue(issueId)
     return response
 
 
@@ -115,7 +123,7 @@ class SetupModel(BaseModel):
     linear_team_id: str
 
 
-@app.get("/get_setup", response_class=HTMLResponse)
+@app.get("/get_setup", response_class=HTMLResponse, response_model_exclude_none=True)
 async def get_setup(request: Request):
     return templates.TemplateResponse("setup_form.html", {"request": request})
 
@@ -204,6 +212,10 @@ async def webhooks_linear(request: Request):
     status_changed = "stateId" in j.get("updatedFrom", {})
 
     updated_to = j.get("data", {}).get("state")
+
+    if type(updated_to) == str:
+        return
+
     updated_to_friendly = status_reversed.get(updated_to.get("id"), None)
     issue_placed_in_review = updated_to_friendly == "in_review"
 
@@ -273,25 +285,62 @@ async def webhooks_linear(request: Request):
                 label_ids=remove_label_by_name(lables, "Evaluating"),
             ))
         print("eval result:", eval_result)
-
     return "ok"
 
 
-@app.post("/issues/{issue_id}/assign", response_model=Issue)
+@app.post("/issues/{issue_id}/assign", response_model=Issue, response_model_exclude_none=True)
 async def assign_issue(input: AssignIssueInput):
+    """Assign an issue to a user"""
     response = await linear_client.assign_issue(input.issue_id, input.assignee_id)
     return response
 
 
-@app.get("/users/", response_model=List[User])
-async def list_users():
+@app.get("/users/", response_model=List[User], response_model_exclude_none=True)
+async def list_users() -> List[User]:
+    """List all users"""
     response = linear_client.list_users()
     return response
 
 
-@app.get("/issue_labels", response_model=List[IssueLabel])
-async def list_issue_labels():
+@app.get("/issue_labels", response_model=List[IssueLabel], response_model_exclude_none=True)
+async def list_issue_labels() -> List[IssueLabel]:
+    """List all issue labels"""
     response = linear_client.list_issue_labels()
+    return response
+
+
+@app.get("/projects", response_model=List[Project], response_model_exclude_none=True)
+async def list_projects() -> List[Project]:
+    """List all projects"""
+    response = await linear_client.list_projects()
+    return response
+
+
+@app.get("/projects/{project_id}", response_model=Project, response_model_exclude_none=True)
+async def get_project(project_id: str) -> Project:
+    """Get a project by ID"""
+    response = await linear_client.get_project(project_id)
+    return response
+
+
+@app.post("/projects", response_model=Project, response_model_exclude_none=True)
+async def create_project(input: ProjectInput) -> Project:
+    """Create a project"""
+    response = await linear_client.create_project(input)
+    return response 
+
+
+@app.post("/projects/{project_id}", response_model=Project, response_model_exclude_none=True)
+async def update_project(project_id: str, input: ProjectInput) -> Project:
+    """Update a project"""
+    response = await linear_client.update_project(project_id, input)
+    return response
+
+
+@app.delete("/projects/{project_id}", response_model=Project, response_model_exclude_none=True)
+async def delete_project(project_id: str) -> Project:
+    """Delete a project"""
+    response = await linear_client.delete_project(project_id)
     return response
 
 
@@ -304,6 +353,37 @@ template_mount = modal.Mount.from_local_file(
 asset_mount = modal.Mount.from_local_file(
     "assets/logo.png", remote_path="/root/assets/logo.png"
 )
+
+# project document endpoints
+@app.get("/projects/{project_id}/documents", response_model=List[Document], response_model_exclude_none=True)
+async def list_documents(project_id: str) -> List[Document]:
+    """List all documents (AKA product specifications)."""
+    response = await linear_client.list_documents(project_id)
+    return response
+
+@app.get("/projects/{project_id}/documents/{document_id}", response_model=Document, response_model_exclude_none=True)
+async def get_document(project_id: str, document_id: str) -> Document:
+    """Get a document by ID"""
+    response = await linear_client.get_document(document_id)
+    return response
+
+@app.post("/projects/{project_id}/documents", response_model=Document, response_model_exclude_none=True)
+async def create_document(project_id: str, input: DocumentInput) -> Document:
+    """Create a document"""
+    response = await linear_client.create_document(project_id, input)
+    return response
+
+@app.post("/projects/{project_id}/documents/{document_id}", response_model=Document, response_model_exclude_none=True)
+async def update_document(project_id: str, document_id: str, input: DocumentInput) -> Document:
+    """Update a document"""
+    response = await linear_client.update_document(project_id, document_id, input)
+    return response
+
+@app.delete("/projects/{project_id}/documents/{document_id}", response_model=Document, response_model_exclude_none=True)
+async def delete_document(project_id: str, document_id: str) -> Document:
+    """Delete a document"""
+    response = await linear_client.delete_document(project_id, document_id)
+    return response
 
 
 @stub.asgi(image=image, mounts=[template_mount, asset_mount])

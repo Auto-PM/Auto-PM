@@ -2,14 +2,15 @@ import os
 from typing import List, Optional
 import requests
 import json
-
-from pydantic import BaseModel, Field
-from linear_types import Issue, User, IssueLabel
-
 from enum import Enum
 from typing import Any
 
 import httpx
+from pydantic import BaseModel, Field, Json
+from pydantic import constr
+
+from linear_types import Issue, User, IssueLabel, Project, Document
+from linear_graphql_queries import QUERIES
 
 
 # TODO: don't hardcode these
@@ -24,6 +25,9 @@ status = {
 status_reversed = {v: k for k, v in status.items()}
 
 
+class LinearError(Exception):
+    pass
+
 class IssueState(Enum):
     IN_REVIEW = "in_review"
     IN_PROGRESS = "in_progress"
@@ -37,6 +41,8 @@ class IssueState(Enum):
 
 
 class IssueInput(BaseModel):
+    parent_id: Optional[str] = None
+    project_id: Optional[str] = None
     title: str
     description: str
     priority: Optional[float]
@@ -48,7 +54,6 @@ class IssueInput(BaseModel):
         example=IssueState.IN_REVIEW,
     )
     label_ids: Optional[List[str]] = None
-    parent_id: Optional[str] = None
 
 
 class AssignIssueInput(BaseModel):
@@ -69,175 +74,26 @@ class IssueModificationInput(BaseModel):
     label_ids: Optional[List[str]] = None
 
 
-QUERIES = {
-    "get_issue": """
-query Issue($id: String!) {
-    issue(id: $id) {
-        id
-        title
-        identifier
-        description
-        priority
-        parent {
-          id
-           identifier
-        }
-        assignee {
-          id
-          name
-        }
-        state {
-          id
-          name
-        }
-        labels {
-          nodes {
-            id
-            name
-          }
-        }
-        }}""",
-    "list_issues": """
-query Issues($filter: IssueFilter) {
-  issues(filter: $filter) {
-    nodes {
-        id
-        title
-        identifier
-        priority
-        parent {
-          id
-        }
-        state {
-            name
-        }
-        assignee {
-          id
-          name
-        }
-        labels {
-          nodes {
-            id
-            name
-          }
-        }
-    }
-  }
-}""",
-    "create_issue": """mutation IssueCreate(
-      $title: String!
-      $description: String!
-      $priority: Int
-      $teamId: String!
-      $stateId: String!
-      $parentId: String
-    ) {
-      issueCreate(
-        input: {
-          title: $title
-          description: $description
-          priority: $priority
-          teamId: $teamId
-          stateId: $stateId
-          parentId: $parentId
-        }
-      ) {
-        issue {
-          id
-          title
-          identifier
-          priority
-          state {
-            name
-          }
-        }
-      }
-    }""",
-    "delete_issue": """mutation IssueDelete($issueDeleteId: String!) {
-  issueDelete(id: $issueDeleteId) {
-    success
-  }
-}""",
-    "update_issue": """mutation IssueUpdate(
-      $id: String!
-      $title: String
-      $description: String
-      $priority: Int
-      $teamId: String!
-      $stateId: String
-      $labelIds: [String!]
-    ) {
-      issueUpdate(
-        id: $id
-        input: {
-          title: $title
-          description: $description
-          priority: $priority
-          teamId: $teamId
-          stateId: $stateId
-          labelIds: $labelIds
-        }
-      ) {
-        issue {
-          id
-          title
-          identifier
-          priority
-          state {
-            id
-            name
-          }
-          labels {
-            nodes {
-              id
-              name
-            }
-          }
-        }
-      }
-    }""",
+class ProjectInput(BaseModel):
+    name: str
+    description: constr(max_length=250)
+    priority: Optional[float]
+    state: IssueState = Field(
+        ...,
+        description="Issue state/status. The current status of the issue. If a user asks to mark an issue a \
+        certain status you should not mention it anywhere in the title or description but instead just mark it \
+        here in 'state'. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
+        example=IssueState.IN_REVIEW,
+    )
+    label_ids: Optional[List[str]] = None
 
-    "assign_issue": """
-mutation IssueUpdateAssignee($id: String!, $assigneeId: String) {
-  issueUpdate(id: $id, input: {assigneeId: $assigneeId}) {
-    issue {
-      id
-      title
-      identifier
-      priority
-      state {
-        name
-      }
-      assignee {
-        id
-        name
-      }
-    }
-  }
-}
-""",
-    "list_users": """
-query Users {
-  users {
-    nodes {
-      id
-      name
-      email
-    }
-  }
-}
-""",
-    "list_issue_labels": """
-query IssueLabels {
-  issueLabels {
-    nodes {
-      id
-      name
-    }
-  }
-}
-""",
-}
+
+class DocumentInput(BaseModel):
+    # project_id: str
+    title: str
+    content: str
+    content_data: Optional[Json] = None
+
 
 class LinearClient:
     def __init__(self, endpoint):
@@ -300,7 +156,7 @@ class LinearClient:
         )
         print(result)
         if "errors" in result:
-            raise Exception(result["errors"])
+            raise LinearError(result["errors"])
         return [Issue(**issue) for issue in result["data"]["issues"]["nodes"]]
 
     async def create_issue(self, input: IssueInput):
@@ -315,11 +171,13 @@ class LinearClient:
         }
         if input.parent_id:
             variables["parentId"] = input.parent_id
+        if input.project_id:
+            variables["projectId"] = input.project_id
         result = await self._arun_graphql_query(QUERIES["create_issue"], variables)
         print("variables:", json.dumps(variables))
         print(result)
         if "errors" in result:
-            raise Exception(result["errors"])
+            raise LinearError(result["errors"])
         return Issue(**result["data"]["issueCreate"]["issue"])
 
     def delete_issue(self, issue_id):
@@ -331,7 +189,7 @@ class LinearClient:
         )
         print(result)
         if "errors" in result:
-            raise Exception(result["errors"])
+            raise LinearError(result["errors"])
         return result["data"]["issueDelete"]["success"]
 
     async def update_issue(self, issue_id, issue: IssueInput):
@@ -354,7 +212,7 @@ class LinearClient:
         print("variables:", json.dumps(variables))
         print(result)
         if "errors" in result:
-            raise Exception(result["errors"])
+            raise LinearError(result["errors"])
         return Issue(**result["data"]["issueUpdate"]["issue"])
 
     async def get_issue(self, issue_id):
@@ -367,7 +225,7 @@ class LinearClient:
         )
         print(result)
         if "errors" in result:
-            raise Exception(result["errors"])
+            raise LinearError(result["errors"])
         return Issue(**result["data"]["issue"])
 
     async def assign_issue(self, issue_id: str, assignee_id: Optional[str]) -> Issue:
@@ -378,18 +236,140 @@ class LinearClient:
         result = await self._arun_graphql_query(QUERIES["assign_issue"], variables)
         print(f"Assign issue result: {result}")
         if "errors" in result:
-            raise Exception(result["errors"])
+            raise LinearError(result["errors"])
         return Issue(**result["data"]["issueUpdate"]["issue"])
 
     async def list_users(self) -> List[User]:
         result = await self._arun_graphql_query(QUERIES["list_users"])
         print(f"List users result: {result}")
         if "errors" in result:
-            raise Exception(result["errors"])
+            raise LinearError(result["errors"])
         return [User(**user) for user in result["data"]["users"]["nodes"]]
 
     def list_issue_labels(self) -> List[IssueLabel]:
         result = self._run_graphql_query(QUERIES["list_issue_labels"])
         if "errors" in result:
-            raise Exception(result["errors"])
+            raise LinearError(result["errors"])
         return [IssueLabel(**user) for user in result["data"]["issueLabels"]["nodes"]]
+
+    async def list_projects(self) -> List[Project]:
+        LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
+        variables = {
+            "teamId": LINEAR_TEAM_ID,
+        }
+        print("variables:", json.dumps(variables))
+        # TODO: if/when we refactor to support multiple teams, we'll need to change this
+        result = await self._arun_graphql_query(QUERIES["list_projects_for_team"], variables)
+        print(f"List projects result: {result}")
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return [Project(**project) for project in result["data"]["team"]["projects"]["nodes"]]
+
+    async def create_project(self, input: ProjectInput):
+        LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
+
+        variables = {
+            "teamIds": [LINEAR_TEAM_ID],
+            "name": input.name,
+            "description": input.description,
+            }
+        print("variables:", json.dumps(variables))
+        result = await self._arun_graphql_query(QUERIES["create_project"], variables)
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return Project(**result["data"]["projectCreate"]["project"])
+
+    async def update_project(self, project_id, project: ProjectInput):
+        LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
+        variables = {
+            "id": project_id,
+            "teamIds": [LINEAR_TEAM_ID],
+        }
+        if project.name is not None:
+            variables["name"] = project.name
+        if project.description is not None:
+            variables["description"] = project.description
+        result = await self._arun_graphql_query(QUERIES["update_project"], variables)
+        print("variables:", json.dumps(variables))
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return Project(**result["data"]["projectUpdate"]["project"])
+        
+    async def delete_project(self, project_id) -> bool:
+        result = await self._arun_graphql_query(
+            QUERIES["delete_project"],
+            variables={
+                "id": project_id,
+            },
+        )
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return result["data"]["projectDelete"]["success"]
+
+    # project document endpoints
+    async def list_documents(self, project_id: str) -> List[Document]:
+        result = await self._arun_graphql_query(
+            QUERIES["list_documents"],
+            variables={
+                "projectId": project_id,
+            },
+        )
+        print(f"List documents result: {result}")
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return [Document(**doc) for doc in result["data"]["project"]["documents"]["nodes"]]
+
+    async def create_document(self, project_id: str, input: DocumentInput):
+        variables = {
+            "projectId": project_id,
+            "title": input.title,
+            "content": input.content,
+        }
+        print("variables:", json.dumps(variables))
+        result = await self._arun_graphql_query(QUERIES["create_document"], variables)
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return Document(**result["data"]["documentCreate"]["document"])
+
+    async def update_document(self, document_id: str, input: DocumentInput):
+        variables = {
+            "id": document_id,
+        }
+        if input.name is not None:
+            variables["name"] = input.name
+        if input.content is not None:
+            variables["content"] = input.content
+        result = await self._arun_graphql_query(QUERIES["update_document"], variables)
+        print("variables:", json.dumps(variables))
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return Document(**result["data"]["documentUpdate"]["document"])
+
+    async def delete_document(self, document_id: str) -> bool:
+        result = await self._arun_graphql_query(
+            QUERIES["delete_document"],
+            variables={
+                "id": document_id,
+            },
+        )
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return result["data"]["documentDelete"]["success"]
+
+    async def get_document(self, document_id: str) -> Document:
+        result = await self._arun_graphql_query(
+            QUERIES["get_document"],
+            variables={
+                "id": document_id,
+            },
+        )
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return Document(**result["data"]["document"])
