@@ -115,53 +115,33 @@ class AgentRouter:
         if model_from_labels:
             return model_from_labels
 
-        example_issue1 = Issue(
-            id="1",
+        # Few-shot examples for agent selection given a task.
+
+        example_issue1 = Issue( id="1",
             title="spec out the forgot password screen",
             description="the forgot password screen needs to be spec'd out so that we can implement it.",
         )
-        example_issue2 = Issue(
-            id="1",
+        example_issue2 = Issue( id="1",
             title="spec out the forgot password screen",
             description="""Acceptance Criteria:
 * The forgot password screen should have a field for the user to enter their email address.
 * The forgot password screen should have a button to submit the email address.
 * The forgot password screen should have a button to cancel the forgot password process.
 * The forgot password screen should have a link to the login screen.
-* The forgot password screen should have a link to the sign up screen.
-* The forgot password screen should have a link to the forg""",
+* The forgot password screen should have a link to the sign up screen.""",
         )
-        example_issue3 = Issue(
-            id="1",
+        example_issue3 = Issue( id="1",
             title="spec out the forgot password screen",
-            description="""Acceptance Criteria:
-* The forgot password screen should have a field for the user to enter their email address.
-* The forgot password screen should have a button to submit the email address.
-* The forgot password screen should have a button to cancel the forgot password process.
-* The forgot password screen should have a link to the login screen.
-* The forgot password screen should have a link to the sign up screen.
-* The forgot password screen should have a link to the org""",
+            description=example_issue2.description,
             labels=IssueLabelConnection(nodes=[{"name": "Agent:GPT3.5"}]),
         )
-        example_ai_response1 = json.dumps(
-            {
-                "agent": "issue_creator",
+        example_ai_response1 = json.dumps({"agent": "issue_creator",
                 "rationale": "This issue seems like it needs more definition, so we assign it \
-                        to the agent that can break issues down into smaller issues.",
-            }
-        )
-        example_ai_response2 = json.dumps(
-            {
-                "agent": "GPT4",
-                "rationale": "This issue appears ready to complete (it already has enough detail).",
-            }
-        )
-        example_ai_response3 = json.dumps(
-            {
-                "agent": "GPT35",
-                "rationale": "GPT35 was specifically requested for this issue via a label",
-            }
-        )
+                        to the agent that can break issues down into smaller issues.",})
+        example_ai_response2 = json.dumps({ "agent": "GPT4",
+                "rationale": "This issue appears ready to complete (it already has enough detail).", })
+        example_ai_response3 = json.dumps( { "agent": "GPT35",
+                "rationale": "GPT35 was specifically requested for this issue via a label", })
         output = await self.chain.arun(
             {
                 "agents": json.dumps(
