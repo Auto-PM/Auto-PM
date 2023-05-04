@@ -5,7 +5,7 @@ from typing import Any, Optional, List
 from pydantic import BaseModel
 
 
-from linear_types import PageInfo
+from linear_types import PageInfo, ProjectMilestone
 
 class AirbyteConfigurationInput(BaseModel):
     api_key: str
@@ -1935,33 +1935,6 @@ class ProjectLinkPayload(BaseModel):
 class ProjectLinkUpdateInput(BaseModel):
     label: Optional[str]
     url: Optional[str]
-
-
-class ProjectMilestone(BaseModel):
-    archived_at: Any
-    created_at: Any
-    description: Optional[str]
-    id: str
-    name: str
-    project: "Project"
-    sort_order: float
-    target_date: Any
-    updated_at: Any
-
-
-class ProjectMilestoneConnection(BaseModel):
-    edges: List["ProjectMilestoneEdge"]
-    nodes: List["ProjectMilestone"]
-    page_info: "PageInfo"
-
-
-class ProjectMilestoneCreateInput(BaseModel):
-    description: Optional[str]
-    id: Optional[str]
-    name: str
-    project_id: str
-    sort_order: Optional[float]
-    target_date: Any
 
 
 class ProjectMilestoneEdge(BaseModel):

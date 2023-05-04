@@ -9,7 +9,7 @@ import httpx
 from pydantic import BaseModel, Field, Json
 from pydantic import constr
 
-from linear_types import Issue, User, IssueLabel, Project, Document
+from linear_types import Issue, User, IssueLabel, Project, Document, ProjectMilestone, ProjectMilestoneInput
 from linear_graphql_queries import QUERIES
 
 
@@ -40,12 +40,15 @@ class IssueState(Enum):
     def state_id(self) -> Any:
         return status[self.name.lower()]
 
+class ListIssuesInput(BaseModel):
+    project_id: Optional[str] = None
 
 class IssueInput(BaseModel):
-    parent_id: Optional[str] = None
-    project_id: Optional[str] = None
     title: str
     description: str
+    parent_id: Optional[str] = None
+    project_id: Optional[str] = None
+    milestone_id: Optional[str] = None
     priority: Optional[float]
     state: IssueState = Field(
         ...,
@@ -65,6 +68,9 @@ class AssignIssueInput(BaseModel):
 class IssueModificationInput(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
+    parent_id: Optional[str] = None
+    project_id: Optional[str] = None
+    milestone_id: Optional[str] = None
     priority: Optional[float] = None
     state: Optional[IssueState] = Field(
         None,
@@ -164,6 +170,7 @@ class LinearClient:
         }
         for k, v in kwargs.items():
             variables["filter"][k] = v
+        print("variables:", json.dumps(variables))
         result = await self._arun_graphql_query(
             QUERIES["list_issues"],
             variables=variables,
@@ -207,6 +214,7 @@ class LinearClient:
         return result["data"]["issueDelete"]["success"]
 
     async def update_issue(self, issue_id, issue: IssueInput):
+        print("in update issue")
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
         variables = {
             "id": issue_id,
@@ -222,6 +230,13 @@ class LinearClient:
             variables["stateId"] = issue.state.state_id()
         if issue.label_ids is not None:
             variables["labelIds"] = issue.label_ids
+        if issue.parent_id is not None:
+            variables["parentId"] = issue.parent_id
+        if issue.project_id is not None:
+            variables["projectId"] = issue.project_id
+        if issue.milestone_id is not None:
+            variables["projectMilestoneId"] = issue.milestone_id
+
         result = await self._arun_graphql_query(QUERIES["update_issue"], variables)
         print("variables:", json.dumps(variables))
         print(result)
@@ -393,3 +408,65 @@ class LinearClient:
         if "errors" in result:
             raise LinearError(result["errors"])
         return Document(**result["data"]["document"])
+
+    # project milestone endpoints
+    async def list_milestones(self, project_id: str) -> List[ProjectMilestone]:
+        result = await self._arun_graphql_query(
+            QUERIES["list_milestones"],
+            variables={
+                "projectId": project_id,
+            },
+        )
+        print(f"List milestones result: {result}")
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return [ProjectMilestone(**ms) for ms in result["data"]["project"]["projectMilestones"]["nodes"]]
+
+
+    async def create_milestone(self, project_id: str, input: ProjectMilestoneInput):
+        variables = {
+            "name": input.name,
+            "projectId": project_id,
+            "description": input.description,
+            "targetDate": input.target_date,
+            "sortOrder": input.sort_order,
+        }
+        print("variables:", json.dumps(variables))
+        result = await self._arun_graphql_query(QUERIES["create_milestone"], variables)
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return ProjectMilestone(**result["data"]["projectMilestoneCreate"]["projectMilestone"])
+
+    async def update_milestone(self, milestone_id: str, input: ProjectMilestoneInput):
+        variables = {
+            "id": milestone_id,
+        }
+        if input.name is not None:
+            variables["name"] = input.name
+        if input.description is not None:
+            variables["description"] = input.description
+        if input.target_date is not None:
+            variables["targetDate"] = input.target_date
+        if input.sort_order is not None:
+            variables["sortOrder"] = input.sort_order
+
+        result = await self._arun_graphql_query(QUERIES["update_milestone"], variables)
+        print("variables:", json.dumps(variables))
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return ProjectMilestone(**result["data"]["projectMilestoneUpdate"]["projectMilestone"])
+
+
+    async def delete_milestone(self, milestone_id: str) -> bool:
+        result = await self._arun_graphql_query(
+            QUERIES["delete_milestone"],
+            variables={
+                "id": milestone_id,
+            },
+        )
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return result["data"]["projectMilestoneDelete"]["success"]
