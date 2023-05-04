@@ -407,4 +407,33 @@ query IssueLabels {
       }
     }
 """,
+                        
+"create_attachment": """mutation CreateAttachment(
+        $issueId: String!
+        $commentBody: String
+        $title: String!
+        $subtitle: String
+        $metadata: JSONObject
+        $url: String!
+    ) {
+    attachmentCreate(input: {
+        issueId: $issueId
+        commentBody: $commentBody
+        title: $title
+        subtitle: $subtitle
+        metadata: $metadata
+        url: $url
+    }) {
+        attachment {
+        id
+        title
+        subtitle
+        metadata
+        source
+        sourceType
+        }
+        }}
+""",
+
 }
+

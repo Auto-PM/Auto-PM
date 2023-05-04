@@ -23,6 +23,7 @@ from linear_client import ProjectInput, DocumentInput, status, set_workflow_stat
 from linear_types import Issue, User, IssueLabel, Project, Document
 from linear_types import ProjectMilestone, ProjectMilestoneInput
 from linear_types import CommentCreateInput
+from linear_types import AttachmentCreateInput
 
 from agents.agent_router import AgentRouter
 
@@ -184,6 +185,14 @@ async def webhooks_linear(request: Request):
         # If a new comment arrives, and it's assigned to the robot, then we should perform a chat completion.
         # if issue.assignee and issue.assignee.name == "AutoPM Robot":
         #     print("Comment on robot-assigned issue")
+        await linear_client.create_attachment(AttachmentCreateInput(
+            issue_id=issue.id,
+            # comment_body="woot",
+            title="Model resasoning",
+            subtitle="AutoPM Model resasoning",
+            metadata=j["data"],
+            url="https://www.google.com",
+        ))
         labels = []
         if issue.labels:
             labels = issue.labels.nodes
@@ -194,6 +203,13 @@ async def webhooks_linear(request: Request):
         print("result:",result)
         parts = result.split("ΔDESCRIPTION: ")
         comment = parts[0].replace("COMMENT:", "").strip()
+        await linear_client.create_attachment(AttachmentCreateInput(
+            issue_id=issue.id,
+            # comment_body=result,
+            title="Model resasoning",
+            subtitlt="AutoPM Model resasoning",
+            metadata=j["data"],
+        ))
         print("parts:", parts)
         print("comment:", comment)
         print("creating comment")
@@ -204,7 +220,7 @@ async def webhooks_linear(request: Request):
        ))
         if len(parts) > 1:
             description = parts[1].strip()
-            if len(description) > 0 and description != issue.description:
+            if len(description) > 10 and description != issue.description:
                 print("updating description")
                 await linear_client.update_issue(issue.id, IssueModificationInput(
                     description=description,

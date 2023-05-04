@@ -19,6 +19,8 @@ from linear_types import (
     ProjectMilestoneInput,
     Comment,
     CommentCreateInput,
+    Attachment,
+    AttachmentCreateInput,
 )
 from linear_graphql_queries import QUERIES
 
@@ -142,8 +144,6 @@ class LinearClient:
     async def _arun_graphql_query(self, query, variables=None):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
         # print("variables:", json.dumps(variables))
-        print("key:")
-        print(LINEAR_API_KEY)
         async with httpx.AsyncClient() as client:
             r = await client.post(
                 self.endpoint,
@@ -525,3 +525,27 @@ class LinearClient:
         if "errors" in result:
             raise LinearError(result["errors"])
         return Comment(**result["data"]["commentCreate"]["comment"])
+
+
+    # attachment 
+    async def create_attachment(self, input: AttachmentCreateInput):
+        variables = {
+            "commentBody": input.comment_body,
+            # "groupBySource": input.group_by_source, 
+            # "iconUrl": input.icon_url, 
+            # "id": input.id, 
+            "issueId": input.issue_id, 
+            "metadata": json.dumps({"foo": "bar"}),
+            "subtitle": input.subtitle or "subtitle here", 
+            "title": input.title, 
+            "url": input.url,    
+        }
+        if not input.url:
+            variables["url"] = "https://www.google.com/2"
+
+        print("variables:", json.dumps(variables))
+        result = await self._arun_graphql_query(QUERIES["create_attachment"], variables)
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return Attachment(**result["data"]["attachmentCreate"]["attachment"])
