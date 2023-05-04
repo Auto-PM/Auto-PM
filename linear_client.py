@@ -28,6 +28,7 @@ status_reversed = {v: k for k, v in status.items()}
 class LinearError(Exception):
     pass
 
+
 class IssueState(Enum):
     IN_REVIEW = "in_review"
     IN_PROGRESS = "in_progress"
@@ -122,7 +123,9 @@ class LinearClient:
 
     async def _arun_graphql_query(self, query, variables=None):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
-        #print("variables:", json.dumps(variables))
+        # print("variables:", json.dumps(variables))
+        print("key:")
+        print(LINEAR_API_KEY)
         async with httpx.AsyncClient() as client:
             r = await client.post(
                 self.endpoint,
@@ -137,9 +140,20 @@ class LinearClient:
             )
         return r.json()
 
+    async def get_linear_team_id(self, team_name):
+        result = await self._arun_graphql_query(
+            QUERIES["get_teams"],
+        )
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        for team in result["data"]["teams"]["nodes"]:
+            if team["name"] == team_name:
+                return team["id"]
+        raise LinearError(f"Team {team_name} not found")
+
     async def list_issues(self, **kwargs):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
-        variables={
+        variables = {
             "filter": {
                 "team": {
                     "id": {
@@ -148,7 +162,7 @@ class LinearClient:
                 },
             }
         }
-        for k,v in kwargs.items():
+        for k, v in kwargs.items():
             variables["filter"][k] = v
         result = await self._arun_graphql_query(
             QUERIES["list_issues"],
@@ -216,7 +230,6 @@ class LinearClient:
         return Issue(**result["data"]["issueUpdate"]["issue"])
 
     async def get_issue(self, issue_id):
-
         result = await self._arun_graphql_query(
             QUERIES["get_issue"],
             variables={
@@ -259,11 +272,16 @@ class LinearClient:
         }
         print("variables:", json.dumps(variables))
         # TODO: if/when we refactor to support multiple teams, we'll need to change this
-        result = await self._arun_graphql_query(QUERIES["list_projects_for_team"], variables)
+        result = await self._arun_graphql_query(
+            QUERIES["list_projects_for_team"], variables
+        )
         print(f"List projects result: {result}")
         if "errors" in result:
             raise LinearError(result["errors"])
-        return [Project(**project) for project in result["data"]["team"]["projects"]["nodes"]]
+        return [
+            Project(**project)
+            for project in result["data"]["team"]["projects"]["nodes"]
+        ]
 
     async def create_project(self, input: ProjectInput):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
@@ -272,7 +290,7 @@ class LinearClient:
             "teamIds": [LINEAR_TEAM_ID],
             "name": input.name,
             "description": input.description,
-            }
+        }
         print("variables:", json.dumps(variables))
         result = await self._arun_graphql_query(QUERIES["create_project"], variables)
         print(result)
@@ -296,7 +314,7 @@ class LinearClient:
         if "errors" in result:
             raise LinearError(result["errors"])
         return Project(**result["data"]["projectUpdate"]["project"])
-        
+
     async def delete_project(self, project_id) -> bool:
         result = await self._arun_graphql_query(
             QUERIES["delete_project"],
@@ -320,7 +338,9 @@ class LinearClient:
         print(f"List documents result: {result}")
         if "errors" in result:
             raise LinearError(result["errors"])
-        return [Document(**doc) for doc in result["data"]["project"]["documents"]["nodes"]]
+        return [
+            Document(**doc) for doc in result["data"]["project"]["documents"]["nodes"]
+        ]
 
     async def create_document(self, project_id: str, input: DocumentInput):
         variables = {

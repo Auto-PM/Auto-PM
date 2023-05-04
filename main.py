@@ -12,7 +12,13 @@ from fastapi.responses import HTMLResponse
 from fastapi.responses import RedirectResponse
 
 from linear_client import LinearClient
-from linear_client import IssueInput, AssignIssueInput, IssueModificationInput, status_reversed
+from linear_client import (
+    IssueInput,
+    AssignIssueInput,
+    IssueModificationInput,
+    status_reversed,
+)
+
 # Project types:
 from linear_client import ProjectInput, DocumentInput
 from linear_types import Issue, User, IssueLabel, Project, Document
@@ -21,9 +27,10 @@ from agents.agent_router import AgentRouter
 
 load_dotenv()
 
+
 app = FastAPI(
     title="AutoPM",
-    description="Automate your product management",
+    description="Automate your project management",
     servers=[
         {
             "url": "http://localhost:8000",
@@ -35,25 +42,11 @@ templates = Jinja2Templates(directory="templates")
 stub = modal.Stub("form_generator")
 
 linear_client = LinearClient(endpoint="https://api.linear.app/graphql")
-agent_router = AgentRouter(agent_kwargs={
-    "linear_client": linear_client,
-})
-
-async def check_setup(request: Request, call_next):
-    setup_done = os.environ.get("SETUP_DONE", "false")
-    if (
-        setup_done
-        or request.url.path == "/setup"
-        or request.url.path == "/get_setup"
-        or request.url.path == "/form_setup"
-        or request.url.path == "/favicon.ico"
-    ):
-        response = await call_next(request)
-    else:
-        print("setup not done, returning 403")
-        raise HTTPException(status_code=403, detail="Forbidden")
-    return response
-
+agent_router = AgentRouter(
+    agent_kwargs={
+        "linear_client": linear_client,
+    }
+)
 
 app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
@@ -71,9 +64,29 @@ app.add_middleware(
 )
 
 
-class Task(BaseModel):
-    name: str
-    description: Optional[str] = None
+@app.middleware("http")
+async def check_setup(request: Request, call_next):
+    setup_done = (
+        os.environ.get("LINEAR_API_KEY")
+        and os.environ.get("OPENAI_API_KEY")
+        and os.environ.get("SERPAPI_API_KEY")
+        and os.environ.get("LINEAR_TEAM_NAME")
+    )
+    if setup_done or request.url.path == "/favicon.ico":
+        if not os.environ.get("LINEAR_TEAM_ID"):
+            print("Setup Middleware: team ID not set, getting it from linear")
+            # Get team ID
+            linear_team_id = await linear_client.get_linear_team_id(
+                os.environ.get("LINEAR_TEAM_NAME")
+            )
+            set_key(".env", "LINEAR_TEAM_ID", linear_team_id)
+            # load dotenv to pick up team ID change
+            load_dotenv()
+        response = await call_next(request)
+    else:
+        print("Setup Middleware: setup not done, returning 403")
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return response
 
 
 @app.get("/issues/", response_model=List[Issue], response_model_exclude_none=True)
@@ -123,84 +136,22 @@ class SetupModel(BaseModel):
     linear_team_id: str
 
 
-@app.get("/get_setup", response_class=HTMLResponse, response_model_exclude_none=True)
-async def get_setup(request: Request):
-    return templates.TemplateResponse("setup_form.html", {"request": request})
-
-
-async def setup(
-    linear_api_key: str, openai_api_key: str, serpapi_api_key: str, linear_team_id: str
-):
-    if not os.environ.get("SETUP_DONE", "false") == "true":
-        # Check if the .env file exists, if not, create one
-        if not os.path.exists(".env"):
-            with open(".env", "w") as env_file:
-                env_file.write("")
-
-        set_key(".env", "LINEAR_API_KEY", linear_api_key)
-        set_key(".env", "OPENAI_API_KEY", openai_api_key)
-        set_key(".env", "LINEAR_TEAM_ID", linear_team_id)
-        set_key(".env", "SERPAPI_API_KEY", serpapi_api_key)
-        set_key(".env", "SETUP_DONE", "true")
-
-        # re-run load dotenv to pick up changes
-        load_dotenv()
-
-        return {
-            "message": "API keys have been added to the .env file and setup is complete"
-        }
-    else:
-        raise HTTPException(status_code=400, detail="API keys are already set")
-
-
-@app.post("/setup")
-async def api_setup(setup_data: SetupModel):
-    return await setup(
-        setup_data.linear_api_key,
-        setup_data.openai_api_key,
-        setup_data.serpapi_api_key,
-        setup_data.linear_team_id,
-    )
-
-
-@app.post("/form_setup")
-async def form_setup(request: Request, setup_data: SetupModel):
-    response = await setup(
-        setup_data.linear_api_key,
-        setup_data.openai_api_key,
-        setup_data.serpapi_api_key,
-        setup_data.linear_team_id,
-    )
-    print("response:")
-    print(response)
-
-    if response.get("message"):
-        return RedirectResponse(
-            url="/setup_confirmation", status_code=status.HTTP_303_SEE_OTHER
-        )
-    else:
-        return templates.TemplateResponse(
-            "setup_form.html",
-            {"request": request, "error": "Setup failed. Please try againrr."},
-        )
-
-
-@app.get("/setup_confirmation", response_class=HTMLResponse)
-async def setup_confirmation(request: Request):
-    return templates.TemplateResponse("setup_confirmation.html", {"request": request})
-
-
-def append_label_id_by_name(all_labels: List[IssueLabel], current_labels: List[IssueLabel], label_name)-> List[str]:
+def append_label_id_by_name(
+    all_labels: List[IssueLabel], current_labels: List[IssueLabel], label_name
+) -> List[str]:
     label_ids = [i.id for i in current_labels]
     # filter down by name:
     filtered_label_ids = [i.id for i in all_labels if i.name == label_name]
     label_ids.extend(filtered_label_ids)
     return list(set(label_ids))
 
-def remove_label_by_name(labels: List[IssueLabel], label_name)-> List[str]:
+
+def remove_label_by_name(labels: List[IssueLabel], label_name) -> List[str]:
     return [i.id for i in labels if i.name != label_name]
 
+
 all_issue_labels = linear_client.list_issue_labels()
+
 
 @app.post("/webhooks/linear")
 async def webhooks_linear(request: Request):
@@ -232,26 +183,37 @@ async def webhooks_linear(request: Request):
         if issue.labels:
             lables = issue.labels.nodes
         label_ids = append_label_id_by_name(all_issue_labels, lables, "Running")
-        await linear_client.update_issue(j["data"]["id"], IssueModificationInput(state="in_progress"))
-        print("set new labels:", await linear_client.update_issue(
-            j["data"]["id"],
-            IssueModificationInput(label_ids=label_ids),
-        ))
+        await linear_client.update_issue(
+            j["data"]["id"], IssueModificationInput(state="in_progress")
+        )
+        print(
+            "set new labels:",
+            await linear_client.update_issue(
+                j["data"]["id"],
+                IssueModificationInput(label_ids=label_ids),
+            ),
+        )
 
         print("ROUTER START!")
         result = await agent_router.accomplish_issue(issue)
         print("ROUTER END!")
 
         if result:
-            await linear_client.update_issue(j["data"]["id"], IssueModificationInput(
-                description=result,
-                state="in_review",
-                label_ids=remove_label_by_name(lables, "Running"),
-            ))
+            await linear_client.update_issue(
+                j["data"]["id"],
+                IssueModificationInput(
+                    description=result,
+                    state="in_review",
+                    label_ids=remove_label_by_name(lables, "Running"),
+                ),
+            )
         else:
-            await linear_client.update_issue(j["data"]["id"], IssueModificationInput(
-                state=prior_state,
-                label_ids=remove_label_by_name(lables, "Running")))
+            await linear_client.update_issue(
+                j["data"]["id"],
+                IssueModificationInput(
+                    state=prior_state, label_ids=remove_label_by_name(lables, "Running")
+                ),
+            )
         print(await linear_client.assign_issue(j["data"]["id"], None))
 
     elif all([is_update, status_changed, issue_placed_in_review]):
@@ -261,34 +223,49 @@ async def webhooks_linear(request: Request):
         child_issues = []
         if issue.parent:
             child_issues = await linear_client.list_issues(
-                        parent={"id":{"eq": issue.parent.id}},
+                parent={"id": {"eq": issue.parent.id}},
             )
 
-        child_issues = [{"title": i.title, "status": i.state.name} for i in child_issues if i.id != issue.id]
+        child_issues = [
+            {"title": i.title, "status": i.state.name}
+            for i in child_issues
+            if i.id != issue.id
+        ]
 
         lables = []
         if issue.labels:
             lables = issue.labels.nodes
         label_ids = append_label_id_by_name(all_issue_labels, lables, "Evaluating")
-        print("set new labels:", await linear_client.update_issue(
-            j["data"]["id"],
-            IssueModificationInput(label_ids=label_ids),
-            ))
+        print(
+            "set new labels:",
+            await linear_client.update_issue(
+                j["data"]["id"],
+                IssueModificationInput(label_ids=label_ids),
+            ),
+        )
         eval_result = await agent_router.evaluate_issue_completion(issue, child_issues)
         if eval_result:
-            await linear_client.update_issue(j["data"]["id"], IssueModificationInput(
-                state="done",
-                label_ids=remove_label_by_name(lables, "Evaluating"),
-            ))
+            await linear_client.update_issue(
+                j["data"]["id"],
+                IssueModificationInput(
+                    state="done",
+                    label_ids=remove_label_by_name(lables, "Evaluating"),
+                ),
+            )
         else:
-            await linear_client.update_issue(j["data"]["id"], IssueModificationInput(
-                label_ids=remove_label_by_name(lables, "Evaluating"),
-            ))
+            await linear_client.update_issue(
+                j["data"]["id"],
+                IssueModificationInput(
+                    label_ids=remove_label_by_name(lables, "Evaluating"),
+                ),
+            )
         print("eval result:", eval_result)
     return "ok"
 
 
-@app.post("/issues/{issue_id}/assign", response_model=Issue, response_model_exclude_none=True)
+@app.post(
+    "/issues/{issue_id}/assign", response_model=Issue, response_model_exclude_none=True
+)
 async def assign_issue(input: AssignIssueInput):
     """Assign an issue to a user"""
     response = await linear_client.assign_issue(input.issue_id, input.assignee_id)
@@ -302,7 +279,9 @@ async def list_users() -> List[User]:
     return response
 
 
-@app.get("/issue_labels", response_model=List[IssueLabel], response_model_exclude_none=True)
+@app.get(
+    "/issue_labels", response_model=List[IssueLabel], response_model_exclude_none=True
+)
 async def list_issue_labels() -> List[IssueLabel]:
     """List all issue labels"""
     response = linear_client.list_issue_labels()
@@ -316,7 +295,9 @@ async def list_projects() -> List[Project]:
     return response
 
 
-@app.get("/projects/{project_id}", response_model=Project, response_model_exclude_none=True)
+@app.get(
+    "/projects/{project_id}", response_model=Project, response_model_exclude_none=True
+)
 async def get_project(project_id: str) -> Project:
     """Get a project by ID"""
     response = await linear_client.get_project(project_id)
@@ -327,17 +308,21 @@ async def get_project(project_id: str) -> Project:
 async def create_project(input: ProjectInput) -> Project:
     """Create a project"""
     response = await linear_client.create_project(input)
-    return response 
+    return response
 
 
-@app.post("/projects/{project_id}", response_model=Project, response_model_exclude_none=True)
+@app.post(
+    "/projects/{project_id}", response_model=Project, response_model_exclude_none=True
+)
 async def update_project(project_id: str, input: ProjectInput) -> Project:
     """Update a project"""
     response = await linear_client.update_project(project_id, input)
     return response
 
 
-@app.delete("/projects/{project_id}", response_model=Project, response_model_exclude_none=True)
+@app.delete(
+    "/projects/{project_id}", response_model=Project, response_model_exclude_none=True
+)
 async def delete_project(project_id: str) -> Project:
     """Delete a project"""
     response = await linear_client.delete_project(project_id)
@@ -354,32 +339,59 @@ asset_mount = modal.Mount.from_local_file(
     "assets/logo.png", remote_path="/root/assets/logo.png"
 )
 
+
 # project document endpoints
-@app.get("/projects/{project_id}/documents", response_model=List[Document], response_model_exclude_none=True)
+@app.get(
+    "/projects/{project_id}/documents",
+    response_model=List[Document],
+    response_model_exclude_none=True,
+)
 async def list_documents(project_id: str) -> List[Document]:
     """List all documents (AKA product specifications)."""
     response = await linear_client.list_documents(project_id)
     return response
 
-@app.get("/projects/{project_id}/documents/{document_id}", response_model=Document, response_model_exclude_none=True)
+
+@app.get(
+    "/projects/{project_id}/documents/{document_id}",
+    response_model=Document,
+    response_model_exclude_none=True,
+)
 async def get_document(project_id: str, document_id: str) -> Document:
     """Get a document by ID"""
     response = await linear_client.get_document(document_id)
     return response
 
-@app.post("/projects/{project_id}/documents", response_model=Document, response_model_exclude_none=True)
+
+@app.post(
+    "/projects/{project_id}/documents",
+    response_model=Document,
+    response_model_exclude_none=True,
+)
 async def create_document(project_id: str, input: DocumentInput) -> Document:
     """Create a document"""
     response = await linear_client.create_document(project_id, input)
     return response
 
-@app.post("/projects/{project_id}/documents/{document_id}", response_model=Document, response_model_exclude_none=True)
-async def update_document(project_id: str, document_id: str, input: DocumentInput) -> Document:
+
+@app.post(
+    "/projects/{project_id}/documents/{document_id}",
+    response_model=Document,
+    response_model_exclude_none=True,
+)
+async def update_document(
+    project_id: str, document_id: str, input: DocumentInput
+) -> Document:
     """Update a document"""
     response = await linear_client.update_document(project_id, document_id, input)
     return response
 
-@app.delete("/projects/{project_id}/documents/{document_id}", response_model=Document, response_model_exclude_none=True)
+
+@app.delete(
+    "/projects/{project_id}/documents/{document_id}",
+    response_model=Document,
+    response_model_exclude_none=True,
+)
 async def delete_document(project_id: str, document_id: str) -> Document:
     """Delete a document"""
     response = await linear_client.delete_document(project_id, document_id)

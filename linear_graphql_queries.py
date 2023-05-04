@@ -1,6 +1,16 @@
 """This file contains all the queries used in the linear_client.py file"""
 
 QUERIES = {
+    "get_teams": """
+      query Teams {
+          teams {
+            nodes {
+              id
+              name
+            }
+          }
+        }
+        """,
     "get_issue": """
 query Issue($id: String!) {
     issue(id: $id) {
@@ -129,7 +139,6 @@ query Issues($filter: IssueFilter) {
         }
       }
     }""",
-
     "assign_issue": """
 mutation IssueUpdateAssignee($id: String!, $assigneeId: String) {
   issueUpdate(id: $id, input: {assigneeId: $assigneeId}) {
@@ -170,8 +179,8 @@ query IssueLabels {
   }
 }
 """,
-# list projects_for_team
-"list_projects_for_team": """query ListProjects($teamId: String!) {
+    # list projects_for_team
+    "list_projects_for_team": """query ListProjects($teamId: String!) {
     team(id: $teamId) {
       projects {
         nodes {
@@ -189,9 +198,8 @@ query IssueLabels {
       }
     }
 }""",
-
-# create project:
-"create_project": """
+    # create project:
+    "create_project": """
     mutation CreateProject(
       $teamIds: [String!]!
       $name: String!
@@ -213,16 +221,15 @@ query IssueLabels {
         }
       }
     }""",
-
-# delete project:
-"delete_project": """
+    # delete project:
+    "delete_project": """
     mutation DeleteProject($id: String!) {
         projectDelete(id: $id) {
             success
         }
     }""",
-# document queries
-"create_document": """
+    # document queries
+    "create_document": """
     mutation CreateDocument(
       $projectId: String!
       $title: String!
@@ -245,8 +252,7 @@ query IssueLabels {
         }
       }
     }""",
-
-"get_document": """
+    "get_document": """
     query Document($id: String!) {
         document(id: $id) {
             id
@@ -256,4 +262,3 @@ query IssueLabels {
        }
     }""",
 }
-        
