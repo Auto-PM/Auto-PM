@@ -1,16 +1,14 @@
 # main.py
 import os
-from typing import List, Optional
+from typing import List
 
-from fastapi import FastAPI, HTTPException, Request, Body, status
+from fastapi import FastAPI, HTTPException, Request, Body
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import modal
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv, set_key
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
-from fastapi.responses import RedirectResponse
 
 from linear_client import LinearClient
 from linear_client import (
@@ -67,7 +65,7 @@ app.add_middleware(
 )
 
 
-@app.middleware("http")
+#@app.middleware("http")
 async def check_setup(request: Request, call_next):
     setup_done = (
         os.environ.get("LINEAR_API_KEY")
@@ -200,12 +198,13 @@ async def webhooks_linear(request: Request):
             parent_id=j["data"]["id"],
        ))
         if len(parts) > 1:
-            print("updating description")
             description = parts[1].strip()
-            await linear_client.update_issue(issue.id, IssueModificationInput(
-                description=description,
-                label_ids=remove_label_by_name(labels, "Running"),
-            ))
+            if len(description) > 0 and description != issue.description:
+                print("updating description")
+                await linear_client.update_issue(issue.id, IssueModificationInput(
+                    description=description,
+                    label_ids=remove_label_by_name(labels, "Running"),
+                ))
         await linear_client.update_issue(issue.id, IssueModificationInput(
             label_ids=remove_label_by_name(labels, "Running"),
         ))
