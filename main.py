@@ -185,14 +185,6 @@ async def webhooks_linear(request: Request):
         # If a new comment arrives, and it's assigned to the robot, then we should perform a chat completion.
         # if issue.assignee and issue.assignee.name == "AutoPM Robot":
         #     print("Comment on robot-assigned issue")
-        await linear_client.create_attachment(AttachmentCreateInput(
-            issue_id=issue.id,
-            # comment_body="woot",
-            title="Model resasoning",
-            subtitle="AutoPM Model resasoning",
-            metadata=j["data"],
-            url="https://www.google.com",
-        ))
         labels = []
         if issue.labels:
             labels = issue.labels.nodes
@@ -203,13 +195,6 @@ async def webhooks_linear(request: Request):
         print("result:",result)
         parts = result.split("ΔDESCRIPTION: ")
         comment = parts[0].replace("COMMENT:", "").strip()
-        await linear_client.create_attachment(AttachmentCreateInput(
-            issue_id=issue.id,
-            # comment_body=result,
-            title="Model resasoning",
-            subtitlt="AutoPM Model resasoning",
-            metadata=j["data"],
-        ))
         print("parts:", parts)
         print("comment:", comment)
         print("creating comment")
