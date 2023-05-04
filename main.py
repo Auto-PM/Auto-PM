@@ -173,7 +173,10 @@ async def webhooks_linear(request: Request):
     # TODO: use something like cachetools here
     # all_issue_labels = linear_client.list_issue_labels()
 
-    if all([is_create, is_comment]):
+    is_from_robot = j["data"].get("user", {}).get("name") == "AutoPM Robot"
+    if all([is_create, is_comment, not is_from_robot]):
+        import json
+        print(json.dumps(j, indent=2))
         issue = await linear_client.get_issue(j["data"]["issueId"])
         # If a new comment arrives, and it's assigned to the robot, then we should perform a chat completion.
         # if issue.assignee and issue.assignee.name == "AutoPM Robot":
@@ -185,26 +188,27 @@ async def webhooks_linear(request: Request):
         await linear_client.update_issue(issue.id, IssueModificationInput(label_ids=label_ids))
         result = await agent_router.handle_new_comment(issue)
 
-        print(result)
-        # if the result starts with COMMENT:, then we should add a comment to the issue:
-        if result.startswith("COMMENT:"):
-            comment = result.replace("COMMENT: ", "").strip()
-            print("creating comment")
-            await linear_client.create_comment(CommentCreateInput(
-                body=comment,
-                issue_id=issue.id,
-                parent_id=j["data"]["id"],
-           ))
-            await linear_client.update_issue(issue.id, IssueModificationInput(
-                label_ids=remove_label_by_name(labels, "Running"),
-            ))
-        else:
+        print("result:",result)
+        parts = result.split("ΔDESCRIPTION: ")
+        comment = parts[0].replace("COMMENT:", "").strip()
+        print("parts:", parts)
+        print("comment:", comment)
+        print("creating comment")
+        await linear_client.create_comment(CommentCreateInput(
+            body=comment,
+            issue_id=issue.id,
+            parent_id=j["data"]["id"],
+       ))
+        if len(parts) > 1:
             print("updating description")
-            description = result
+            description = parts[1].strip()
             await linear_client.update_issue(issue.id, IssueModificationInput(
                 description=description,
                 label_ids=remove_label_by_name(labels, "Running"),
             ))
+        await linear_client.update_issue(issue.id, IssueModificationInput(
+            label_ids=remove_label_by_name(labels, "Running"),
+        ))
 
     updated_to = j.get("data", {}).get("state")
 

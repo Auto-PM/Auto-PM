@@ -32,9 +32,9 @@ class IssueLabel(BaseModel):
 IssueLabelConnection.update_forward_refs()  
 
 class IssueConnection(BaseModel):
-    edges: list["IssueEdge"]
-    # nodes: List['Issue']
-    page_info: PageInfo
+    #edges: list["IssueEdge"]
+    nodes: Optional[List[Optional['Issue']]]
+    #page_info: PageInfo
 
 
 class IssueEdge(BaseModel):
@@ -50,8 +50,8 @@ class Issue(BaseModel):
     # auto_closed_at: Any
     # branch_name: str
     # canceled_at: Any
-    # children: 'IssueConnection'
-    children: Optional[list["Issue"]]
+    children: Optional['IssueConnection']
+    # children: Optional[list["Issue"]]
     comments: Optional['CommentConnection']
     # completed_at: Any
     # created_at: Any
@@ -420,3 +420,4 @@ class CommentCreateInput(BaseModel):
 Issue.update_forward_refs()
 Project.update_forward_refs()
 Document.update_forward_refs()
+IssueConnection.update_forward_refs()

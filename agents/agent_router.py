@@ -199,10 +199,9 @@ class AgentRouter:
         You are a helpful project management AI that is responding to a new comment on a task.
         {issue}
 
-        You should either respond with a new comment or suggest a replacement for the issue description based on the conversation in the comments.
+        The first line of your response should begin with "COMMENT:" followed by the comment to respond with - please explain your reasoning.
 
-        Please explain your reasoning for your response and then provide your response wrapped in triple backticks.
-        If the response is a comment prefix it with "COMMENT: ".
+        Finally, if the comment is asking to improve the issue description, please add a new line beginning with "ΔDESCRIPTION:" followed by the improvement.
         """
         llm = OpenAI(temperature=0.9, model_name="gpt-4")
 
@@ -213,16 +212,10 @@ class AgentRouter:
         )
 
         from langchain.chains import LLMChain
-
         chain = LLMChain(llm=llm, prompt=prompt, verbose=True)
 
-        print("running chain")
-        chain_run = await chain.arun({"issue": issue.dict()})
-        print("done running chain")
-        print(chain_run)
-        # extract from backticks:
-        o = re.findall(r"```(.*)```", chain_run, re.DOTALL)
-        return "\n".join(o)
+        chain_run = await chain.arun({"issue": json.dumps(issue.dict(exclude_unset=True, exclude_none=True))})
+        return chain_run
 
     async def run(self, issue: Issue, agent_name: str):
         """

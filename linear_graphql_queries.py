@@ -52,6 +52,16 @@ query Issue($id: String!) {
             }
           }
         }
+        children {
+          nodes {
+            id
+            title
+            state {
+              id
+              name
+            }
+          }
+        }
         }}""",
     "list_issues": """
 query Issues($filter: IssueFilter) {
