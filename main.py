@@ -20,7 +20,7 @@ from linear_client import (
 )
 
 # Project types:
-from linear_client import ProjectInput, DocumentInput
+from linear_client import ProjectInput, DocumentInput, status, set_workflow_states
 from linear_types import Issue, User, IssueLabel, Project, Document
 from linear_types import ProjectMilestone, ProjectMilestoneInput
 
@@ -83,7 +83,12 @@ async def check_setup(request: Request, call_next):
             set_key(".env", "LINEAR_TEAM_ID", linear_team_id)
             # load dotenv to pick up team ID change
             load_dotenv()
+            workflow_states = await linear_client.get_linear_workflow_states(
+                linear_team_id
+            )
+            set_workflow_states(workflow_states)
         response = await call_next(request)
+
     else:
         print("Setup Middleware: setup not done, returning 403")
         raise HTTPException(status_code=403, detail="Forbidden")

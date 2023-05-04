@@ -9,19 +9,26 @@ import httpx
 from pydantic import BaseModel, Field, Json
 from pydantic import constr
 
-from linear_types import Issue, User, IssueLabel, Project, Document, ProjectMilestone, ProjectMilestoneInput
+from linear_types import (
+    Issue,
+    User,
+    IssueLabel,
+    Project,
+    Document,
+    ProjectMilestone,
+    ProjectMilestoneInput,
+)
 from linear_graphql_queries import QUERIES
 
+status = {}
 
-# TODO: don't hardcode these
-status = {
-    "in_review": "7c0bbc28-ffce-45b4-b432-d9223c2330a9",
-    "in_progress": "f4bf4bfa-7a53-4b9c-8a5f-6efd2167afd4",
-    "cancelled": "ab54a373-3661-44f8-9cb8-c464fab63bc6",
-    "done": "09e6c51b-8ff9-4c5a-a797-4afd3cae9fa1",
-    "backlog": "15645ccf-4883-48fb-9483-d194b9cb19a1",
-    "todo": "4781c172-be3b-43fd-9db1-55924c2d46d8",
-}
+
+def set_workflow_states(states_dict):
+    global status
+    status = states_dict
+    print(f"set_workflow_states: status updated to: {status}")
+
+
 status_reversed = {v: k for k, v in status.items()}
 
 
@@ -29,6 +36,7 @@ class LinearError(Exception):
     pass
 
 
+# TODO: generate the statuses from the ones fetched.
 class IssueState(Enum):
     IN_REVIEW = "in_review"
     IN_PROGRESS = "in_progress"
@@ -40,8 +48,10 @@ class IssueState(Enum):
     def state_id(self) -> Any:
         return status[self.name.lower()]
 
+
 class ListIssuesInput(BaseModel):
     project_id: Optional[str] = None
+
 
 class IssueInput(BaseModel):
     title: str
@@ -156,6 +166,29 @@ class LinearClient:
             if team["name"] == team_name:
                 return team["id"]
         raise LinearError(f"Team {team_name} not found")
+
+    async def get_linear_workflow_states(self, team_id):
+        variables = {
+            "filter": {
+                "id": {
+                    "eq": team_id,
+                }
+            }
+        }
+        result = await self._arun_graphql_query(
+            QUERIES["get_workflow_states"],
+            variables=variables,
+        )
+        if "errors" in result:
+            raise LinearError(result["errors"])
+
+        # Extract the workflow states and convert them into a dictionary
+        workflow_states = {}
+        for team in result["data"]["teams"]["nodes"]:
+            for state in team["states"]["nodes"]:
+                workflow_states[state["name"]] = state["id"]
+
+        return workflow_states
 
     async def list_issues(self, **kwargs):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
@@ -420,8 +453,10 @@ class LinearClient:
         print(f"List milestones result: {result}")
         if "errors" in result:
             raise LinearError(result["errors"])
-        return [ProjectMilestone(**ms) for ms in result["data"]["project"]["projectMilestones"]["nodes"]]
-
+        return [
+            ProjectMilestone(**ms)
+            for ms in result["data"]["project"]["projectMilestones"]["nodes"]
+        ]
 
     async def create_milestone(self, project_id: str, input: ProjectMilestoneInput):
         variables = {
@@ -436,7 +471,9 @@ class LinearClient:
         print(result)
         if "errors" in result:
             raise LinearError(result["errors"])
-        return ProjectMilestone(**result["data"]["projectMilestoneCreate"]["projectMilestone"])
+        return ProjectMilestone(
+            **result["data"]["projectMilestoneCreate"]["projectMilestone"]
+        )
 
     async def update_milestone(self, milestone_id: str, input: ProjectMilestoneInput):
         variables = {
@@ -456,8 +493,9 @@ class LinearClient:
         print(result)
         if "errors" in result:
             raise LinearError(result["errors"])
-        return ProjectMilestone(**result["data"]["projectMilestoneUpdate"]["projectMilestone"])
-
+        return ProjectMilestone(
+            **result["data"]["projectMilestoneUpdate"]["projectMilestone"]
+        )
 
     async def delete_milestone(self, milestone_id: str) -> bool:
         result = await self._arun_graphql_query(

@@ -11,6 +11,20 @@ QUERIES = {
           }
         }
         """,
+    "get_workflow_states": """
+        query Teams($filter: TeamFilter) {
+  teams(filter: $filter) {
+    nodes {
+      states {
+        nodes {
+          name
+          id
+        }
+      }
+    }
+  }
+}
+""",
     "get_issue": """
 query Issue($id: String!) {
     issue(id: $id) {
@@ -283,8 +297,7 @@ query IssueLabels {
             contentData
        }
     }""",
-
-"list_milestones": """
+    "list_milestones": """
     query ListProjectMilestones($projectId: String!) {
       project(id: $projectId) {
         projectMilestones {
@@ -298,7 +311,7 @@ query IssueLabels {
       }
     }
     """,
-"create_milestone": """
+    "create_milestone": """
     mutation CreateProjectMilestone(
       $projectId: String!
       $name: String!
@@ -326,14 +339,14 @@ query IssueLabels {
     }
 
 """,
-"delete_milestone": """
+    "delete_milestone": """
     mutation DeleteProjectMilestone($id: String!) {
         projectMilestoneDelete(id: $id) {
             success
         }
     }
 """,
-"update_milestone": """
+    "update_milestone": """
     mutation UpdateProjectMilestone(
       $id: String!
       $name: String
@@ -360,6 +373,4 @@ query IssueLabels {
       }
     }
 """,
-                    
-                        
 }
