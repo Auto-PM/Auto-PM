@@ -5,7 +5,7 @@ from typing import Any, Optional, List
 from pydantic import BaseModel
 
 
-from linear_types import PageInfo, ProjectMilestone
+from linear_types import PageInfo, ProjectMilestone, Comment, ExternalUser
 
 class AirbyteConfigurationInput(BaseModel):
     api_key: str
@@ -209,23 +209,6 @@ class AuthorizedApplication(BaseModel):
     webhooks_enabled: bool
 
 
-class Comment(BaseModel):
-    archived_at: Any
-    body: str
-    body_data: str
-    children: "CommentConnection"
-    created_at: Any
-    edited_at: Any
-    external_user: Optional["ExternalUser"]
-    id: str
-    issue: "Issue"
-    parent: Optional["Comment"]
-    reaction_data: Any
-    updated_at: Any
-    url: str
-    user: Optional["User"]
-
-
 class CommentCollectionFilter(BaseModel):
     and_: Optional[List["CommentCollectionFilter"]]
     body: Optional["StringComparator"]
@@ -238,24 +221,6 @@ class CommentCollectionFilter(BaseModel):
     some: Optional["CommentFilter"]
     updated_at: Optional["DateComparator"]
     user: Optional["UserFilter"]
-
-
-class CommentConnection(BaseModel):
-    edges: List["CommentEdge"]
-    nodes: List["Comment"]
-    page_info: "PageInfo"
-
-
-class CommentCreateInput(BaseModel):
-    body: Optional[str]
-    body_data: Any
-    create_as_user: Optional[str]
-    created_at: Any
-    display_icon_url: Optional[str]
-    do_not_subscribe_to_issue: Optional[bool]
-    id: Optional[str]
-    issue_id: str
-    parent_id: Optional[str]
 
 
 class CommentEdge(BaseModel):
@@ -554,19 +519,6 @@ class EventCreateInput(BaseModel):
 
 class EventPayload(BaseModel):
     success: bool
-
-
-class ExternalUser(BaseModel):
-    archived_at: Any
-    avatar_url: Optional[str]
-    created_at: Any
-    display_name: str
-    email: str
-    id: str
-    last_seen: Any
-    name: str
-    organization: "Organization"
-    updated_at: Any
 
 
 class ExternalUserConnection(BaseModel):

@@ -32,9 +32,9 @@ class IssueLabel(BaseModel):
 IssueLabelConnection.update_forward_refs()  
 
 class IssueConnection(BaseModel):
-    edges: list["IssueEdge"]
-    # nodes: List['Issue']
-    page_info: PageInfo
+    #edges: list["IssueEdge"]
+    nodes: Optional[List[Optional['Issue']]]
+    #page_info: PageInfo
 
 
 class IssueEdge(BaseModel):
@@ -50,9 +50,9 @@ class Issue(BaseModel):
     # auto_closed_at: Any
     # branch_name: str
     # canceled_at: Any
-    # children: 'IssueConnection'
-    children: Optional[list["Issue"]]
-    # comments: 'CommentConnection'
+    children: Optional['IssueConnection']
+    # children: Optional[list["Issue"]]
+    comments: Optional['CommentConnection']
     # completed_at: Any
     # created_at: Any
     # creator: Optional['User']
@@ -368,7 +368,56 @@ class ProjectMilestoneInput(BaseModel):
     target_date: Any
 
 
+class Comment(BaseModel):
+    archived_at: Optional[Any]
+    body: Optional[str]
+    body_data: Optional[str]
+    #children: Optional["CommentConnection"]
+    created_at: Optional[Any]
+    edited_at: Optional[Any]
+    #external_user: Optional["ExternalUser"]
+    id: str
+    issue: Optional["Issue"]
+    #parent: Optional["Comment"]
+    reaction_data: Optional[Any]
+    updated_at: Optional[Any]
+    url: Optional[str]
+    #user: Optional["User"]
+
+
+class CommentConnection(BaseModel):
+    # edges: List["CommentEdge"]
+    nodes: List[Optional["Comment"]]
+    # page_info: "PageInfo"
+
+
+class ExternalUser(BaseModel):
+    archived_at: Any
+    avatar_url: Optional[str]
+    created_at: Any
+    display_name: str
+    email: str
+    id: str
+    last_seen: Any
+    name: str
+    # organization: "Organization"
+    updated_at: Any
+
+
+class CommentCreateInput(BaseModel):
+    body: Optional[str]
+    body_data: Optional[Any]
+    create_as_user: Optional[str]
+    created_at: Optional[Any]
+    display_icon_url: Optional[str]
+    do_not_subscribe_to_issue: Optional[bool]
+    id: Optional[str]
+    issue_id: str
+    parent_id: Optional[str]
+
+
 # IssueEdge.update_forward_refs()
 Issue.update_forward_refs()
 Project.update_forward_refs()
 Document.update_forward_refs()
+IssueConnection.update_forward_refs()
