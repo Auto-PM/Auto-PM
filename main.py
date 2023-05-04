@@ -16,6 +16,7 @@ from linear_client import IssueInput, AssignIssueInput, IssueModificationInput, 
 # Project types:
 from linear_client import ProjectInput, DocumentInput
 from linear_types import Issue, User, IssueLabel, Project, Document
+from linear_types import ProjectMilestone, ProjectMilestoneInput
 
 from agents.agent_router import AgentRouter
 
@@ -77,8 +78,11 @@ class Task(BaseModel):
 
 
 @app.get("/issues/", response_model=List[Issue], response_model_exclude_none=True)
-async def list_issues():
-    response = await linear_client.list_issues()
+async def list_issues(project_id: str):
+    filters = {}
+    if project_id:
+        filters["project"] = {"id": {"eq": project_id}}
+    response = await linear_client.list_issues(**filters)
     return response
 
 
@@ -100,7 +104,7 @@ async def create_issue_bulk(issues: List[IssueInput] = Body(..., embed=True)):
 
 @app.post("/issues/{issue_id}/", response_model=Issue, response_model_exclude_none=True)
 async def patch_issue(issue_id: str, issue: IssueModificationInput):
-    response = linear_client.update_issue(issue_id, issue)
+    response = await linear_client.update_issue(issue_id, issue)
     return response
 
 
@@ -380,11 +384,45 @@ async def update_document(project_id: str, document_id: str, input: DocumentInpu
     return response
 
 @app.delete("/projects/{project_id}/documents/{document_id}", response_model=Document, response_model_exclude_none=True)
-async def delete_document(project_id: str, document_id: str) -> Document:
+async def delete_document(project_id: str, document_id: str) -> bool:
     """Delete a document"""
     response = await linear_client.delete_document(project_id, document_id)
     return response
 
+
+# project milestone endpoints
+@app.get("/projects/{project_id}/milestones", response_model=List[ProjectMilestone], response_model_exclude_none=True)
+async def list_milestones(project_id: str) -> List[ProjectMilestone]:
+    """List all milestones."""
+    response = await linear_client.list_milestones(project_id)
+    return response
+
+@app.get("/projects/{project_id}/milestones/{milestone_id}",
+         response_model=ProjectMilestone, response_model_exclude_none=True)
+async def get_milestone(project_id: str, milestone_id: str) -> ProjectMilestone:
+    """Get a milestone by ID"""
+    response = await linear_client.get_milestone(milestone_id)
+    return response
+
+@app.post("/projects/{project_id}/milestones", response_model=ProjectMilestone, response_model_exclude_none=True)
+async def create_milestone(project_id: str, input: ProjectMilestoneInput) -> ProjectMilestone:
+    """Create a milestone"""
+    response = await linear_client.create_milestone(project_id, input)
+    return response
+
+@app.post("/projects/{project_id}/milestones/{milestone_id}",
+          response_model=ProjectMilestone, response_model_exclude_none=True)
+async def update_milestone(project_id: str, milestone_id: str, input: ProjectMilestoneInput) -> ProjectMilestone:
+    """Update a milestone"""
+    response = await linear_client.update_milestone(milestone_id, input)
+    return response
+
+@app.delete("/projects/{project_id}/milestones/{milestone_id}", 
+            response_model=ProjectMilestone, response_model_exclude_none=True)
+async def delete_milestone(project_id: str, milestone_id: str) -> bool:
+    """Delete a milestone"""
+    response = await linear_client.delete_milestone(milestone_id)
+    return response
 
 @stub.asgi(image=image, mounts=[template_mount, asset_mount])
 def fastapi_app():

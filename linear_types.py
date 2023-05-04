@@ -74,7 +74,7 @@ class Issue(BaseModel):
     priority: Optional[float]
     # priority_label: str
     # project: Optional['Project']
-    # project_milestone: Optional['ProjectMilestone']
+    project_milestone: Optional['ProjectMilestone']
     # relations: 'IssueRelationConnection'
     # sla_breaches_at: Any
     # sla_started_at: Any
@@ -271,7 +271,7 @@ class Project(BaseModel):
     # members: "UserConnection"
     name: Optional[str]
     progress: Optional[float]
-    # project_milestones: "ProjectMilestoneConnection"
+    project_milestones: Optional["ProjectMilestoneConnection"]
     # project_update_reminders_paused_until_at: Any
     # project_updates: "ProjectUpdateConnection"
     # scope: float
@@ -318,7 +318,7 @@ class DocumentCreateInput(BaseModel):
     content_data: Any
     icon: Optional[str]
     id: Optional[str]
-    project_id: str
+    project_id: st
     title: str
 
 
@@ -340,6 +340,32 @@ class DocumentUpdateInput(BaseModel):
     icon: Optional[str]
     project_id: Optional[str]
     title: Optional[str]
+
+
+class ProjectMilestone(BaseModel):
+    # archived_at: Any
+    # created_at: Any
+    id: str
+    name: str
+    description: Optional[str]
+    project: Optional["Project"]
+    sort_order: Optional[float]
+    target_date: Optional[Any]
+    updated_at: Optional[Any]
+
+
+class ProjectMilestoneConnection(BaseModel):
+    nodes: List["ProjectMilestone"]
+    page_info: "PageInfo"
+
+
+class ProjectMilestoneInput(BaseModel):
+    description: Optional[str]
+    id: Optional[str]
+    name: str
+    # project_id: str
+    sort_order: Optional[float]
+    target_date: Any
 
 
 # IssueEdge.update_forward_refs()

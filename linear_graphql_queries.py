@@ -27,6 +27,10 @@ query Issue($id: String!) {
             name
           }
         }
+        projectMilestone {
+          id
+          name
+        }
         }}""",
     "list_issues": """
 query Issues($filter: IssueFilter) {
@@ -52,6 +56,10 @@ query Issues($filter: IssueFilter) {
             name
           }
         }
+        projectMilestone {
+          id
+          name
+        }
     }
   }
 }""",
@@ -63,6 +71,7 @@ query Issues($filter: IssueFilter) {
       $stateId: String!
       $parentId: String
       $projectId: String
+      $projectMilestoneId: String
     ) {
       issueCreate(
         input: {
@@ -73,6 +82,7 @@ query Issues($filter: IssueFilter) {
           stateId: $stateId
           parentId: $parentId
           projectId: $projectId
+          projectMilestoneId: $projectMilestoneId
         }
       ) {
         issue {
@@ -81,6 +91,10 @@ query Issues($filter: IssueFilter) {
           identifier
           priority
           state {
+            name
+          }
+          projectMilestone {
+            id
             name
           }
         }
@@ -99,6 +113,8 @@ query Issues($filter: IssueFilter) {
       $teamId: String!
       $stateId: String
       $labelIds: [String!]
+      $projectId: String 
+      $projectMilestoneId: String
     ) {
       issueUpdate(
         id: $id
@@ -109,6 +125,8 @@ query Issues($filter: IssueFilter) {
           teamId: $teamId
           stateId: $stateId
           labelIds: $labelIds
+          projectId: $projectId
+          projectMilestoneId: $projectMilestoneId
         }
       ) {
         issue {
@@ -125,6 +143,10 @@ query Issues($filter: IssueFilter) {
               id
               name
             }
+          }
+          projectMilestone {
+            id
+            name
           }
         }
       }
@@ -255,5 +277,84 @@ query IssueLabels {
             contentData
        }
     }""",
+
+"list_milestones": """
+    query ListProjectMilestones($projectId: String!) {
+      project(id: $projectId) {
+        projectMilestones {
+          nodes {
+            id
+            name
+            description
+            targetDate
+          }
+        }
+      }
+    }
+    """,
+"create_milestone": """
+    mutation CreateProjectMilestone(
+      $projectId: String!
+      $name: String!
+      $description: String
+      $targetDate: TimelessDate
+      $sortOrder: Float
+    ) {
+      projectMilestoneCreate(
+        input: {
+          projectId: $projectId
+          name: $name
+          description: $description
+          targetDate: $targetDate
+          sortOrder: $sortOrder
+        }
+      ) {
+        projectMilestone {
+          id
+          name
+          description
+          targetDate
+          sortOrder
+        }
+      }
+    }
+
+""",
+"delete_milestone": """
+    mutation DeleteProjectMilestone($id: String!) {
+        projectMilestoneDelete(id: $id) {
+            success
+        }
+    }
+""",
+"update_milestone": """
+    mutation UpdateProjectMilestone(
+      $id: String!
+      $name: String
+      $description: String
+      $targetDate: TimelessDate
+      $sortOrder: Float
+    ) {
+      projectMilestoneUpdate(
+        id: $id
+        input: {
+          name: $name
+          description: $description
+          targetDate: $targetDate
+          sortOrder: $sortOrder
+        }
+      ) {
+        projectMilestone {
+          id
+          name
+          description
+          targetDate
+          sortOrder
+        }
+      }
+    }
+""",
+                    
+                        
 }
         
