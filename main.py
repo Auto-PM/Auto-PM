@@ -182,7 +182,7 @@ async def webhooks_linear(request: Request):
         labels = []
         if issue.labels:
             labels = issue.labels.nodes
-        label_ids = append_label_id_by_name(all_issue_labels, labels, "Running")
+        label_ids = append_label_id_by_name(all_issue_labels, labels, "🤖")
         await linear_client.update_issue(issue.id, IssueModificationInput(label_ids=label_ids))
         result = await agent_router.handle_new_comment(issue)
 
@@ -203,10 +203,10 @@ async def webhooks_linear(request: Request):
                 print("updating description")
                 await linear_client.update_issue(issue.id, IssueModificationInput(
                     description=description,
-                    label_ids=remove_label_by_name(labels, "Running"),
+                    label_ids=remove_label_by_name(labels, "🤖"),
                 ))
         await linear_client.update_issue(issue.id, IssueModificationInput(
-            label_ids=remove_label_by_name(labels, "Running"),
+            label_ids=remove_label_by_name(labels, "🤖"),
         ))
 
     updated_to = j.get("data", {}).get("state")
@@ -225,7 +225,7 @@ async def webhooks_linear(request: Request):
         labels = []
         if issue.labels:
             lables = issue.labels.nodes
-        label_ids = append_label_id_by_name(all_issue_labels, lables, "Running")
+        label_ids = append_label_id_by_name(all_issue_labels, lables, "🤖")
         await linear_client.update_issue(
             j["data"]["id"], IssueModificationInput(state="in_progress")
         )
@@ -247,14 +247,14 @@ async def webhooks_linear(request: Request):
                 IssueModificationInput(
                     description=result,
                     state="in_review",
-                    label_ids=remove_label_by_name(lables, "Running"),
+                    label_ids=remove_label_by_name(lables, "🤖"),
                 ),
             )
         else:
             await linear_client.update_issue(
                 j["data"]["id"],
                 IssueModificationInput(
-                    state=prior_state, label_ids=remove_label_by_name(lables, "Running")
+                    state=prior_state, label_ids=remove_label_by_name(lables, "🤖")
                 ),
             )
         print(await linear_client.assign_issue(j["data"]["id"], None))
