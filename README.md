@@ -15,12 +15,38 @@ AutoPM is a ChatGPT plugin that seamlessly integrates AI and agents into your ex
 
 ## Installation
 
-To get started with AutoPM, please ensure you have the latest version of Python installed. Detailed installation instructions will be provided soon.
+To get started with AutoPM, please ensure you have the latest version of Python installed. 
 
-Set up virtualenv:
+### Set up virtualenv:
 ```shell
 $ make venv
 ````
+This command will also install all requirements.
+
+### Activate virtual environement:
+```shell
+$ source venv/bin/activate
+````
+
+### Copy example.env, name it .env, and add your API keys
+It should be named ".env" and look something like this:
+```
+LINEAR_API_KEY = lin_api_abc123
+OPENAI_API_KEY = sk-abc123
+LINEAR_TEAM_NAME="Example Name"
+SERPAPI_API_KEY=abc123
+```
+
+Make sure that you use the exact name of your project or it will not work!
+
+### Start the Server
+```shell
+$ uvicorn main:app --reload
+````
+
+You should now be up and running! To start using the ChatGPT plugin simply paste 'http://127.0.0.1:8000/' as the plugin link when adding a local plugin to ChatGPT.
+
+
 
 ## How it Works
 
