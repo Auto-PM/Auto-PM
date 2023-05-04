@@ -61,22 +61,6 @@ class ArchivePayload(BaseModel):
     success: bool
 
 
-class Attachment(BaseModel):
-    archived_at: Any
-    # created_at: Any
-    # creator: Optional['User']
-    # group_by_source: bool
-    # id: str
-    # issue: 'Issue'
-    # metadata: Any
-    # source: Any
-    # source_type: Optional[str]
-    # subtitle: Optional[str]
-    # title: str
-    # updated_at: Any
-    # url: str
-
-
 class AttachmentCollectionFilter(BaseModel):
     and_: Optional[List["AttachmentCollectionFilter"]]
     created_at: Optional["DateComparator"]
@@ -91,26 +75,6 @@ class AttachmentCollectionFilter(BaseModel):
     title: Optional["StringComparator"]
     updated_at: Optional["DateComparator"]
     url: Optional["StringComparator"]
-
-
-class AttachmentConnection(BaseModel):
-    edges: List["AttachmentEdge"]
-    nodes: List["Attachment"]
-    page_info: "PageInfo"
-
-
-class AttachmentCreateInput(BaseModel):
-    comment_body: Optional[str]
-    comment_body_data: Any
-    create_as_user: Optional[str]
-    group_by_source: Optional[bool]
-    icon_url: Optional[str]
-    id: Optional[str]
-    issue_id: str
-    metadata: Any
-    subtitle: Optional[str]
-    title: str
-    url: str
 
 
 class AttachmentEdge(BaseModel):

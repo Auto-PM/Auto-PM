@@ -1,4 +1,3 @@
-import re
 import json
 
 from linear_types import Issue
@@ -201,7 +200,7 @@ class AgentRouter:
 
         The first line of your response should begin with "COMMENT:" followed by the comment to respond with - please explain your reasoning.
 
-        Finally, if the comment is asking to improve the issue description, please add a new line beginning with "ΔDESCRIPTION:" followed by the improvement.
+        Finally, if the comment is asking to improve the issue description, please add a new line beginning with "ΔDESCRIPTION:" followed by the improvement. If you have no improvements to suggest, please add a new line beginning with "ΔDESCRIPTION: none".
         """
         llm = OpenAI(temperature=0.9, model_name="gpt-4")
 

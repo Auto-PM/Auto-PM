@@ -45,7 +45,7 @@ class IssueEdge(BaseModel):
 class Issue(BaseModel):
     archived_at: Any
     assignee: Optional[AssigneeUser]
-    # attachments: 'AttachmentConnection'
+    attachments: Optional['AttachmentConnection']
     # auto_archived_at: Any
     # auto_closed_at: Any
     # branch_name: str
@@ -414,6 +414,42 @@ class CommentCreateInput(BaseModel):
     id: Optional[str]
     issue_id: str
     parent_id: Optional[str]
+
+
+class Attachment(BaseModel):
+    archived_at: Optional[Any]
+    created_at: Optional[Any]
+    creator: Optional['User']
+    group_by_source: Optional[bool]
+    id: Optional[str]
+    issue: Optional['Issue']
+    metadata: Optional[dict]
+    source: Optional[Any]
+    source_type: Optional[str]
+    subtitle: Optional[str]
+    title: Optional[str]
+    updated_at: Optional[Any]
+    url: Optional[str]
+
+
+class AttachmentConnection(BaseModel):
+    #edges: List["AttachmentEdge"]
+    nodes: List["Attachment"]
+    #page_info: "PageInfo"
+
+
+class AttachmentCreateInput(BaseModel):
+    comment_body: Optional[str]
+    comment_body_data: Optional[Any]
+    create_as_user: Optional[str]
+    group_by_source: Optional[bool]
+    icon_url: Optional[str]
+    id: Optional[str]
+    issue_id: str
+    metadata: Optional[Any]
+    subtitle: Optional[str]
+    title: Optional[str]
+    url: Optional[str]
 
 
 # IssueEdge.update_forward_refs()

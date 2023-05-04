@@ -23,6 +23,7 @@ from linear_client import ProjectInput, DocumentInput
 from linear_types import Issue, User, IssueLabel, Project, Document
 from linear_types import ProjectMilestone, ProjectMilestoneInput
 from linear_types import CommentCreateInput
+from linear_types import AttachmentCreateInput
 
 from agents.agent_router import AgentRouter
 
@@ -205,7 +206,7 @@ async def webhooks_linear(request: Request):
         )
         if len(parts) > 1:
             description = parts[1].strip()
-            if len(description) > 0 and description != issue.description:
+            if len(description) > 10 and description != issue.description:
                 print("updating description")
                 await linear_client.update_issue(
                     issue.id,
