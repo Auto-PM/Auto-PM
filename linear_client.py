@@ -28,7 +28,6 @@ status = {}
 def set_workflow_states(states_dict):
     global status
     status = states_dict
-    print(f"set_workflow_states: status updated to: {status}")
 
 
 status_reversed = {v: k for k, v in status.items()}
@@ -48,7 +47,7 @@ class IssueState(Enum):
     TODO = "todo"
 
     def state_id(self) -> Any:
-        return status[self.name.lower()]
+        return status[self.name.lower().replace("_", " ").title()]
 
 
 class ListIssuesInput(BaseModel):
@@ -118,6 +117,9 @@ class LinearClient:
     def __init__(self, endpoint):
         self.endpoint = endpoint
         self.session = requests.Session()
+        if os.environ.get("LINEAR_TEAM_ID"):
+            global status
+            status = self.get_linear_workflow_states(os.environ.get("LINEAR_TEAM_ID"))
 
     def _get_api_key_and_team_id(self):
         LINEAR_API_KEY = os.environ.get("LINEAR_API_KEY", "")
@@ -141,9 +143,6 @@ class LinearClient:
 
     async def _arun_graphql_query(self, query, variables=None):
         LINEAR_API_KEY, LINEAR_TEAM_ID = self._get_api_key_and_team_id()
-        # print("variables:", json.dumps(variables))
-        print("key:")
-        print(LINEAR_API_KEY)
         async with httpx.AsyncClient() as client:
             r = await client.post(
                 self.endpoint,
@@ -169,7 +168,7 @@ class LinearClient:
                 return team["id"]
         raise LinearError(f"Team {team_name} not found")
 
-    async def get_linear_workflow_states(self, team_id):
+    def get_linear_workflow_states(self, team_id):
         variables = {
             "filter": {
                 "id": {
@@ -177,7 +176,7 @@ class LinearClient:
                 }
             }
         }
-        result = await self._arun_graphql_query(
+        result = self._run_graphql_query(
             QUERIES["get_workflow_states"],
             variables=variables,
         )

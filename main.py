@@ -19,7 +19,7 @@ from linear_client import (
 )
 
 # Project types:
-from linear_client import ProjectInput, DocumentInput, status, set_workflow_states
+from linear_client import ProjectInput, DocumentInput
 from linear_types import Issue, User, IssueLabel, Project, Document
 from linear_types import ProjectMilestone, ProjectMilestoneInput
 from linear_types import CommentCreateInput
@@ -65,7 +65,7 @@ app.add_middleware(
 )
 
 
-#@app.middleware("http")
+# @app.middleware("http")
 async def check_setup(request: Request, call_next):
     setup_done = (
         os.environ.get("LINEAR_API_KEY")
@@ -83,10 +83,6 @@ async def check_setup(request: Request, call_next):
             set_key(".env", "LINEAR_TEAM_ID", linear_team_id)
             # load dotenv to pick up team ID change
             load_dotenv()
-            workflow_states = await linear_client.get_linear_workflow_states(
-                linear_team_id
-            )
-            set_workflow_states(workflow_states)
         response = await call_next(request)
 
     else:
@@ -179,6 +175,7 @@ async def webhooks_linear(request: Request):
     is_from_robot = j["data"].get("user", {}).get("name") == "AutoPM Robot"
     if all([is_create, is_comment, not is_from_robot]):
         import json
+
         print(json.dumps(j, indent=2))
         issue = await linear_client.get_issue(j["data"]["issueId"])
         # If a new comment arrives, and it's assigned to the robot, then we should perform a chat completion.
@@ -188,31 +185,41 @@ async def webhooks_linear(request: Request):
         if issue.labels:
             labels = issue.labels.nodes
         label_ids = append_label_id_by_name(all_issue_labels, labels, "🤖")
-        await linear_client.update_issue(issue.id, IssueModificationInput(label_ids=label_ids))
+        await linear_client.update_issue(
+            issue.id, IssueModificationInput(label_ids=label_ids)
+        )
         result = await agent_router.handle_new_comment(issue)
 
-        print("result:",result)
+        print("result:", result)
         parts = result.split("ΔDESCRIPTION: ")
         comment = parts[0].replace("COMMENT:", "").strip()
         print("parts:", parts)
         print("comment:", comment)
         print("creating comment")
-        await linear_client.create_comment(CommentCreateInput(
-            body=comment,
-            issue_id=issue.id,
-            parent_id=j["data"]["id"],
-       ))
+        await linear_client.create_comment(
+            CommentCreateInput(
+                body=comment,
+                issue_id=issue.id,
+                parent_id=j["data"]["id"],
+            )
+        )
         if len(parts) > 1:
             description = parts[1].strip()
             if len(description) > 0 and description != issue.description:
                 print("updating description")
-                await linear_client.update_issue(issue.id, IssueModificationInput(
-                    description=description,
-                    label_ids=remove_label_by_name(labels, "🤖"),
-                ))
-        await linear_client.update_issue(issue.id, IssueModificationInput(
-            label_ids=remove_label_by_name(labels, "🤖"),
-        ))
+                await linear_client.update_issue(
+                    issue.id,
+                    IssueModificationInput(
+                        description=description,
+                        label_ids=remove_label_by_name(labels, "🤖"),
+                    ),
+                )
+        await linear_client.update_issue(
+            issue.id,
+            IssueModificationInput(
+                label_ids=remove_label_by_name(labels, "🤖"),
+            ),
+        )
 
     updated_to = j.get("data", {}).get("state")
 
