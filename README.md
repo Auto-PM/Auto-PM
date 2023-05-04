@@ -46,6 +46,13 @@ $ uvicorn main:app --reload
 
 You should now be up and running! To start using the ChatGPT plugin simply paste 'http://127.0.0.1:8000/' as the plugin link when adding a local plugin to ChatGPT.
 
+### Linear Agents Setup
+
+We're working on making this simpler!!
+
+ChatGPT will work with Linear using just the steps above. In order to use the agent features with Linear you will need to set up Ngrok (https://ngrok.com/) so that the linear webhooks can reach your local server. Once you have Ngrok running, paste the generated Ngrock link + '/webhooks/linear' into your Linear webook settings. It shoud look something like `https://b11234bf.ngrok.app/webhooks/linear`.
+
+You will also need to add a new user to your team called "AutoPM Robot". Once the user is added and Ngrok is setup you should be able to assign issues to 'AutoPM Robot' and watch as the issues are auto completed by GPT.
 
 
 ## How it Works
