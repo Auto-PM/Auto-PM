@@ -41,6 +41,17 @@ query Issue($id: String!) {
           id
           name
         }
+        comments {
+          nodes {
+            id
+            body
+            user {
+              name
+              email
+              isMe
+            }
+          }
+        }
         }}""",
     "list_issues": """
 query Issues($filter: IssueFilter) {
@@ -361,5 +372,18 @@ query IssueLabels {
     }
 """,
                     
+# create issue
+"create_comment": """
+    mutation CreateComment($issueId: String!, $body: String!, $parentId: String) {
+      commentCreate(
+        input: { issueId: $issueId, body: $body, parentId: $parentId }
+      ) {
+        comment {
+          id
+          body
+        }
+      }
+    }
+""",
                         
 }

@@ -52,7 +52,7 @@ class Issue(BaseModel):
     # canceled_at: Any
     # children: 'IssueConnection'
     children: Optional[list["Issue"]]
-    # comments: 'CommentConnection'
+    comments: Optional['CommentConnection']
     # completed_at: Any
     # created_at: Any
     # creator: Optional['User']
@@ -366,6 +366,54 @@ class ProjectMilestoneInput(BaseModel):
     # project_id: str
     sort_order: Optional[float]
     target_date: Any
+
+
+class Comment(BaseModel):
+    archived_at: Optional[Any]
+    body: Optional[str]
+    body_data: Optional[str]
+    #children: Optional["CommentConnection"]
+    created_at: Optional[Any]
+    edited_at: Optional[Any]
+    #external_user: Optional["ExternalUser"]
+    id: str
+    issue: Optional["Issue"]
+    #parent: Optional["Comment"]
+    reaction_data: Optional[Any]
+    updated_at: Optional[Any]
+    url: Optional[str]
+    #user: Optional["User"]
+
+
+class CommentConnection(BaseModel):
+    # edges: List["CommentEdge"]
+    nodes: List[Optional["Comment"]]
+    # page_info: "PageInfo"
+
+
+class ExternalUser(BaseModel):
+    archived_at: Any
+    avatar_url: Optional[str]
+    created_at: Any
+    display_name: str
+    email: str
+    id: str
+    last_seen: Any
+    name: str
+    # organization: "Organization"
+    updated_at: Any
+
+
+class CommentCreateInput(BaseModel):
+    body: Optional[str]
+    body_data: Optional[Any]
+    create_as_user: Optional[str]
+    created_at: Optional[Any]
+    display_icon_url: Optional[str]
+    do_not_subscribe_to_issue: Optional[bool]
+    id: Optional[str]
+    issue_id: str
+    parent_id: Optional[str]
 
 
 # IssueEdge.update_forward_refs()

@@ -1,3 +1,4 @@
+import re
 import json
 
 from linear_types import Issue
@@ -189,6 +190,40 @@ class AgentRouter:
         agent = await self.agent_for_issue(issue)
         return await self.run(issue, agent)
 
+    async def handle_new_comment(self, issue: Issue):
+        """Handles a new comment on an issue."""
+        print("handling new comment")
+        #self.agent_kwargs.get("linear_client")
+
+        template = """
+        You are a helpful project management AI that is responding to a new comment on a task.
+        {issue}
+
+        You should either respond with a new comment or suggest a replacement for the issue description based on the conversation in the comments.
+
+        Please explain your reasoning for your response and then provide your response wrapped in triple backticks.
+        If the response is a comment prefix it with "COMMENT: ".
+        """
+        llm = OpenAI(temperature=0.9, model_name="gpt-4")
+
+        SystemMessagePromptTemplate.from_template(template)
+        prompt = PromptTemplate(
+            input_variables=["issue"],
+            template=template,
+        )
+
+        from langchain.chains import LLMChain
+
+        chain = LLMChain(llm=llm, prompt=prompt, verbose=True)
+
+        print("running chain")
+        chain_run = await chain.arun({"issue": issue.dict()})
+        print("done running chain")
+        print(chain_run)
+        # extract from backticks:
+        o = re.findall(r"```(.*)```", chain_run, re.DOTALL)
+        return "\n".join(o)
+
     async def run(self, issue: Issue, agent_name: str):
         """
         Takes an input string and an agent name, and runs the input string through the chosen agent function.
@@ -297,9 +332,7 @@ class AgentRouter:
                 "past_issues": past_issues,
              }
         )
-
         print(chain_run)
-
         # TODO: come eup with a better way to connect this output to the issue
         if "[not completed]" in chain_run.lower():
             # issue.description = (

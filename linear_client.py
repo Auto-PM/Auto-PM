@@ -9,7 +9,7 @@ import httpx
 from pydantic import BaseModel, Field, Json
 from pydantic import constr
 
-from linear_types import Issue, User, IssueLabel, Project, Document, ProjectMilestone, ProjectMilestoneInput
+from linear_types import Issue, User, IssueLabel, Project, Document, ProjectMilestone, ProjectMilestoneInput, Comment, CommentCreateInput
 from linear_graphql_queries import QUERIES
 
 
@@ -470,3 +470,20 @@ class LinearClient:
         if "errors" in result:
             raise LinearError(result["errors"])
         return result["data"]["projectMilestoneDelete"]["success"]
+
+
+# comment endpoints
+    async def create_comment(self, input: CommentCreateInput):
+        variables = {
+            "body": input.body,
+            "issueId": input.issue_id,
+        }
+        if input.parent_id is not None:
+            variables["parentId"] = input.parent_id
+        print("variables:", json.dumps(variables))
+        result = await self._arun_graphql_query(QUERIES["create_comment"], variables)
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return Comment(**result["data"]["commentCreate"]["comment"])
+
