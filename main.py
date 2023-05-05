@@ -23,7 +23,6 @@ from linear_client import ProjectInput, DocumentInput
 from linear_types import Issue, User, IssueLabel, Project, Document
 from linear_types import ProjectMilestone, ProjectMilestoneInput
 from linear_types import CommentCreateInput
-from linear_types import AttachmentCreateInput
 
 from agents.agent_router import AgentRouter
 
@@ -36,7 +35,11 @@ app = FastAPI(
     servers=[
         {
             "url": "http://localhost:8000",
-            "description": "Production server",
+            "description": "Development server",
+        },
+        {
+            "url": "https://ccdfda000f0c.ngrok.app",
+            "description": "Staging server",
         }
     ],
 )
