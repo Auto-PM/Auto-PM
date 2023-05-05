@@ -25,14 +25,7 @@ from linear_types import (
 from linear_graphql_queries import QUERIES
 
 status = {}
-
-
-def set_workflow_states(states_dict):
-    global status
-    status = states_dict
-
-
-status_reversed = {v: k for k, v in status.items()}
+status_reversed = {}
 
 
 class LinearError(Exception):
@@ -121,7 +114,9 @@ class LinearClient:
         self.session = requests.Session()
         if os.environ.get("LINEAR_TEAM_ID"):
             global status
+            global status_reversed
             status = self.get_linear_workflow_states(os.environ.get("LINEAR_TEAM_ID"))
+            status_reversed = {v: k for k, v in status.items()}
 
     def _get_api_key_and_team_id(self):
         LINEAR_API_KEY = os.environ.get("LINEAR_API_KEY", "")
