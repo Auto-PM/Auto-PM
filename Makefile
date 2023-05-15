@@ -30,7 +30,6 @@ venv/bin/pip:
 requirements.txt: venv/bin/pip requirements.in
 	./venv/bin/pip-compile --resolver=backtracking requirements.in
 	./venv/bin/pip3 install -r requirements.txt
-	./venv/bin/mypy --install-types
 
 .PHONY: e2e-test
 e2e-test: venv

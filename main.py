@@ -24,9 +24,9 @@ from linear_types import Issue, User, IssueLabel, Project, Document
 from linear_types import ProjectMilestone, ProjectMilestoneInput
 from linear_types import CommentCreateInput
 
-from agents.agent_router import AgentRouter
-
 load_dotenv()
+
+from agents.agent_router import AgentRouter # noqa
 
 
 app = FastAPI(

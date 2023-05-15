@@ -26,6 +26,7 @@ markdown-it-py
 mdurl
 modal-client
 multidict
+openai
 protobuf
 pydantic
 pytest
