@@ -255,6 +255,23 @@ query IssueLabels {
       }
     }
 }""",
+    # get project:
+    "get_project": """
+    query Project($id: String!) {
+        project(id: $id) {
+          id
+          name
+          state
+          documents {
+            nodes   {
+              id
+              content
+              contentData
+            }
+          }
+          }
+          }
+    """,
     # create project:
     "create_project": """
     mutation CreateProject(
@@ -277,6 +294,30 @@ query IssueLabels {
           description
         }
       }
+    }""",
+    # update project:
+    "update_project": """
+    mutation UpdateProject(
+        $id: String!
+        $name: String
+        $description: String
+        $state: String
+    ) {
+        projectUpdate(
+            id: $id
+            input: {
+                name: $name
+                description: $description
+                state: $state
+            }
+        ) {
+            project {
+                id
+                name
+                description
+                state
+            }
+        }
     }""",
     # delete project:
     "delete_project": """
@@ -308,6 +349,47 @@ query IssueLabels {
           contentData
         }
       }
+    }""",
+    # update document:
+    "update_document": """
+    mutation UpdateDocument(
+        $id: String!
+        $title: String
+        $content: String
+        $contentData: JSONObject
+    ) {
+        documentUpdate(
+            id: $id
+            input: {
+                title: $title
+                content: $content
+                contentData: $contentData
+            }
+        ) {
+            
+            document {
+                
+                id
+                title
+                content
+                contentData
+            }
+        }
+    }""",
+    # list documents:
+    "list_documents": """
+    query ListDocuments($projectId: String!) {
+        project(id: $projectId) {
+            documents {
+                nodes {
+                    
+                    id
+                    title
+                    content
+                    contentData
+                }
+            }
+        }
     }""",
     "get_document": """
     query Document($id: String!) {
@@ -394,7 +476,7 @@ query IssueLabels {
       }
     }
 """,
-    # create issue
+    # create comment
     "create_comment": """
     mutation CreateComment($issueId: String!, $body: String!, $parentId: String) {
       commentCreate(

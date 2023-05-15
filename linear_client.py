@@ -91,13 +91,7 @@ class ProjectInput(BaseModel):
     name: str
     description: constr(max_length=250)
     priority: Optional[float]
-    state: IssueState = Field(
-        ...,
-        description="Issue state/status. The current status of the issue. If a user asks to mark an issue a \
-        certain status you should not mention it anywhere in the title or description but instead just mark it \
-        here in 'state'. (accepted values: 'in_review', 'in_progress', 'todo', 'done', 'backlog', 'cancelled')",
-        example=IssueState.IN_REVIEW,
-    )
+    state: Optional[str]
     label_ids: Optional[List[str]] = None
 
 
@@ -225,6 +219,8 @@ class LinearClient:
             variables["parentId"] = input.parent_id
         if input.project_id:
             variables["projectId"] = input.project_id
+        if input.milestone_id:
+            variables["projectMilestoneId"] = input.milestone_id
         result = await self._arun_graphql_query(QUERIES["create_issue"], variables)
         print("variables:", json.dumps(variables))
         print(result)
@@ -354,12 +350,26 @@ class LinearClient:
             variables["name"] = project.name
         if project.description is not None:
             variables["description"] = project.description
+        if project.state is not None:
+            variables["state"] = project.state
         result = await self._arun_graphql_query(QUERIES["update_project"], variables)
         print("variables:", json.dumps(variables))
         print(result)
         if "errors" in result:
             raise LinearError(result["errors"])
         return Project(**result["data"]["projectUpdate"]["project"])
+
+    async def get_project(self, project_id) -> Project:
+        result = await self._arun_graphql_query(
+            QUERIES["get_project"],
+            variables={
+                "id": project_id,
+            },
+        )
+        print(result)
+        if "errors" in result:
+            raise LinearError(result["errors"])
+        return Project(**result["data"]["project"])
 
     async def delete_project(self, project_id) -> bool:
         result = await self._arun_graphql_query(

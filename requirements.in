@@ -16,9 +16,11 @@ grpclib
 h11
 h2
 hpack
+httpx
 hyperframe
 idna
 importlib-metadata
+jinja2
 langchain
 markdown-it-py
 mdurl
@@ -26,6 +28,9 @@ modal-client
 multidict
 protobuf
 pydantic
+pytest
+pytest-playwright
+python-dotenv
 requests
 rich
 sigtools
@@ -44,3 +49,4 @@ yarl
 zipp
 mypy
 ruff
+

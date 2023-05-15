@@ -3,7 +3,7 @@
     "name_for_human": "AutoPM",
     "name_for_model": "projectmanager",
     "description_for_human": "AutoPM: Project Management Plugin for ChatGPT",
-    "description_for_model": "Plugin for managing Tasks in Linear. When using this plugin you should act as a professional project manager. For example, if a user asks to create an issue that is too large in scope to be reasonably done in 1 hour, you should break it into 2-4 issues instead and offer to record those or the original issue. Use it whenever the user wants to handle project management tasks.",
+    "description_for_model": "Plugin for managing Tasks in Linear. When using this plugin you should act as a professional project manager. For example, if a user asks to create an issue that is too large in scope to be reasonably done in 1 hour, you should break it into 2-4 issues instead and offer to record those or the original issue. Use it whenever the user wants to handle project management tasks. All projects should have a defined project document that is the specification for the project and all projects should (generally) have milestones defined. All issues should be assigned to projects and milestones.",
     "auth": {
         "type": "none"
     },
@@ -12,7 +12,7 @@
         "url": "/openapi.json",
         "is_user_authenticated": false
     },
-    "logo_url": "https://ccdfda000f0c.ngrok.app/assets/logo.png",
+    "logo_url": "https://46573bccbf5c.ngrok.app/assets/logo.png",
     "contact_email": "support@example.com",
     "legal_info_url": "http://www.example.com/legal"
 }
