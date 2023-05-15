@@ -69,13 +69,17 @@ app.add_middleware(
 )
 
 
-# @app.middleware("http")
+@app.middleware("http")
 async def check_setup(request: Request, call_next):
     setup_done = (
         os.environ.get("LINEAR_API_KEY")
         and os.environ.get("OPENAI_API_KEY")
         and os.environ.get("SERPAPI_API_KEY")
-        and os.environ.get("LINEAR_TEAM_NAME")
+        and (
+            os.environ.get("LINEAR_TEAM_NAME")
+            or
+            os.environ.get("LINEAR_TEAM_ID")
+        )
     )
     if setup_done or request.url.path == "/favicon.ico":
         if not os.environ.get("LINEAR_TEAM_ID"):
