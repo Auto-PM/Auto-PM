@@ -405,8 +405,8 @@ class LinearClient:
         variables = {
             "id": document_id,
         }
-        if input.name is not None:
-            variables["name"] = input.name
+        if input.title is not None:
+            variables["title"] = input.title
         if input.content is not None:
             variables["content"] = input.content
         result = await self._arun_graphql_query(QUERIES["update_document"], variables)

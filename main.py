@@ -442,7 +442,7 @@ async def update_document(
     project_id: str, document_id: str, input: DocumentInput
 ) -> Document:
     """Update a document"""
-    response = await linear_client.update_document(project_id, document_id, input)
+    response = await linear_client.update_document(document_id, input)
     return response
 
 
