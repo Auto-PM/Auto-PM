@@ -31,8 +31,8 @@ $ source venv/bin/activate
 ### Copy example.env, name it .env, and add your API keys
 It should be named ".env" and look something like this:
 ```
-LINEAR_API_KEY = lin_api_abc123
-OPENAI_API_KEY = sk-abc123
+LINEAR_API_KEY=lin_api_abc123
+OPENAI_API_KEY=sk-abc123
 LINEAR_TEAM_NAME="Example Name"
 SERPAPI_API_KEY=abc123
 ```
@@ -41,7 +41,7 @@ Make sure that you use the exact name of your project or it will not work!
 
 ### Start the Server
 ```shell
-$ uvicorn main:app --reload
+$ make run
 ````
 
 You should now be up and running! To start using the ChatGPT plugin simply paste 'http://127.0.0.1:8000/' as the plugin link when adding a local plugin to ChatGPT.
