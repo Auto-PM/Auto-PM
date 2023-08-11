@@ -30,7 +30,7 @@ numpy
 pre-commit
 black
 isort
-gitpython==3.1.31
+gitpython==3.1.32
 
 # Items below this point will not be included in the Docker Image
 
